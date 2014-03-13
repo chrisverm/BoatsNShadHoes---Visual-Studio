@@ -11,21 +11,21 @@
 // Macro for popping up a text box based
 // on a failed HRESULT and then quitting (only in debug builds)
 #if defined(DEBUG) | defined(_DEBUG)
-#ifndef HR
-#define HR(x)												\
+	#ifndef HR
+	#define HR(x)												\
 	{															\
-	HRESULT hr = (x);										\
-if (FAILED(hr))											\
+		HRESULT hr = (x);										\
+		if(FAILED(hr))											\
 		{														\
-		DXTrace(__FILEW__, (DWORD)__LINE__, hr, L#x, true);	\
-		PostQuitMessage(0);									\
+			DXTrace(__FILEW__, (DWORD)__LINE__, hr, L#x, true);	\
+			PostQuitMessage(0);									\
 		}														\
-	}
-#endif
+	}														
+	#endif
 #else
-#ifndef HR
-#define HR(x) (x)
-#endif
+	#ifndef HR
+	#define HR(x) (x)
+	#endif
 #endif
 
 static std::string* Split(std::string s, char delimeter)

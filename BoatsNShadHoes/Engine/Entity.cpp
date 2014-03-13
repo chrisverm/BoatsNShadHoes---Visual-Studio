@@ -2,23 +2,23 @@
 
 using namespace DirectX;
 
-Entity::Entity(Mesh* mesh)
+Entity::Entity(Mesh* mesh, Material* material)
 {
 	this->mesh = mesh;
-	//this->material = material;
+	this->material = material;
 
 	topology = D3D11_PRIMITIVE_TOPOLOGY_TRIANGLELIST;
 
-	position = XMVectorSet(0,0,0,0);// XMFLOAT3(0.0f, 0.0f, 0.0f); //XMFLOAT3(0.0f, 0.0f, 0.0f);
-	rotation = XMVectorSet(0.0f, 0.0f, 0.0f,0); //XMFLOAT3(0.0f, 0.0f, 0.0f);
-	scale = XMVectorSet(1.0f, 1.0f, 1.0f,0); //XMFLOAT3(1.0f, 1.0f, 1.0f);
+	position = XMVectorSet(0.0f , 0.0f , 0.0f ,0.0f);
+	rotation = XMVectorSet(0.0f , 0.0f , 0.0f ,0.0f);
+	scale = XMVectorSet(1.0f, 1.0f, 1.0f, 0.0f);
 	XMStoreFloat4x4(&worldMatrix, XMMatrixTranspose(XMMatrixIdentity()));
 }
 
-void Entity::Initialize(ID3D11Device* device, ID3D11Buffer* modelConstBuffer) //VertexModelConstantBuffer* modelConstBufferData)
+void Entity::Initialize(ID3D11Device* device, ID3D11Buffer* modelConstBuffer, VSPerModelData* modelConstBufferData)
 {
 	this->modelConstBuffer = modelConstBuffer;
-	//this->modelConstBufferData = modelConstBufferData;
+	this->modelConstBufferData = modelConstBufferData;
 }
 
 void Entity::Update(ID3D11DeviceContext* deviceContext, float dt)
@@ -34,20 +34,20 @@ void Entity::Update(ID3D11DeviceContext* deviceContext, float dt)
 
 void Entity::Render(ID3D11DeviceContext* deviceContext)
 {
-	modelConstBufferData.model = worldMatrix;
+	modelConstBufferData->model = worldMatrix;
 
 	deviceContext->UpdateSubresource(
 		modelConstBuffer,
 		0,
 		NULL,
-		&modelConstBufferData,
+		modelConstBufferData,
 		0,
 		0);
 		
 	deviceContext->IASetPrimitiveTopology(topology);
 
 	mesh->SetBuffers(deviceContext);
-	//material->SetShaders(deviceContext);
+	material->SetShaders(deviceContext);
 
 	deviceContext->DrawIndexed(
 		mesh->numInds,

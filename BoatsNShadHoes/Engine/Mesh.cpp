@@ -12,7 +12,17 @@ Mesh::Mesh(Vertex* verts, int vSize, UINT* inds, int iSize)
 
 Mesh::~Mesh()
 {
-
+	if (vBuffer != nullptr)
+	{
+		ReleaseMacro(vBuffer);
+		vBuffer = nullptr;
+	}
+	
+	if (iBuffer != nullptr)
+	{
+		ReleaseMacro(iBuffer);
+		iBuffer = nullptr;
+	}
 }
 
 void Mesh::Initialize(ID3D11Device* device)
@@ -141,7 +151,7 @@ Mesh* Mesh::LoadFromOBJ(std::string objFilePath)
 	Vertex* verts = new Vertex[numVerts];
 	for (int i = 0; i < numVerts; i++)
 	{
-		Vertex v = { tempVerts[i], XMFLOAT4(1, 1, 1, 1) }; //tempUVs[i], tempNorms[i] };
+		Vertex v = { tempVerts[i], tempUVs[i], tempNorms[i] };
 		verts[i] = v;
 	}
 

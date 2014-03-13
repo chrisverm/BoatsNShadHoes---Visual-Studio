@@ -1,4 +1,5 @@
-#pragma once
+#ifndef MESH_H
+#define MESH_H
 
 #include <d3d11.h>
 #include <list>
@@ -16,12 +17,14 @@ public:
 	void SetBuffers(ID3D11DeviceContext* deviceContext);
 
 	static Mesh* LoadFromOBJ(std::string objFilePath);
-	ID3D11Buffer* vBuffer;
-	ID3D11Buffer* iBuffer;
 
 private:
 	int numVerts, numInds;
 	Vertex* vertices;
 	UINT* indices;
+	ID3D11Buffer* vBuffer;
+	ID3D11Buffer* iBuffer;
+
 };
 
+#endif

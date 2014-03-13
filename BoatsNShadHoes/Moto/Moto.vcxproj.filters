@@ -13,7 +13,7 @@
       <UniqueIdentifier>{67DA6AB6-F800-4c08-8B7A-83BB121AAD01}</UniqueIdentifier>
       <Extensions>rc;ico;cur;bmp;dlg;rc2;rct;bin;rgs;gif;jpg;jpeg;jpe;resx;tiff;tif;png;wav;mfcribbon-ms</Extensions>
     </Filter>
-    <Filter Include="Shaders">
+    <Filter Include="Resource Files\Shaders">
       <UniqueIdentifier>{b02c1e3b-4be7-4b4f-9d20-edb710381152}</UniqueIdentifier>
     </Filter>
   </ItemGroup>
@@ -24,6 +24,9 @@
     <ClInclude Include="BoatGame.h">
       <Filter>Header Files</Filter>
     </ClInclude>
+    <ClInclude Include="Water.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="Boat.cpp">
@@ -32,13 +35,27 @@
     <ClCompile Include="BoatGame.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
+    <ClCompile Include="Water.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
-    <FxCompile Include="Shaders\PixelShader.hlsl">
-      <Filter>Shaders</Filter>
+    <FxCompile Include="Shaders\Texture_VertexShader.hlsl">
+      <Filter>Resource Files\Shaders</Filter>
     </FxCompile>
-    <FxCompile Include="Shaders\VertexShader.hlsl">
-      <Filter>Shaders</Filter>
+    <FxCompile Include="Shaders\Texture_PixelShader.hlsl">
+      <Filter>Resource Files\Shaders</Filter>
     </FxCompile>
+    <FxCompile Include="Shaders\Color_PixelShader.hlsl">
+      <Filter>Resource Files\Shaders</Filter>
+    </FxCompile>
+  </ItemGroup>
+  <ItemGroup>
+    <Text Include="..\Resources\crate_obj.obj">
+      <Filter>Resource Files</Filter>
+    </Text>
+    <Text Include="..\Resources\water_obj.obj">
+      <Filter>Resource Files</Filter>
+    </Text>
   </ItemGroup>
 </Project>

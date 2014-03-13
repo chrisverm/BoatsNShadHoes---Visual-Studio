@@ -1,12 +1,19 @@
-#pragma once
+#ifndef BOAT_GAME_H
+#define BOAT_GAME_H
 
+#include <vector>
+#include <d3dcompiler.h>
+#include "WICTextureLoader.h"
 #include "DXGame.h"
-#include "Game.h"
+#include "Globals.h"
 #include "BufferStructs.h"
 #include "Boat.h"
+#include "Water.h"
 #include "Mesh.h"
-#include <vector>
+#include "ResourceManager.h"
 
+#include "Camera.h"
+#include "CameraManager.h"
 
 enum GameState
 {
@@ -15,7 +22,7 @@ enum GameState
 	Paused
 };
 
-class BoatGame : public Game
+class BoatGame : public DXGame
 {
 public:
 	BoatGame(HINSTANCE hInstance);
@@ -29,18 +36,28 @@ public:
 	GameState state;
 
 protected:
+	ID3D11PixelShader* texturePixelShader;
+	ID3D11PixelShader* colorPixelShader;
+	ID3D11VertexShader* vertexShader;
 
-	ID3D11Buffer* vsPerDrawConstantBuffer;
+	ID3D11InputLayout* inputLayout;
+	ID3D11Buffer* vsPerFrameConstantBuffer;
 	ID3D11Buffer* vsPerModelConstantBuffer;
-	VSPerDrawData vsPerDrawData; VSPerModelData vsPerModelData;
+	VSPerFrameData* vsPerFrameData;
+	VSPerModelData* vsPerModelData;
 
 	void LoadShadersAndInputLayout();
 	void CreateGeometryBuffers();
+	void LoadResources();
 
 	ID3D11Buffer* vertex;
 	ID3D11Buffer* index;
 
 	std::vector<Entity*> entities;
-	std::vector<Mesh*> meshes;
+
+	bool viewChanged;
+	bool projChanged;
+
 };
 
+#endif
