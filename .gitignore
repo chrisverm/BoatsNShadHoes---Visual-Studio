@@ -11,3 +11,10 @@
 *.lai
 *.la
 *.a
+
+# SQL crap
+*.sdf
+*.suo
+
+BoatsNShadHoes/DELETE/
+BoatsNShadHoes/Debug/

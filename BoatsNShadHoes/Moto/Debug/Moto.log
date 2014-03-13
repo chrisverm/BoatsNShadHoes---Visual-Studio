@@ -1,0 +1,18 @@
+﻿Build started 3/13/2014 12:01:32 PM.
+     1>Project "D:\Users\ldf7974\Git\BoatsNShadHoes---Visual-Studio\BoatsNShadHoes\Moto\Moto.vcxproj" on node 2 (Build target(s)).
+     1>ClCompile:
+         C:\Program Files (x86)\Microsoft Visual Studio 11.0\VC\bin\CL.exe /c /I"D:\Users\ldf7974\Git\BoatsNShadHoes---Visual-Studio\BoatsNShadHoes\/Engine" /I"D:\Users\ldf7974\Git\BoatsNShadHoes---Visual-Studio\BoatsNShadHoes\/DirectXTK/Inc" /ZI /nologo /W3 /WX- /sdl /Od /Oy- /D _MBCS /Gm /EHsc /RTC1 /MDd /GS /fp:precise /Zc:wchar_t /Zc:forScope /Fo"Debug\\" /Fd"Debug\vc110.pdb" /Gd /TP /analyze- /errorReport:prompt Boat.cpp BoatGame.cpp
+         BoatGame.cpp
+         Boat.cpp
+         Generating Code...
+       Link:
+         C:\Program Files (x86)\Microsoft Visual Studio 11.0\VC\bin\link.exe /ERRORREPORT:PROMPT /OUT:"D:\Users\ldf7974\Git\BoatsNShadHoes---Visual-Studio\BoatsNShadHoes\Debug\Moto.exe" /INCREMENTAL /NOLOGO d3d11.lib d3dcompiler.lib kernel32.lib user32.lib gdi32.lib winspool.lib comdlg32.lib advapi32.lib shell32.lib ole32.lib oleaut32.lib uuid.lib odbc32.lib odbccp32.lib /MANIFEST /MANIFESTUAC:"level='asInvoker' uiAccess='false'" /manifest:embed /DEBUG /PDB:"D:\Users\ldf7974\Git\BoatsNShadHoes---Visual-Studio\BoatsNShadHoes\Debug\Moto.pdb" /TLBID:1 /DYNAMICBASE /NXCOMPAT /IMPLIB:"D:\Users\ldf7974\Git\BoatsNShadHoes---Visual-Studio\BoatsNShadHoes\Debug\Moto.lib" /MACHINE:X86 Debug\Boat.obj
+         Debug\BoatGame.obj
+         "D:\Users\ldf7974\Git\BoatsNShadHoes---Visual-Studio\BoatsNShadHoes\DirectXTK\Bin\Desktop_2012\Win32\Debug\DirectXTK.lib"
+         "D:\Users\ldf7974\Git\BoatsNShadHoes---Visual-Studio\BoatsNShadHoes\DELETE\Engine_d.lib"
+     1>LINK : fatal error LNK1104: cannot open file 'D:\Users\ldf7974\Git\BoatsNShadHoes---Visual-Studio\BoatsNShadHoes\DELETE\Engine_d.lib'
+     1>Done Building Project "D:\Users\ldf7974\Git\BoatsNShadHoes---Visual-Studio\BoatsNShadHoes\Moto\Moto.vcxproj" (Build target(s)) -- FAILED.
+
+Build FAILED.
+
+Time Elapsed 00:00:04.04
