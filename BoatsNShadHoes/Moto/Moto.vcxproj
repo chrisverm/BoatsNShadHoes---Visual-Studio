@@ -52,6 +52,7 @@
       <Optimization>Disabled</Optimization>
       <SDLCheck>true</SDLCheck>
       <AdditionalIncludeDirectories>$(SolutionDir)/Engine; $(SolutionDir)/DirectXTK/Inc</AdditionalIncludeDirectories>
+      <PreprocessorDefinitions>_CRT_SECURE_NO_WARNINGS;_MBCS;%(PreprocessorDefinitions)</PreprocessorDefinitions>
     </ClCompile>
     <Link>
       <GenerateDebugInformation>true</GenerateDebugInformation>
@@ -128,6 +129,7 @@ copy "$(SolutionDir)Resources\" "$(SolutionDir)Binary\Resources" /Y</Command>
   <ItemGroup>
     <Text Include="..\Resources\crate_obj.obj">
       <FileType>Document</FileType>
+      <SubType>Designer</SubType>
     </Text>
   </ItemGroup>
   <ItemGroup>

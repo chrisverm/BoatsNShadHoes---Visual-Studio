@@ -21,6 +21,18 @@ Camera::Camera(Mount mount, float fov, float nearP, float farP)
 	viewMatrix = XMFLOAT4X4();
 }
 
+Camera::~Camera()
+{
+	if (mount.position != Mount::State::FIXED)
+		delete position;
+
+	if (mount.direction != Mount::State::FIXED)
+		delete forward;
+
+	delete right;
+	delete up;
+}
+
 void Camera::Update()
 {
 	// Mount stuff here

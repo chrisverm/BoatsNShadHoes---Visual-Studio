@@ -50,9 +50,6 @@ protected:
 	void CreateGeometryBuffers();
 	void LoadResources();
 
-	ID3D11Buffer* vertex;
-	ID3D11Buffer* index;
-
 	std::vector<Entity*> entities;
 
 	bool viewChanged;

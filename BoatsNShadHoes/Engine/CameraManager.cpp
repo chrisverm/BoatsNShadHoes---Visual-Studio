@@ -40,7 +40,6 @@ void CameraManager::Initialize(ID3D11DeviceContext* deviceContext, int numViewpo
 void CameraManager::AddCamera(Camera* camera, bool makeActive)
 {
 	numCameras++;
-	activeIndex = numCameras;
 
 	Camera** newCameraList = new Camera*[numCameras];
 	for (int i = 0; i < numCameras - 1; i++)
@@ -48,7 +47,16 @@ void CameraManager::AddCamera(Camera* camera, bool makeActive)
 		newCameraList[i] = cameras[i];
 	}
 	newCameraList[numCameras - 1] = camera;
-	cameras = newCameraList;
+
+	delete cameras;
+	cameras = new Camera*[numCameras];
+	for (int i = 0; i < numCameras; i++)
+	{
+		cameras[i] = newCameraList[i];
+	}
+
+	delete[] newCameraList;
+	newCameraList = nullptr;
 
 	if (makeActive)
 		ChangeActiveCamera(numCameras - 1);
@@ -83,4 +91,18 @@ void CameraManager::Update()
 
 	if (!IsEmpty())
 		cameras[activeIndex]->Update();
+}
+
+void CameraManager::Release()
+{
+	if (cameras != nullptr)
+	{
+		for (int i = 0; i < numCameras; i++)
+		{
+			delete cameras[i];
+			cameras[i] = nullptr;
+		}
+
+		delete[] cameras;
+	}
 }

@@ -23,6 +23,18 @@ Mesh::~Mesh()
 		ReleaseMacro(iBuffer);
 		iBuffer = nullptr;
 	}
+	
+	if (vertices != nullptr)
+	{
+		delete[] vertices;
+		vertices = nullptr;
+	}
+
+	if (indices != nullptr)
+	{
+		delete[] indices;
+		indices = nullptr;
+	}
 }
 
 void Mesh::Initialize(ID3D11Device* device)
@@ -30,7 +42,7 @@ void Mesh::Initialize(ID3D11Device* device)
 	// Create the vertex buffer
 	D3D11_BUFFER_DESC vbd;
 	vbd.Usage = D3D11_USAGE_IMMUTABLE;
-	vbd.ByteWidth = sizeof(Vertex)* numVerts; // Number of vertices
+	vbd.ByteWidth = sizeof(Vertex) * numVerts; // Number of vertices
 	vbd.BindFlags = D3D11_BIND_VERTEX_BUFFER;
 	vbd.CPUAccessFlags = 0;
 	vbd.MiscFlags = 0;
@@ -42,7 +54,7 @@ void Mesh::Initialize(ID3D11Device* device)
 	// Create the index buffer
 	D3D11_BUFFER_DESC ibd;
 	ibd.Usage = D3D11_USAGE_IMMUTABLE;
-	ibd.ByteWidth = sizeof(UINT)* numInds; // Number of indices
+	ibd.ByteWidth = sizeof(UINT) * numInds; // Number of indices
 	ibd.BindFlags = D3D11_BIND_INDEX_BUFFER;
 	ibd.CPUAccessFlags = 0;
 	ibd.MiscFlags = 0;
@@ -101,6 +113,7 @@ Mesh* Mesh::LoadFromOBJ(std::string objFilePath)
 
 	while (data.length() > 0)
 	{
+		split = nullptr;
 		line = data.substr(0, data.find_first_of('\n'));
 		data = data.substr(line.length() + 1, data.length());
 
@@ -109,26 +122,26 @@ Mesh* Mesh::LoadFromOBJ(std::string objFilePath)
 			line = line.substr(2, line.length() - 1);
 			split = Split(line, ' ');
 
-			tempVerts[iTV++] = XMFLOAT3(atof(split[0].c_str()),
-				atof(split[1].c_str()),
-				atof(split[2].c_str()));
+			tempVerts[iTV++] = XMFLOAT3((float)atof(split[0].c_str()),
+										(float)atof(split[1].c_str()),
+										(float)atof(split[2].c_str()));
 		}
 		else if (line[0] == 'v' && line[1] == 't') // vt = Vertex Texture (UV)
 		{
 			line = line.substr(3, line.length() - 1);
 			split = Split(line, ' ');
 
-			tempUVs[iUV++] = XMFLOAT2(atof(split[0].c_str()),
-				atof(split[1].c_str()));
+			tempUVs[iUV++] = XMFLOAT2((float)atof(split[0].c_str()),
+									  (float)atof(split[1].c_str()));
 		}
 		else if (line[0] == 'v' && line[1] == 'n') // vn = Vertex Normal
 		{
 			line = line.substr(3, line.length() - 1);
 			split = Split(line, ' ');
 
-			tempNorms[iNO++] = XMFLOAT3(atof(split[0].c_str()),
-				atof(split[1].c_str()),
-				atof(split[2].c_str()));
+			tempNorms[iNO++] = XMFLOAT3((float)atof(split[0].c_str()),
+										(float)atof(split[1].c_str()),
+										(float)atof(split[2].c_str()));
 		}
 		else if (line[0] == 'f')
 		{
@@ -144,8 +157,14 @@ Mesh* Mesh::LoadFromOBJ(std::string objFilePath)
 				//uvIndices[iIS]   = atoi(split2[1].c_str());
 				//normIndices[iIS] = atoi(split2[2].c_str());
 				iIS++;
+
+				delete[] split2;
+				split2 = nullptr;
 			}
 		}
+
+		delete[] split;
+		split = nullptr;
 	}
 
 	Vertex* verts = new Vertex[numVerts];
@@ -160,6 +179,11 @@ Mesh* Mesh::LoadFromOBJ(std::string objFilePath)
 	{
 		indices[i] = vertIndices[i] - 1;
 	}
+
+	delete[] tempVerts;
+	delete[] tempUVs;
+	delete[] tempNorms;
+	delete[] vertIndices;
 
 	return new Mesh(verts, numVerts, indices, numIndices);
 }

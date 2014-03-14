@@ -31,6 +31,7 @@ public:
 	float attachedDist;
 
 	Camera(Mount mount, float fov = XMConvertToRadians(45.0f), float nearP = 0.1f, float farP = 100.0f);
+	~Camera();
 	void Update();
 	void ResizeAspectRatio(float ratio);
 	void LookAt(XMVECTOR focus);

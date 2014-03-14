@@ -1,4 +1,3 @@
-
 #include "BoatGame.h"
 
 using namespace DirectX;
@@ -10,6 +9,14 @@ int WINAPI WinMain(HINSTANCE hInstance, HINSTANCE prevInstance,
 	// Enable run-time memory check for debug builds.
 #if defined(DEBUG) | defined(_DEBUG)
 	_CrtSetDbgFlag(_CRTDBG_ALLOC_MEM_DF | _CRTDBG_LEAK_CHECK_DF);
+	
+	// Attach console window! :D
+	// Requires use of _CRT_SECURE_NO_WARNINGS for freopen to work
+	// see pre-processor stuff for debug in properties
+
+	AllocConsole();
+	AttachConsole(GetCurrentProcessId());
+	freopen("CON", "w", stdout);
 #endif
 
 	// Make the game, initialize and run
@@ -43,13 +50,14 @@ BoatGame::~BoatGame()
 	ReleaseMacro(vsPerFrameConstantBuffer);
 	ReleaseMacro(vsPerModelConstantBuffer);
 
-	ReleaseMacro(vertex);
-	ReleaseMacro(index);
+	delete vsPerFrameData;
+	delete vsPerModelData;
 	
 	for (std::vector<Entity*>::iterator it = entities.begin(); it != entities.end() ; it++)
 	{ delete (*it); }
 
 	ResourceManager::Release();
+	CameraManager::Release();
 }
 
 bool BoatGame::Init()
@@ -63,16 +71,15 @@ bool BoatGame::Init()
 	viewChanged = false;
 	CameraManager::Initialize(deviceContext, 1, &windowWidth, &windowHeight, &viewChanged, &projChanged);
 
-	Camera::Mount mount = { Camera::Mount::State::FIXED, Camera::Mount::State::STATIC, Camera::Mount::State::STATIC };
+	Camera::Mount mount = { Camera::Mount::State::STATIC, Camera::Mount::State::STATIC, Camera::Mount::State::STATIC };
 	Camera* camera = new Camera(mount);
 	*camera->position = XMVectorSet(0.0f, 0.0f, -5.0f, 0.0f);
 	*camera->forward = XMVectorSet(0.0f, 0.0f, 1.0f, 0.0f);
+	CameraManager::AddCamera(camera, true);
 
 	LoadShadersAndInputLayout();
 	CreateGeometryBuffers();
 	LoadResources();
-	
-	CameraManager::AddCamera(camera, true);
 
 	// Entites -----------------------------------------
 	Boat* boat = new Boat("cube", "crate");
@@ -99,7 +106,7 @@ void BoatGame::LoadShadersAndInputLayout()
 
 	// Load Vertex Shader --------------------------------------
 	ID3DBlob* vsBlob;
-	HRESULT hr = D3DReadFileToBlob(L"Shaders/Texture_VertexShader.cso", &vsBlob);
+	D3DReadFileToBlob(L"Shaders/Texture_VertexShader.cso", &vsBlob);
 
 	// Create the shader on the device
 	HR(device->CreateVertexShader(
@@ -265,7 +272,7 @@ void BoatGame::UpdateScene(float dt)
 		default:
 			break;
 	}
-
+	
 	for (std::vector<Entity*>::iterator it = entities.begin(); it != entities.end(); it++)
 	{
 		(*it)->Update(deviceContext, dt);
@@ -289,12 +296,12 @@ void BoatGame::DrawScene()
 
 	deviceContext->VSSetConstantBuffers(0, 1, &vsPerFrameConstantBuffer);
 	deviceContext->VSSetConstantBuffers(1, 1, &vsPerModelConstantBuffer);
-
+	
 	for (std::vector<Entity*>::iterator it = entities.begin(); it != entities.end(); it++)
 	{
 		(*it)->Render(deviceContext);
 	}
-
+	
 	// Present the buffer
 	HR(swapChain->Present(0, 0));
 }

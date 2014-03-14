@@ -10,6 +10,7 @@ class Entity
 {
 public:
 	Entity(Mesh* mesh, Material* material);
+	~Entity();
 	void Initialize(ID3D11Device* device, ID3D11Buffer* modelConstBuffer, VSPerModelData* modelConstBufferData);
 	void Update(ID3D11DeviceContext* deviceContext, float dt);
 	void Render(ID3D11DeviceContext* deviceContext);

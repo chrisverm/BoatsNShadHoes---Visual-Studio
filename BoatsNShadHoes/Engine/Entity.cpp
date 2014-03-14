@@ -15,6 +15,11 @@ Entity::Entity(Mesh* mesh, Material* material)
 	XMStoreFloat4x4(&worldMatrix, XMMatrixTranspose(XMMatrixIdentity()));
 }
 
+Entity::~Entity()
+{
+
+}
+
 void Entity::Initialize(ID3D11Device* device, ID3D11Buffer* modelConstBuffer, VSPerModelData* modelConstBufferData)
 {
 	this->modelConstBuffer = modelConstBuffer;

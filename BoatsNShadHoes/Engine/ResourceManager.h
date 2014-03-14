@@ -34,6 +34,7 @@ private:
 	static MatMap materials;
 	static SRVMap srvs;
 	static SSMap samplerStates;
+
 };
 
 #endif

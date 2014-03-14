@@ -11,10 +11,11 @@ public:
 	static void AddCamera(Camera* camera, bool makeActive = false);
 	static void ChangeActiveCamera(int index);
 	static void Update();
+	static void Release();
 
-	static bool IsEmpty() { return activeIndex < 0; }
+	static bool IsEmpty() { return numCameras < 0; }
 	static float AspectRatio() { return (float)*windowWidth / *windowHeight; }
-	static Camera* ActiveCamera() { return cameras[activeIndex]; }
+	static const Camera* ActiveCamera() { return cameras[activeIndex]; } 
 
 	static int* windowWidth;
 	static int* windowHeight;
