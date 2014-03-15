@@ -15,6 +15,9 @@
 #include "Camera.h"
 #include "CameraManager.h"
 
+#include "AudioPlayer.h"
+#include "AudioManager.h"
+
 enum GameState
 {
 	Menu,
@@ -51,6 +54,11 @@ protected:
 	void LoadResources();
 
 	std::vector<Entity*> entities;
+
+	ALCdevice* audioDevice;
+	ALCcontext* audioDeviceContext;
+
+	AudioPlayer* main_bgm;
 
 	bool viewChanged;
 	bool projChanged;

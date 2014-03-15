@@ -52,15 +52,17 @@
       <Optimization>Disabled</Optimization>
       <SDLCheck>true</SDLCheck>
       <AdditionalIncludeDirectories>$(SolutionDir)/Engine; $(SolutionDir)/DirectXTK/Inc</AdditionalIncludeDirectories>
-      <PreprocessorDefinitions>_CRT_SECURE_NO_WARNINGS;_MBCS;%(PreprocessorDefinitions)</PreprocessorDefinitions>
+      <PreprocessorDefinitions>DEBUG;_CRT_SECURE_NO_WARNINGS;_MBCS;%(PreprocessorDefinitions)</PreprocessorDefinitions>
     </ClCompile>
     <Link>
       <GenerateDebugInformation>true</GenerateDebugInformation>
       <AdditionalDependencies>d3d11.lib;d3dcompiler.lib;%(AdditionalDependencies)</AdditionalDependencies>
     </Link>
     <PostBuildEvent>
-      <Command>
-      </Command>
+      <Command>mkdir "$(SolutionDir)Binary\"
+mkdir "$(SolutionDir)Binary\Resources\"
+mkdir "$(SolutionDir)Binary\Shaders\"
+copy "$(OutDir)$(TargetName)$(TargetExt)" "$(SolutionDir)Binary"</Command>
     </PostBuildEvent>
     <FxCompile>
       <ObjectFileOutput>$(SolutionDir)Binary\Shaders\%(Filename).cso</ObjectFileOutput>
@@ -90,8 +92,7 @@ copy "$(SolutionDir)Resources\" "$(SolutionDir)Binary\Resources" /Y</Command>
       <Command>mkdir "$(SolutionDir)Binary\"
 mkdir "$(SolutionDir)Binary\Resources\"
 mkdir "$(SolutionDir)Binary\Shaders\"
-copy "$(OutDir)$(TargetName)$(TargetExt)" "$(SolutionDir)Binary"
-copy "$(SolutionDir)Resources\" "$(SolutionDir)Binary\Resources" /Y</Command>
+copy "$(OutDir)$(TargetName)$(TargetExt)" "$(SolutionDir)Binary"</Command>
     </PostBuildEvent>
     <FxCompile>
       <ObjectFileOutput>$(SolutionDir)Binary\Shaders\%(Filename).cso</ObjectFileOutput>
@@ -108,6 +109,8 @@ copy "$(SolutionDir)Resources\" "$(SolutionDir)Binary\Resources" /Y</Command>
   <ItemGroup>
     <ClInclude Include="Boat.h" />
     <ClInclude Include="BoatGame.h" />
+    <ClInclude Include="resource.h" />
+    <ClInclude Include="resource1.h" />
     <ClInclude Include="Water.h" />
   </ItemGroup>
   <ItemGroup>
@@ -137,6 +140,12 @@ copy "$(SolutionDir)Resources\" "$(SolutionDir)Binary\Resources" /Y</Command>
       <FileType>Document</FileType>
       <SubType>Designer</SubType>
     </Text>
+  </ItemGroup>
+  <ItemGroup>
+    <Image Include="..\Resources\ship_icon.ico" />
+  </ItemGroup>
+  <ItemGroup>
+    <ResourceCompile Include="Moto.rc" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">

@@ -41,11 +41,17 @@
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
     <OutDir>$(SolutionDir)DELETE\</OutDir>
     <IntDir>$(SolutionDir)DELETE\$(ProjectName)\$(Configuration)\</IntDir>
-    <TargetName>$(ProjectName)_d</TargetName>
+    <TargetName>$(ProjectName)</TargetName>
+    <ExecutablePath>$(SolutionDir)\$(ProjectName)\OpenAL\bin;$(ExecutablePath)</ExecutablePath>
+    <IncludePath>$(SolutionDir)\$(ProjectName)\OpenAL\include;$(IncludePath)</IncludePath>
+    <LibraryPath>$(SolutionDir)\$(ProjectName)\OpenAL\lib;$(LibraryPath)</LibraryPath>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">
     <OutDir>$(SolutionDir)DELETE\</OutDir>
     <IntDir>$(SolutionDir)DELETE\$(ProjectName)\$(Configuration)\</IntDir>
+    <ExecutablePath>$(SolutionDir)\$(ProjectName)\OpenAL\bin;$(ExecutablePath)</ExecutablePath>
+    <IncludePath>$(SolutionDir)\$(ProjectName)\OpenAL\include;$(IncludePath)</IncludePath>
+    <LibraryPath>$(SolutionDir)\$(ProjectName)\OpenAL\lib;$(LibraryPath)</LibraryPath>
   </PropertyGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
     <ClCompile>
@@ -63,13 +69,14 @@
 mkdir "$(SolutionDir)Binary\Resources\"
 mkdir "$(SolutionDir)Binary\Shaders\"
 copy "$(OutDir)$(TargetName)$(TargetExt)" "$(SolutionDir)Binary"
+copy "$(SolutionDir)\$(ProjectName)\OpenAL\bin" "$(SolutionDir)Binary"
 copy "$(SolutionDir)Resources\" "$(SolutionDir)Binary\Resources"</Command>
     </PostBuildEvent>
     <FxCompile>
       <ObjectFileOutput>$(SolutionDir)Binary\Shaders\%(Filename).cso</ObjectFileOutput>
     </FxCompile>
     <Lib>
-      <AdditionalDependencies>d3d11.lib;d3dcompiler.lib;%(AdditionalDependencies)</AdditionalDependencies>
+      <AdditionalDependencies>d3d11.lib;d3dcompiler.lib;OpenAL32.lib;%(AdditionalDependencies)</AdditionalDependencies>
     </Lib>
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">
@@ -91,6 +98,7 @@ copy "$(SolutionDir)Resources\" "$(SolutionDir)Binary\Resources"</Command>
 mkdir "$(SolutionDir)Binary\Resources\"
 mkdir "$(SolutionDir)Binary\Shaders\"
 copy "$(OutDir)$(TargetName)$(TargetExt)" "$(SolutionDir)Binary"
+copy "$(SolutionDir)\$(ProjectName)\OpenAL\bin" "$(SolutionDir)Binary"
 copy "$(SolutionDir)Resources\" "$(SolutionDir)Binary\Resources"</Command>
     </PostBuildEvent>
     <FxCompile>
@@ -103,6 +111,8 @@ copy "$(SolutionDir)Resources\" "$(SolutionDir)Binary\Resources"</Command>
     </ProjectReference>
   </ItemGroup>
   <ItemGroup>
+    <ClInclude Include="AudioManager.h" />
+    <ClInclude Include="AudioPlayer.h" />
     <ClInclude Include="BufferStructs.h" />
     <ClInclude Include="Camera.h" />
     <ClInclude Include="CameraManager.h" />
@@ -113,10 +123,13 @@ copy "$(SolutionDir)Resources\" "$(SolutionDir)Binary\Resources"</Command>
     <ClInclude Include="Globals.h" />
     <ClInclude Include="Material.h" />
     <ClInclude Include="Mesh.h" />
+    <ClInclude Include="resource.h" />
     <ClInclude Include="ResourceManager.h" />
     <ClInclude Include="Vertex.h" />
   </ItemGroup>
   <ItemGroup>
+    <ClCompile Include="AudioManager.cpp" />
+    <ClCompile Include="AudioPlayer.cpp" />
     <ClCompile Include="Camera.cpp" />
     <ClCompile Include="CameraManager.cpp" />
     <ClCompile Include="dxerr.cpp" />

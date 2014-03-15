@@ -16,6 +16,12 @@
     <Filter Include="Resource Files\Shaders">
       <UniqueIdentifier>{b02c1e3b-4be7-4b4f-9d20-edb710381152}</UniqueIdentifier>
     </Filter>
+    <Filter Include="Resource Files\Objects">
+      <UniqueIdentifier>{17d2b9aa-e3d6-4b69-9484-a9d2ce56b434}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Resource Files\Icon">
+      <UniqueIdentifier>{b7c8950b-a2fc-4770-8957-6e0ca15ee71a}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Boat.h">
@@ -25,6 +31,12 @@
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="Water.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="resource.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="resource1.h">
       <Filter>Header Files</Filter>
     </ClInclude>
   </ItemGroup>
@@ -52,10 +64,20 @@
   </ItemGroup>
   <ItemGroup>
     <Text Include="..\Resources\crate_obj.obj">
-      <Filter>Resource Files</Filter>
+      <Filter>Resource Files\Objects</Filter>
     </Text>
     <Text Include="..\Resources\water_obj.obj">
-      <Filter>Resource Files</Filter>
+      <Filter>Resource Files\Objects</Filter>
     </Text>
+  </ItemGroup>
+  <ItemGroup>
+    <ResourceCompile Include="Moto.rc">
+      <Filter>Resource Files\Icon</Filter>
+    </ResourceCompile>
+  </ItemGroup>
+  <ItemGroup>
+    <Image Include="..\Resources\ship_icon.ico">
+      <Filter>Resource Files\Icon</Filter>
+    </Image>
   </ItemGroup>
 </Project>

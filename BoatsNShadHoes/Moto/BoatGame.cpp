@@ -56,6 +56,11 @@ BoatGame::~BoatGame()
 	for (std::vector<Entity*>::iterator it = entities.begin(); it != entities.end() ; it++)
 	{ delete (*it); }
 
+	alcDestroyContext(audioDeviceContext);
+	alcCloseDevice(audioDevice);
+
+	delete main_bgm;
+
 	ResourceManager::Release();
 	CameraManager::Release();
 }
@@ -90,6 +95,54 @@ bool BoatGame::Init()
 
 	entities.push_back(boat);
 	entities.push_back(water);
+
+	// AL setup --------------------------------~^^~-----
+
+	// grab audio device
+	audioDevice = alcOpenDevice(NULL);
+#ifdef DEBUG
+	assert(audioDevice != NULL);
+#endif
+
+	// create context for device
+	audioDeviceContext = alcCreateContext(audioDevice, NULL);
+#ifdef DEBUG
+	assert(audioDeviceContext != NULL);
+#endif
+
+	// assign context to 'current'
+	alcMakeContextCurrent(audioDeviceContext);
+
+	// ^ using assert to replace the following:
+	/*audioDevice = alcOpenDevice(NULL);
+
+#ifdef DEBUG
+	if(audioDevice == NULL)
+		std::cout << "cannot open sound card!" << std::endl;
+#endif
+
+	// device accessed successfully
+	else
+	{
+		// create context for device
+		audioDeviceContext = alcCreateContext(audioDevice, NULL);
+
+#ifdef DEBUG
+		if(audioDeviceContext == NULL)
+			std::cout << "cannot create context for our device!" << std::endl;
+#endif
+
+		// context created successfully
+		else
+			alcMakeContextCurrent(audioDeviceContext); // assign our created context to 'current'
+	}*/
+
+	// Audio ---------------------d[-_-]b-----------------
+	main_bgm = new AudioPlayer("Resources/Zedd-Clarity_BGM.wav");
+
+	main_bgm->init();
+	main_bgm->generateBufferData();
+	main_bgm->setLooping(AL_TRUE);
 
 	return true;
 }
@@ -257,7 +310,10 @@ void BoatGame::UpdateScene(float dt)
 	{
 		case Menu:
 			if (GetAsyncKeyState('G'))
+			{
 				state = GameLoop;
+				main_bgm->start();
+			}
 			break;
 		case GameLoop:
 			if (GetAsyncKeyState('P'))
