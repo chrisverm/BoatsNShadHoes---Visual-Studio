@@ -12,9 +12,14 @@
 *.la
 *.a
 
-# SQL crap
+# SQL/visual studio prefs crap
 *.sdf
+*.opensdf
 *.suo
 
 BoatsNShadHoes/DELETE/
 BoatsNShadHoes/Debug/
+[Bb]in
+[Bb]inary
+
+
