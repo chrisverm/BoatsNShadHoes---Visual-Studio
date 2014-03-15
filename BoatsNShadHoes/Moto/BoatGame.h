@@ -39,9 +39,6 @@ public:
 	GameState state;
 
 protected:
-	ID3D11PixelShader* texturePixelShader;
-	ID3D11PixelShader* colorPixelShader;
-	ID3D11VertexShader* vertexShader;
 
 	ID3D11InputLayout* inputLayout;
 	ID3D11Buffer* vsPerFrameConstantBuffer;

@@ -41,12 +41,11 @@ BoatGame::BoatGame(HINSTANCE hInstance) : DXGame(hInstance)
 BoatGame::~BoatGame()
 {
 	DXGame::~DXGame();
+	
+	// Close cmd window.
+	_fcloseall();
 
-	ReleaseMacro(vertexShader);
-	ReleaseMacro(texturePixelShader);
-	ReleaseMacro(colorPixelShader);
 	ReleaseMacro(inputLayout);
-
 	ReleaseMacro(vsPerFrameConstantBuffer);
 	ReleaseMacro(vsPerModelConstantBuffer);
 
@@ -161,12 +160,14 @@ void BoatGame::LoadShadersAndInputLayout()
 	ID3DBlob* vsBlob;
 	D3DReadFileToBlob(L"Shaders/Texture_VertexShader.cso", &vsBlob);
 
+	ID3D11VertexShader* vertexShader;
 	// Create the shader on the device
 	HR(device->CreateVertexShader(
 		vsBlob->GetBufferPointer(),
 		vsBlob->GetBufferSize(),
 		NULL,
 		&vertexShader));
+	ResourceManager::AddVertexShader("Texture", vertexShader);
 
 	// Before cleaning up the data, create the input layout
 	HR(device->CreateInputLayout(
@@ -183,24 +184,28 @@ void BoatGame::LoadShadersAndInputLayout()
 	ID3DBlob* psBlob;
 	D3DReadFileToBlob(L"Shaders/Texture_PixelShader.cso", &psBlob);
 
+	ID3D11PixelShader* texturePixelShader;
 	// Create the shader on the device
 	HR(device->CreatePixelShader(
 		psBlob->GetBufferPointer(),
 		psBlob->GetBufferSize(),
 		NULL,
 		&texturePixelShader));
+	ResourceManager::AddPixelShader("Texture", texturePixelShader);
 
 	// Clean up
 	ReleaseMacro(psBlob);
 
 	D3DReadFileToBlob(L"Shaders/Color_PixelShader.cso", &psBlob);
 
+	ID3D11PixelShader* colorPixelShader;
 	// Create the shader on the device
 	HR(device->CreatePixelShader(
 		psBlob->GetBufferPointer(),
 		psBlob->GetBufferSize(),
 		NULL,
 		&colorPixelShader));
+	ResourceManager::AddPixelShader("Color", colorPixelShader);
 
 	ReleaseMacro(psBlob);
 }
@@ -271,10 +276,10 @@ void BoatGame::LoadResources()
 
 	// Materials -----------------------------------------
 	Material* crateMat = new Material(srv, ss);
-	crateMat->Initialize(vertexShader, texturePixelShader);
+	crateMat->Initialize(ResourceManager::GetVertexShader("Texture"), ResourceManager::GetPixelShader("Texture"));
 
 	Material* waterMat = new Material(nullptr, nullptr);
-	waterMat->Initialize(vertexShader, colorPixelShader);
+	waterMat->Initialize(ResourceManager::GetVertexShader("Texture"), ResourceManager::GetPixelShader("Color"));
 
 	ResourceManager::AddMaterial("crate", crateMat);
 	ResourceManager::AddMaterial("water", waterMat);

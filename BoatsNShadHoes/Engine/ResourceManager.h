@@ -7,11 +7,12 @@
 #include "Mesh.h"
 #include "Material.h"
 
-
 typedef std::map<std::string, Mesh*> MeshMap;
 typedef std::map<std::string, Material*> MatMap;
 typedef std::map<std::string, ID3D11ShaderResourceView*> SRVMap;
 typedef std::map<std::string, ID3D11SamplerState*> SSMap;
+typedef std::map<std::string, ID3D11VertexShader*> VSMap;
+typedef std::map<std::string, ID3D11PixelShader*> PSMap;
 
 class ResourceManager
 {
@@ -21,19 +22,26 @@ public:
 	static bool AddMaterial(std::string, Material*);
 	static bool AddSRV(std::string, ID3D11ShaderResourceView*);
 	static bool AddSamplerState(std::string, ID3D11SamplerState*);
+	static bool AddPixelShader(std::string, ID3D11PixelShader*);
+	static bool AddVertexShader(std::string, ID3D11VertexShader*);
 
 	static Mesh* GetMesh(std::string);
 	static Material* GetMaterial(std::string);
 	static ID3D11ShaderResourceView* GetSRV(std::string);
 	static ID3D11SamplerState* GetSamplerState(std::string);
+	static ID3D11VertexShader* GetVertexShader(std::string);
+	static ID3D11PixelShader* GetPixelShader(std::string);
 
 	static void Release();
 
 private:
+
 	static MeshMap meshes;
 	static MatMap materials;
 	static SRVMap srvs;
 	static SSMap samplerStates;
+	static VSMap vertexShaders;
+	static PSMap pixelShaders;
 
 };
 
