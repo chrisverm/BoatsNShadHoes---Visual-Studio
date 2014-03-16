@@ -110,7 +110,6 @@ copy "$(OutDir)$(TargetName)$(TargetExt)" "$(SolutionDir)Binary"</Command>
     <ClInclude Include="Boat.h" />
     <ClInclude Include="BoatGame.h" />
     <ClInclude Include="resource.h" />
-    <ClInclude Include="resource1.h" />
     <ClInclude Include="Water.h" />
   </ItemGroup>
   <ItemGroup>

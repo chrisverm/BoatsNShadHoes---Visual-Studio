@@ -112,6 +112,24 @@ bool BoatGame::Init()
 	// assign context to 'current'
 	alcMakeContextCurrent(audioDeviceContext);
 
+	float listenerOrientation[] = {
+		XMVectorGetX(*camera->forward),
+		XMVectorGetY(*camera->forward),
+		XMVectorGetZ(*camera->forward),
+		XMVectorGetX(*camera->up),
+		XMVectorGetY(*camera->up),
+		XMVectorGetZ(*camera->up)
+	};
+	
+	// listener setup! :D
+	alListener3f(AL_POSITION, XMVectorGetX(*camera->position), XMVectorGetY(*camera->position), XMVectorGetZ(*camera->position));
+	alListener3f(AL_VELOCITY, 0.0f, 0.0f, 0.0f);
+	alListenerfv(AL_ORIENTATION, listenerOrientation);
+
+#ifdef DEBUG
+	std::cout << "listener position:" << "[" << XMVectorGetX(*camera->position) << ", " << XMVectorGetY(*camera->position) << ", " << XMVectorGetZ(*camera->position) << "]" << std::endl;
+#endif
+
 	// ^ using assert to replace the following:
 	/*audioDevice = alcOpenDevice(NULL);
 
@@ -296,6 +314,7 @@ void BoatGame::OnResize()
 void BoatGame::UpdateScene(float dt)
 {
 	CameraManager::Update();
+	
 
 	vsPerFrameData->view	   = CameraManager::ActiveCamera()->GetViewMatrix();
 	vsPerFrameData->projection = CameraManager::ActiveCamera()->GetProjMatrix();
@@ -323,6 +342,13 @@ void BoatGame::UpdateScene(float dt)
 		case GameLoop:
 			if (GetAsyncKeyState('P'))
 				state = Paused;
+			
+			// change velocity of audio
+			if (GetAsyncKeyState('Q'))
+				main_bgm->changeVelocity(-.0001f);
+			if (GetAsyncKeyState('W'))
+				main_bgm->changeVelocity(+.0001f);
+
 			break;
 		case Paused:
 			if (GetAsyncKeyState('G'))
@@ -338,6 +364,11 @@ void BoatGame::UpdateScene(float dt)
 	{
 		(*it)->Update(deviceContext, dt);
 	}
+
+	float listenerPos[3];
+	alGetListenerfv(AL_POSITION, listenerPos);
+	main_bgm->updateGain(listenerPos);
+	main_bgm->update();
 }
 
 void BoatGame::DrawScene()

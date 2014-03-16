@@ -5,6 +5,7 @@
 
 class AudioPlayer
 {
+
 private:
 	AudioManager* manager;
 	ALuint abo;
@@ -16,22 +17,35 @@ private:
 	ALenum format;
 	ALboolean doesLoop;
 
+	float position[3];
+	float velocity[3];
+	float gain;
+	float pitch;
+
 	unsigned char* data;
 
-	void load(const char* filename);
+	void load(const char*);
 
 public:
-	AudioPlayer(const char* filename);
+	AudioPlayer(const char*);
 	~AudioPlayer();
 
 	/* Accessors */
 	ALuint State() const;
+	float* const Position();
+	float* const Velocity();
 
 	/* Mutators */
-	void setLooping(ALboolean setting);
+	void setLooping(ALboolean);
 	
 	void init();
 	void generateBufferData();
+	void update();
+	void updateGain(float[]);
+
+	void changePitch(float);
+	void updatePosition();
+	void changeVelocity(float, float=0.0f, float=0.0f);
 
 	// Control playing
 	void pause();

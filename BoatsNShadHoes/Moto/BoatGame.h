@@ -52,6 +52,7 @@ protected:
 
 	std::vector<Entity*> entities;
 
+	// Audio
 	ALCdevice* audioDevice;
 	ALCcontext* audioDeviceContext;
 
