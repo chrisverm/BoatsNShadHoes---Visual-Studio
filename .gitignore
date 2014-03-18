@@ -17,9 +17,9 @@
 *.opensdf
 *.suo
 
-BoatsNShadHoes/DELETE/
-BoatsNShadHoes/Debug/
+# Folders that most likely have build junk in them.
+DELETE
+[Dd]ebug
+[Rr]elease
 [Bb]in
 [Bb]inary
-
-
