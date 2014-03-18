@@ -59,3 +59,21 @@ void Entity::Render(ID3D11DeviceContext* deviceContext)
 		0,
 		0);
 }
+
+XMVECTOR Entity::getRight()
+{
+	//XMVector3Normalize(XMVector3TransformCoord(XMVectorSet(1,0,0,0), XMLoadFloat4x4(&worldMatrix)));
+	return XMVectorSet(worldMatrix._11, worldMatrix._12, worldMatrix._13, 0);
+}
+
+XMVECTOR Entity::getUp()
+{
+	//XMVector3Normalize(XMVector3TransformCoord(XMVectorSet(0,1,0,0), XMLoadFloat4x4(&worldMatrix)));
+	return XMVectorSet(worldMatrix._21, worldMatrix._22, worldMatrix._23, 0);
+}
+
+XMVECTOR Entity::getForward()
+{
+	//XMVector3Normalize(XMVector3TransformCoord(XMVectorSet(0,0,1,0), XMLoadFloat4x4(&worldMatrix)));
+	return XMVectorSet(worldMatrix._31, worldMatrix._32, worldMatrix._33, 0);
+}

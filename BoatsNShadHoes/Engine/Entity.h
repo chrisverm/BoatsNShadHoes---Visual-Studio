@@ -18,6 +18,11 @@ public:
 	DirectX::XMVECTOR position;
 	DirectX::XMVECTOR rotation;
 	DirectX::XMVECTOR scale;
+	
+	// These are based on the current world matrix, so if you rotate after the last frame, it wont change untill update is called.
+	DirectX::XMVECTOR getRight();
+	DirectX::XMVECTOR getUp();
+	DirectX::XMVECTOR getForward();
 
 private:
 	Mesh* mesh;
@@ -26,9 +31,7 @@ private:
 	ID3D11Buffer* modelConstBuffer;
 	VSPerModelData* modelConstBufferData;
 
-	
 	DirectX::XMFLOAT4X4 worldMatrix;
-
 };
 
 #endif

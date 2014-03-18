@@ -315,7 +315,6 @@ void BoatGame::UpdateScene(float dt)
 {
 	CameraManager::Update();
 	
-
 	vsPerFrameData->view	   = CameraManager::ActiveCamera()->GetViewMatrix();
 	vsPerFrameData->projection = CameraManager::ActiveCamera()->GetProjMatrix();
 
