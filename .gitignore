@@ -17,8 +17,8 @@
 *.opensdf
 *.suo
 
-DELETE
-[Dd]ebug
+BoatsNShadHoes/DELETE/
+BoatsNShadHoes/Debug/
 [Bb]in
 [Bb]inary
 

@@ -1,11 +1,11 @@
 ﻿
 Microsoft Visual Studio Solution File, Format Version 12.00
 # Visual Studio 2012
-Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "Moto", "Moto\Moto.vcxproj", "{88DD0F3F-AC66-4654-BCAC-00B3023014C3}"
-EndProject
-Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "Engine", "Engine\Engine.vcxproj", "{B5BD607F-667D-4ED3-808B-686E8AE0A805}"
+Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "Engine", "Engine\Engine.vcxproj", "{88DD0F3F-AC66-4654-BCAC-00B3023014C3}"
 EndProject
 Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "DirectXTK_Desktop_2012", "DirectXTK\DirectXTK_Desktop_2012.vcxproj", "{E0B52AE7-E160-4D32-BF3F-910B785E5A8E}"
+EndProject
+Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "Moto", "Moto\Moto.vcxproj", "{B5BD607F-667D-4ED3-808B-686E8AE0A805}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
