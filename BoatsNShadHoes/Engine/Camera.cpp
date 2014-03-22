@@ -1,17 +1,20 @@
 #include "Camera.h"
 
-Camera::Camera(Mount mount, float fov, float nearP, float farP)
+Camera::Camera(CAMERA_DESC* cDesc)
 {
-	this->mount = mount;
+	fieldOfView = cDesc->FieldOfView;
+	nearPlane = cDesc->NearPlane;
+	farPlane = cDesc->FarPlane;
 
-	fieldOfView = fov;
-	nearPlane = nearP;
-	farPlane = farP;
+	roll = cDesc->InitialRoll;
+	rollState = cDesc->Roll;
 
-	roll = 0.0f;
+	position = cDesc->InitialPosition;
+	positionState = cDesc->Position;
 
-	position = new XMVECTOR();
-	forward = new XMVECTOR();
+	forward = cDesc->InitialForward;
+	forwardState = cDesc->Forward;
+
 	right = new XMVECTOR();
 	up = new XMVECTOR();
 
@@ -23,11 +26,14 @@ Camera::Camera(Mount mount, float fov, float nearP, float farP)
 
 Camera::~Camera()
 {
-	if (mount.position != Mount::State::FIXED)
+	if (positionState != ATTACHED)
 		delete position;
 
-	if (mount.direction != Mount::State::FIXED)
+	if (forwardState != ATTACHED)
 		delete forward;
+
+	if (rollState != ATTACHED)
+		delete roll;
 
 	delete right;
 	delete up;
@@ -36,41 +42,44 @@ Camera::~Camera()
 void Camera::Update()
 {
 	// Mount stuff here
-	switch (mount.position)
+	switch (positionState)
 	{
-	case Mount::State::STATIC:
+	case STATIC:
 		// do nothing?
 		break;
-	case Mount::State::FIXED:
+	case ATTACHED:
 		SetViewMatrix();		// only if view changed
 		break;
-	case Mount::State::FREE:
+	case FIRST_PERSON:
+	case THIRD_PERSON:
 
 		break;
 	}
 
-	switch (mount.direction)
+	switch (forwardState)
 	{
-	case Mount::State::STATIC:
+	case STATIC:
 		// do nothing?
 		break;
-	case Mount::State::FIXED:
+	case ATTACHED:
 
 		break;
-	case Mount::State::FREE:
+	case FIRST_PERSON:
+	case THIRD_PERSON:
 
 		break;
 	}
 
-	switch (mount.rotation)
+	switch (rollState)
 	{
-	case Mount::State::STATIC:
+	case STATIC:
 		// do nothing?
 		break;
-	case Mount::State::FIXED:
+	case ATTACHED:
 
 		break;
-	case Mount::State::FREE:
+	case FIRST_PERSON:
+	case THIRD_PERSON:
 
 		break;
 	}
@@ -88,7 +97,7 @@ void Camera::LookAt(XMVECTOR focus)
 
 void Camera::AttachTo(Entity* entity, float attachedDist)
 {
-	if (mount.position != Mount::State::FIXED)
+	if (positionState != ATTACHED)
 		return;
 
 	delete position; position = &entity->position;
@@ -107,8 +116,8 @@ void Camera::SetUnitVectors()
 	*up = XMVector3Normalize(*up);
 
 	// roll - rotate on the z axis
-	*up = XMVectorSetX(*up, sin( XMConvertToRadians(roll) ));
-	*up = XMVectorSetY(*up, cos( XMConvertToRadians(roll) ));
+	*up = XMVectorSetX(*up, sin( XMConvertToRadians(*roll) ));
+	*up = XMVectorSetY(*up, cos( XMConvertToRadians(*roll) ));
 
 	*up = XMVector3Normalize(*up);
 }

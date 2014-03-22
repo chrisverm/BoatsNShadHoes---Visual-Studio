@@ -8,7 +8,7 @@ class CameraManager
 public:
 	static void Initialize(ID3D11DeviceContext* deviceContext, int numViewports,
 		int* windowWidth, int* windowHeight, bool* viewChanged, bool* projChanged);
-	static void AddCamera(Camera* camera, bool makeActive = false);
+	static void CreateNewCamera(CAMERA_DESC* cDesc, bool makeActive = false);
 	static void ChangeActiveCamera(int index);
 	static void Update();
 	static void Release();

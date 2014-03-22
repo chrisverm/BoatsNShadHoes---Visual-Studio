@@ -7,22 +7,36 @@
 
 using namespace DirectX;
 
+enum CameraMountState
+{
+	STATIC,
+	ATTACHED,
+	FIRST_PERSON,
+	THIRD_PERSON,
+};
+
+struct CAMERA_DESC
+{
+	float FieldOfView;
+	float NearPlane;
+	float FarPlane;
+	float* InitialRoll;
+	XMVECTOR* InitialPosition;
+	XMVECTOR* InitialForward;
+	CameraMountState Position;
+	CameraMountState Forward;
+	CameraMountState Roll;
+
+	~CAMERA_DESC() {}
+};
+
 class Camera
 {
 public:
-	struct Mount
-	{
-		enum State { STATIC, FIXED, FREE };
-
-		State position;
-		State direction;
-		State rotation;
-	};
-
 	float fieldOfView;
 	float aspectRatio;
 	float nearPlane, farPlane;
-	float roll;
+	float* roll;
 	XMVECTOR* position;
 	XMVECTOR* forward;
 	XMVECTOR* right;
@@ -30,7 +44,7 @@ public:
 
 	float attachedDist;
 
-	Camera(Mount mount, float fov = XMConvertToRadians(45.0f), float nearP = 0.1f, float farP = 100.0f);
+	Camera(CAMERA_DESC* cDesc);
 	~Camera();
 	void Update();
 	void ResizeAspectRatio(float ratio);
@@ -44,7 +58,9 @@ public:
 	XMFLOAT4X4 GetViewMatrix() const { return viewMatrix; }
 
 private:
-	Mount mount;
+	CameraMountState positionState;
+	CameraMountState forwardState;
+	CameraMountState rollState;
 	XMFLOAT4X4 projMatrix;
 	XMFLOAT4X4 viewMatrix;
 

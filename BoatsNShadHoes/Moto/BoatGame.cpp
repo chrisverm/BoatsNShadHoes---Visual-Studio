@@ -77,15 +77,6 @@ bool BoatGame::Init()
 	if (!DXGame::Init())
 		return false;
 
-	viewChanged = false;
-	CameraManager::Initialize(deviceContext, 1, &windowWidth, &windowHeight, &viewChanged, &projChanged);
-
-	Camera::Mount mount = { Camera::Mount::State::STATIC, Camera::Mount::State::STATIC, Camera::Mount::State::STATIC };
-	Camera* camera = new Camera(mount);
-	*camera->position = XMVectorSet(0.0f, 0.0f, -5.0f, 0.0f);
-	*camera->forward = XMVectorSet(0.0f, 0.0f, 1.0f, 0.0f);
-	CameraManager::AddCamera(camera, true);
-
 	LoadShadersAndInputLayout();
 	CreateGeometryBuffers();
 	LoadResources();
@@ -99,6 +90,22 @@ bool BoatGame::Init()
 
 	entities.push_back(boat);
 	entities.push_back(water);
+
+	// Camera Setup -----------[ o]---------------------
+	viewChanged = false;
+	CameraManager::Initialize(deviceContext, 1, &windowWidth, &windowHeight, &viewChanged, &projChanged);
+
+	CAMERA_DESC camDesc;
+	camDesc.FieldOfView = XMConvertToRadians(45.0f);
+	camDesc.NearPlane = 0.1f;
+	camDesc.FarPlane = 100.0f;
+	camDesc.InitialRoll = new float(1.0f);
+	camDesc.InitialPosition = new XMVECTOR(XMVectorSet(0.0f, 0.0f, -5.0f, 0.0f));
+	camDesc.InitialForward = new XMVECTOR(XMVectorSet(0.0f, 0.0f, 1.0f, 0.0f));
+	camDesc.Position = STATIC;
+	camDesc.Forward = STATIC;
+	camDesc.Roll = STATIC;
+	CameraManager::CreateNewCamera(&camDesc, true);
 
 	// AL setup --------------------------------~^^~-----
 
@@ -118,21 +125,25 @@ bool BoatGame::Init()
 	alcMakeContextCurrent(audioDeviceContext);
 
 	float listenerOrientation[] = {
-		XMVectorGetX(*camera->forward),
-		XMVectorGetY(*camera->forward),
-		XMVectorGetZ(*camera->forward),
-		XMVectorGetX(*camera->up),
-		XMVectorGetY(*camera->up),
-		XMVectorGetZ(*camera->up)
+		XMVectorGetX(*CameraManager::ActiveCamera()->forward),
+		XMVectorGetY(*CameraManager::ActiveCamera()->forward),
+		XMVectorGetZ(*CameraManager::ActiveCamera()->forward),
+		XMVectorGetX(*CameraManager::ActiveCamera()->up),
+		XMVectorGetY(*CameraManager::ActiveCamera()->up),
+		XMVectorGetZ(*CameraManager::ActiveCamera()->up)
 	};
 	
 	// listener setup! :D
-	alListener3f(AL_POSITION, XMVectorGetX(*camera->position), XMVectorGetY(*camera->position), XMVectorGetZ(*camera->position));
+	alListener3f(AL_POSITION, XMVectorGetX(*CameraManager::ActiveCamera()->position), 
+							  XMVectorGetY(*CameraManager::ActiveCamera()->position), 
+							  XMVectorGetZ(*CameraManager::ActiveCamera()->position));
 	alListener3f(AL_VELOCITY, 0.0f, 0.0f, 0.0f);
 	alListenerfv(AL_ORIENTATION, listenerOrientation);
 
 #ifdef DEBUG
-	std::cout << "listener position:" << "[" << XMVectorGetX(*camera->position) << ", " << XMVectorGetY(*camera->position) << ", " << XMVectorGetZ(*camera->position) << "]" << std::endl;
+	std::cout << "listener position:" << "[" << XMVectorGetX(*CameraManager::ActiveCamera()->position) 
+									  << ", " << XMVectorGetY(*CameraManager::ActiveCamera()->position) 
+									  << ", " << XMVectorGetZ(*CameraManager::ActiveCamera()->position) << "]" << std::endl;
 #endif
 
 	// ^ using assert to replace the following:

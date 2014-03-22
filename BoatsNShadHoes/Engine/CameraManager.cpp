@@ -37,8 +37,10 @@ void CameraManager::Initialize(ID3D11DeviceContext* deviceContext, int numViewpo
 	*/
 }
 
-void CameraManager::AddCamera(Camera* camera, bool makeActive)
+void CameraManager::CreateNewCamera(CAMERA_DESC* cDesc, bool makeActive)
 {
+	Camera* camera = new Camera(cDesc);
+
 	numCameras++;
 
 	Camera** newCameraList = new Camera*[numCameras];
