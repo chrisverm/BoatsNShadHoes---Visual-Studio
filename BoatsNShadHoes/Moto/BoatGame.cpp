@@ -62,6 +62,11 @@ BoatGame::~BoatGame()
 
 	ResourceManager::Release();
 	CameraManager::Release();
+
+	// Show memory leaks at end of program
+#if defined(DEBUG) | defined(_DEBUG)
+	_CrtDumpMemoryLeaks();
+#endif
 }
 
 bool BoatGame::Init()
