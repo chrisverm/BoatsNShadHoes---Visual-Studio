@@ -10,7 +10,6 @@
 #include "DXGame.h"
 #include <WindowsX.h>
 #include <sstream>
-#include "resource.h"
 
 #pragma region Global Window Callback
 namespace
@@ -85,9 +84,9 @@ DXGame::~DXGame(void)
 #pragma region Initialization
 
 // Handles the window and Direct3D initialization
-bool DXGame::Init()
+bool DXGame::Init(int iconResource)
 {
-	if(!InitMainWindow())
+	if(!InitMainWindow(iconResource))
 		return false;
 
 	if(!InitDirect3D())
@@ -97,7 +96,7 @@ bool DXGame::Init()
 }
 
 // Initializes the actual window
-bool DXGame::InitMainWindow()
+bool DXGame::InitMainWindow(int iconResource)
 {
 	// Actually create the window
 	WNDCLASS wc;
@@ -106,7 +105,12 @@ bool DXGame::InitMainWindow()
 	wc.cbClsExtra    = 0;
 	wc.cbWndExtra    = 0;
 	wc.hInstance     = hAppInst;
-	wc.hIcon         = LoadIcon(hAppInst, MAKEINTRESOURCE(IDI_ICON1));
+	
+	if(iconResource != 0)
+		wc.hIcon     = LoadIcon(hAppInst, MAKEINTRESOURCE(iconResource));
+	else
+		wc.hIcon	 = LoadIcon(0, IDI_APPLICATION);	
+
 	wc.hCursor       = LoadCursor(0, IDC_ARROW);
 	wc.hbrBackground = (HBRUSH)GetStockObject(NULL_BRUSH);
 	wc.lpszMenuName  = 0;

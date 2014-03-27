@@ -55,7 +55,7 @@ public:
  
 	// Methods called by the game loop - override these in
 	// derived classes to implement custom functionality
-	virtual bool Init();
+	virtual bool Init(int = 0);
 	virtual void OnResize(); 
 	virtual void UpdateScene(float dt)=0;
 	virtual void DrawScene()=0; 
@@ -68,7 +68,7 @@ public:
 
 private:
 	// Handles window and Direct3D initialization
-	bool InitMainWindow();
+	bool InitMainWindow(int = 0);
 	bool InitDirect3D();
 
 	void CalculateFrameStats();

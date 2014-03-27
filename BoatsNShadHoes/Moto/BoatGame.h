@@ -31,7 +31,7 @@ public:
 	BoatGame(HINSTANCE hInstance);
 	~BoatGame();
 
-	bool Init();
+	bool Init(int=0);
 	void OnResize();
 	void DrawScene();
 	void UpdateScene(float);

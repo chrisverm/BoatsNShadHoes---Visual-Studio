@@ -22,7 +22,10 @@ int WINAPI WinMain(HINSTANCE hInstance, HINSTANCE prevInstance,
 	// Make the game, initialize and run
 	BoatGame game(hInstance);
 
-	if (!game.Init())
+	// icon resource
+	int iconResource = 101;
+
+	if (!game.Init(iconResource))
 		return 0;
 
 	return game.Run();
@@ -69,12 +72,12 @@ BoatGame::~BoatGame()
 #endif
 }
 
-bool BoatGame::Init()
+bool BoatGame::Init(int iconResource)
 {
 	vsPerFrameData = new VSPerFrameData();
 	vsPerModelData = new VSPerModelData();
 
-	if (!DXGame::Init())
+	if (!DXGame::Init(iconResource))
 		return false;
 
 	LoadShadersAndInputLayout();
