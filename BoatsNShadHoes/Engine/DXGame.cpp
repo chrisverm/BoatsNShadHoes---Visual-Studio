@@ -10,6 +10,7 @@
 #include "DXGame.h"
 #include <WindowsX.h>
 #include <sstream>
+#include "resource.h"
 
 #pragma region Global Window Callback
 namespace
@@ -105,7 +106,7 @@ bool DXGame::InitMainWindow()
 	wc.cbClsExtra    = 0;
 	wc.cbWndExtra    = 0;
 	wc.hInstance     = hAppInst;
-	wc.hIcon         = LoadIcon(0, IDI_APPLICATION);
+	wc.hIcon         = LoadIcon(hAppInst, MAKEINTRESOURCE(IDI_ICON1));
 	wc.hCursor       = LoadCursor(0, IDC_ARROW);
 	wc.hbrBackground = (HBRUSH)GetStockObject(NULL_BRUSH);
 	wc.lpszMenuName  = 0;

@@ -123,6 +123,7 @@ copy "$(SolutionDir)Resources\" "$(SolutionDir)Binary\Resources"</Command>
     <ClInclude Include="Globals.h" />
     <ClInclude Include="Material.h" />
     <ClInclude Include="Mesh.h" />
+    <ClInclude Include="resource.h" />
     <ClInclude Include="ResourceManager.h" />
     <ClInclude Include="Vertex.h" />
   </ItemGroup>
@@ -138,6 +139,12 @@ copy "$(SolutionDir)Resources\" "$(SolutionDir)Binary\Resources"</Command>
     <ClCompile Include="Material.cpp" />
     <ClCompile Include="Mesh.cpp" />
     <ClCompile Include="ResourceManager.cpp" />
+  </ItemGroup>
+  <ItemGroup>
+    <ResourceCompile Include="Engine.rc" />
+  </ItemGroup>
+  <ItemGroup>
+    <Image Include="..\Resources\ship_icon.ico" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">
