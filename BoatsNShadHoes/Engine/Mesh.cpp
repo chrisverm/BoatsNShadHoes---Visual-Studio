@@ -100,7 +100,7 @@ Mesh* Mesh::LoadFromOBJ(std::string objFilePath)
 			L"File not found error!", MB_ICONEXCLAMATION | MB_OK);
 	}
 
-	int numVerts = std::count(data.begin(), data.begin() + data.find("\n\n"), 'v');
+	int numVerts = std::count(data.begin(), data.end(), 'f') * 3;
 	int numIndices = std::count(data.begin(), data.end(), 'f') * 3;
 	std::string* split = nullptr;
 
@@ -108,14 +108,17 @@ Mesh* Mesh::LoadFromOBJ(std::string objFilePath)
 	XMFLOAT2* tempUVs = new XMFLOAT2[numVerts]; int iUV = 0;
 	XMFLOAT3* tempNorms = new XMFLOAT3[numVerts]; int iNO = 0;
 	USHORT* vertIndices = new USHORT[numIndices]; int iIS = 0;
-	//USHORT* uvIndices	= new USHORT[numIndices];
-	//USHORT* normIndices = new USHORT[numIndices];
+	USHORT* uvIndices	= new USHORT[numIndices];
+	USHORT* normIndices = new USHORT[numIndices];
 
 	while (data.length() > 0)
 	{
 		split = nullptr;
 		line = data.substr(0, data.find_first_of('\n'));
 		data = data.substr(line.length() + 1, data.length());
+
+		int commented = line.find_first_of('#');
+		if (commented >= 0) line = line.substr(0, commented);
 
 		if (line[0] == 'v' && line[1] != 't' && line[1] != 'n') // v = Vertex
 		{
@@ -154,8 +157,8 @@ Mesh* Mesh::LoadFromOBJ(std::string objFilePath)
 				split2 = Split(split[i], '/');
 
 				vertIndices[iIS] = atoi(split2[0].c_str());
-				//uvIndices[iIS]   = atoi(split2[1].c_str());
-				//normIndices[iIS] = atoi(split2[2].c_str());
+				uvIndices[iIS]   = atoi(split2[1].c_str());
+				normIndices[iIS] = atoi(split2[2].c_str());
 				iIS++;
 
 				delete[] split2;
@@ -170,20 +173,22 @@ Mesh* Mesh::LoadFromOBJ(std::string objFilePath)
 	Vertex* verts = new Vertex[numVerts];
 	for (int i = 0; i < numVerts; i++)
 	{
-		Vertex v = { tempVerts[i], tempUVs[i], tempNorms[i] };
+		Vertex v = { tempVerts[vertIndices[i] - 1], tempUVs[uvIndices[i] - 1], tempNorms[normIndices[i] - 1] };
 		verts[i] = v;
 	}
 
 	UINT* indices = new UINT[numIndices];
 	for (int i = 0; i < numIndices; i++)
 	{
-		indices[i] = vertIndices[i] - 1;
+		indices[i] = i;
 	}
 
 	delete[] tempVerts;
 	delete[] tempUVs;
 	delete[] tempNorms;
 	delete[] vertIndices;
+	delete[] uvIndices;
+	delete[] normIndices;
 
 	return new Mesh(verts, numVerts, indices, numIndices);
 }
