@@ -52,7 +52,7 @@ void AudioPlayer::load(const char* filename)
 
 	// set player data based on the file that was loaded
 	size = ALsizei(manager->dataSize());
-	frequency = ALsizei(manager->frequency());
+	frequency = ALsizei(manager->Frequency());
 	format = ALsizei(manager->format());
 	data = manager->audioData();
 }

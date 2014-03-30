@@ -174,7 +174,7 @@ bool BoatGame::Init(int iconResource)
 	}*/
 
 	// Audio ---------------------d[-_-]b-----------------
-	main_bgm = new AudioPlayer("Resources/Zedd-Clarity_BGM.wav");
+	main_bgm = new AudioPlayer("Resources/Zedd-Clarity_BGM.ogg");
 
 	main_bgm->init();
 	main_bgm->generateBufferData();

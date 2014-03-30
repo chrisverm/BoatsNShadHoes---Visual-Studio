@@ -22,7 +22,7 @@ private:
 	float gain;
 	float pitch;
 
-	unsigned char* data;
+	char* data;
 
 	void load(const char*);
 

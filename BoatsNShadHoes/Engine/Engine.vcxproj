@@ -42,16 +42,16 @@
     <OutDir>$(SolutionDir)DELETE\</OutDir>
     <IntDir>$(SolutionDir)DELETE\$(ProjectName)\$(Configuration)\</IntDir>
     <TargetName>$(ProjectName)</TargetName>
-    <ExecutablePath>$(SolutionDir)\$(ProjectName)\OpenAL\bin;$(ExecutablePath)</ExecutablePath>
-    <IncludePath>$(SolutionDir)\$(ProjectName)\OpenAL\include;$(IncludePath)</IncludePath>
-    <LibraryPath>$(SolutionDir)\$(ProjectName)\OpenAL\lib;$(LibraryPath)</LibraryPath>
+    <ExecutablePath>$(SolutionDir)\$(ProjectName)\OpenAL\bin;$(SolutionDir)\$(ProjectName)\oggvorbis\bin;$(ExecutablePath)</ExecutablePath>
+    <IncludePath>$(SolutionDir)\$(ProjectName)\OpenAL\include;$(SolutionDir)\$(ProjectName)\oggvorbis\include;$(IncludePath)</IncludePath>
+    <LibraryPath>$(SolutionDir)\$(ProjectName)\OpenAL\lib;$(SolutionDir)\$(ProjectName)\oggvorbis\lib;$(LibraryPath)</LibraryPath>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">
     <OutDir>$(SolutionDir)DELETE\</OutDir>
     <IntDir>$(SolutionDir)DELETE\$(ProjectName)\$(Configuration)\</IntDir>
-    <ExecutablePath>$(SolutionDir)\$(ProjectName)\OpenAL\bin;$(ExecutablePath)</ExecutablePath>
-    <IncludePath>$(SolutionDir)\$(ProjectName)\OpenAL\include;$(IncludePath)</IncludePath>
-    <LibraryPath>$(SolutionDir)\$(ProjectName)\OpenAL\lib;$(LibraryPath)</LibraryPath>
+    <ExecutablePath>$(SolutionDir)\$(ProjectName)\OpenAL\bin;$(SolutionDir)\$(ProjectName)\oggvorbis\bin;$(ExecutablePath)</ExecutablePath>
+    <IncludePath>$(SolutionDir)\$(ProjectName)\OpenAL\include;$(SolutionDir)\$(ProjectName)\oggvorbis\include;$(IncludePath)</IncludePath>
+    <LibraryPath>$(SolutionDir)\$(ProjectName)\OpenAL\lib;$(SolutionDir)\$(ProjectName)\oggvorbis\lib;$(LibraryPath)</LibraryPath>
   </PropertyGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
     <ClCompile>
@@ -70,13 +70,14 @@ mkdir "$(SolutionDir)Binary\Resources\"
 mkdir "$(SolutionDir)Binary\Shaders\"
 copy "$(OutDir)$(TargetName)$(TargetExt)" "$(SolutionDir)Binary"
 copy "$(SolutionDir)\$(ProjectName)\OpenAL\bin" "$(SolutionDir)Binary"
+copy "$(SolutionDir)\$(ProjectName)\oggvorbis\bin" "$(SolutionDir)Binary"
 copy "$(SolutionDir)Resources\" "$(SolutionDir)Binary\Resources"</Command>
     </PostBuildEvent>
     <FxCompile>
       <ObjectFileOutput>$(SolutionDir)Binary\Shaders\%(Filename).cso</ObjectFileOutput>
     </FxCompile>
     <Lib>
-      <AdditionalDependencies>d3d11.lib;d3dcompiler.lib;OpenAL32.lib;%(AdditionalDependencies)</AdditionalDependencies>
+      <AdditionalDependencies>d3d11.lib;d3dcompiler.lib;OpenAL32.lib;libvorbisfile.lib;%(AdditionalDependencies)</AdditionalDependencies>
     </Lib>
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">
@@ -99,6 +100,7 @@ mkdir "$(SolutionDir)Binary\Resources\"
 mkdir "$(SolutionDir)Binary\Shaders\"
 copy "$(OutDir)$(TargetName)$(TargetExt)" "$(SolutionDir)Binary"
 copy "$(SolutionDir)\$(ProjectName)\OpenAL\bin" "$(SolutionDir)Binary"
+copy "$(SolutionDir)\$(ProjectName)\oggvorbis\bin" "$(SolutionDir)Binary"
 copy "$(SolutionDir)Resources\" "$(SolutionDir)Binary\Resources"</Command>
     </PostBuildEvent>
     <FxCompile>

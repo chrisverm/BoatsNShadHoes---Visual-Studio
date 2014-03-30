@@ -4,8 +4,15 @@
 #include <stdio.h>
 #include <stdint.h>
 #include <iostream>
+#include <vector>
+#include <string>
+
+// Open AL
 #include "OpenAL\include\AL\al.h"
 #include "OpenAL\include\AL\alc.h"
+
+// ogg vorbis
+#include "oggvorbis\include\oggvorbis\vorbisfile.h"
 
 /*
  * Sources: 
@@ -57,6 +64,10 @@ struct WAVE_Data
 	uint32_t subChunk2Size; // Stores the size of the data block
 };
 
+#ifndef AUDIO_BUFFER_SIZE
+	#define AUDIO_BUFFER_SIZE 32768 // bytes in each 32kb buffer
+#endif
+
 class AudioManager
 {
 private:
@@ -64,22 +75,27 @@ private:
 	WAVE_Format* wave_format;
 	WAVE_Data* wave_data;
 
-	unsigned char* data;
+	uint32_t audioFrequency;
+	ALenum audioFormat;
+
+	char* data;
+	std::vector<char> vectorData;
 
 public:
 	AudioManager();
-	AudioManager(const char* filename);
+	AudioManager(std::string);
 	~AudioManager();
 
 	/* Accessors */
-	unsigned char* audioData() const;
+	char* audioData();
 	uint32_t dataSize() const;
-	uint32_t frequency() const;
+	uint32_t Frequency() const;
 	uint16_t numChannels() const;
 	uint16_t bitsPerSample() const;
 	ALenum format() const;
 
-	void loadWAV(const char* filename);
+	void loadWAV(std::string);
+	void loadOGG(std::string);
 };
 
 #endif

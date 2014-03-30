@@ -8,11 +8,12 @@
  */
 AudioManager::AudioManager()
 {
-	riff_header = new RIFF_Header();
-	wave_format = new WAVE_Format();
+	riff_header = nullptr;
+	wave_format = nullptr;
 	wave_data = new WAVE_Data();
 
 	data = nullptr;
+	vectorData = std::vector<char>();
 }
 
 /*
@@ -20,15 +21,31 @@ AudioManager::AudioManager()
  * Sets up default values.
  * Loads the WAVE file
  */
-AudioManager::AudioManager(const char* filename)
+AudioManager::AudioManager(std::string filepath)
 {
 	riff_header = new RIFF_Header();
 	wave_format = new WAVE_Format();
 	wave_data = new WAVE_Data();
 
 	data = nullptr;
+	vectorData = std::vector<char>();
 
-	loadWAV(filename);
+	// check file extension
+	unsigned short last = filepath.find_last_of(".");
+
+	// load audio based on extension
+	if(filepath.substr(last+1) == "wav")
+	{
+		std::cout << "A WAV" << std::endl;
+		loadWAV(filepath);
+	}
+	else if(filepath.substr(last+1) == "ogg")
+	{
+		std::cout << "OGG" << std::endl;
+		loadOGG(filepath);
+	}
+	else
+		std::cout << "Unsupported file type!" << std::endl;
 }
 
 /*
@@ -64,9 +81,16 @@ AudioManager::~AudioManager()
 /*
  * Returns our sound data (in bytes).
  */
-unsigned char* AudioManager::audioData() const
+char* AudioManager::audioData()
 {
-	return data;
+	if(data == nullptr)
+	{
+		data = &vectorData[0];
+		return data;
+	}
+
+	else
+		return data;
 }
 
 /*
@@ -74,15 +98,19 @@ unsigned char* AudioManager::audioData() const
  */
 uint32_t AudioManager::dataSize() const
 {
-	return wave_data->subChunk2Size;
+	//return wave_data->subChunk2Size;
+
+	return (uint32_t)vectorData.size();
 }
 
 /*
  * Returns the sample rate of the audio.
  */
-uint32_t AudioManager::frequency() const
+uint32_t AudioManager::Frequency() const
 {
-	return wave_format->sampleRate;
+	//return wave_format->sampleRate;
+
+	return audioFrequency;
 }
 
 /*
@@ -111,7 +139,7 @@ uint16_t AudioManager::bitsPerSample() const
  */
 ALenum AudioManager::format() const
 {
-	if(wave_format->numChannels == 1)
+	/*if(wave_format->numChannels == 1)
 	{
 		if(wave_format->bitsPerSample == 8)
 			return AL_FORMAT_MONO8;
@@ -127,6 +155,60 @@ ALenum AudioManager::format() const
 
 		else if(wave_format->bitsPerSample == 16)
 			return AL_FORMAT_STEREO16;
+	}*/
+
+	return audioFormat;
+}
+
+void AudioManager::loadOGG(std::string filepath)
+{
+	FILE* soundFile = NULL;
+
+	vorbis_info* pInfo;
+	OggVorbis_File oggFile;
+
+	try
+	{
+		fopen_s(&soundFile, filepath.c_str(), "rb");
+
+		// open file using ogg vorbis
+		ov_open(soundFile, &oggFile, NULL, 0);
+
+		// grab information about the file
+		pInfo = ov_info(&oggFile, -1);
+
+		// format (always use 16-bit samples)
+		if(pInfo->channels == 1)
+			audioFormat = AL_FORMAT_MONO16;
+		else
+			audioFormat = AL_FORMAT_STEREO16;
+
+		// frequency (of sampling rate)
+		audioFrequency = pInfo->rate;
+
+		// decode ogg file
+		long bytes;
+		char array[AUDIO_BUFFER_SIZE];
+		int bitStream;
+
+		vectorData = std::vector<char>();
+
+		do{
+			// read up to a buffer's worth of decoded sound data
+			bytes = ov_read(&oggFile, array, AUDIO_BUFFER_SIZE, 0, 2, 1, &bitStream);
+
+			// append to end of buffer
+			vectorData.insert(vectorData.end(), array, array + bytes);
+
+		}while (bytes>0); // while not End of File
+
+		// clean up memory
+		ov_clear(&oggFile);
+	}
+
+	catch(char* error)
+	{
+		ov_clear(&oggFile);
 	}
 }
 
@@ -134,14 +216,14 @@ ALenum AudioManager::format() const
  * Loads the WAVE file and stores all of the information for it
  * in our variables
  */
-void AudioManager::loadWAV(const char* filename)
+void AudioManager::loadWAV(std::string filename)
 {
 	FILE* soundFile = NULL;
 
 	try
 	{
 		// safely opens the file using read-only binary mode
-		fopen_s(&soundFile, filename, "rb");
+		fopen_s(&soundFile, filename.c_str(), "rb");
 
 		/* 
 		 * read in the first chunk of memory into our struct
@@ -211,7 +293,7 @@ void AudioManager::loadWAV(const char* filename)
 		   wave_data->subChunkID[3] != 'a')
 				throw("Invalid data header!");
 
-		data = new unsigned char[wave_data->subChunk2Size];
+		data = new char[wave_data->subChunk2Size];
 
 		// read in the raw sound data
 		if(!fread(data, wave_data->subChunk2Size, 1, soundFile))
