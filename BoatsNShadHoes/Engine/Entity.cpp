@@ -12,15 +12,21 @@ Entity::Entity(Mesh* mesh, Material* material)
 	position = XMVectorSet(0.0f , 0.0f , 0.0f ,0.0f);
 	rotation = XMVectorSet(0.0f , 0.0f , 0.0f ,0.0f);
 	scale = XMVectorSet(1.0f, 1.0f, 1.0f, 0.0f);
+	forward = XMVectorSet(0,0,1.0f,0);
+	up = XMVectorSet(0,1.0f,0,0);
+	right = XMVectorSet(1.0f,0,0,0);
+	
+	Forward = &forward;
+	Up = &up;
+	Right = &right;
+
 	XMStoreFloat4x4(&worldMatrix, XMMatrixTranspose(XMMatrixIdentity()));
 }
 
 Entity::~Entity()
-{
+{ }
 
-}
-
-void Entity::Initialize(ID3D11Device* device, ID3D11Buffer* modelConstBuffer, VSPerModelData* modelConstBufferData)
+void Entity::Initialize(ID3D11Buffer* modelConstBuffer, VSPerModelData* modelConstBufferData)
 {
 	this->modelConstBuffer = modelConstBuffer;
 	this->modelConstBufferData = modelConstBufferData;
@@ -35,6 +41,8 @@ void Entity::Update(ID3D11DeviceContext* deviceContext, float dt)
 	XMMATRIX sca = XMMatrixScalingFromVector(scale);
 	worldMat *= sca * rot * trans;
 	XMStoreFloat4x4(&worldMatrix, XMMatrixTranspose(worldMat));
+	
+	UpdateOrientation(worldMat);
 }
 
 void Entity::Render(ID3D11DeviceContext* deviceContext)
@@ -58,22 +66,20 @@ void Entity::Render(ID3D11DeviceContext* deviceContext)
 		mesh->numInds,
 		0,
 		0);
+
 }
 
-XMVECTOR Entity::getRight()
+void Entity::UpdateOrientation()
 {
-	//XMVector3Normalize(XMVector3TransformCoord(XMVectorSet(1,0,0,0), XMLoadFloat4x4(&worldMatrix)));
-	return XMVectorSet(worldMatrix._11, worldMatrix._12, worldMatrix._13, 0);
+	UpdateOrientation(XMMatrixRotationRollPitchYawFromVector(rotation));
 }
 
-XMVECTOR Entity::getUp()
+void Entity::UpdateOrientation(const XMMATRIX& rot, bool transpose)
 {
-	//XMVector3Normalize(XMVector3TransformCoord(XMVectorSet(0,1,0,0), XMLoadFloat4x4(&worldMatrix)));
-	return XMVectorSet(worldMatrix._21, worldMatrix._22, worldMatrix._23, 0);
-}
+	// transpose so we can access the columns as xmvectors.
+	XMMATRIX r = (transpose) ? XMMatrixTranspose(rot) : rot;
 
-XMVECTOR Entity::getForward()
-{
-	//XMVector3Normalize(XMVector3TransformCoord(XMVectorSet(0,0,1,0), XMLoadFloat4x4(&worldMatrix)));
-	return XMVectorSet(worldMatrix._31, worldMatrix._32, worldMatrix._33, 0);
+	forward = rot.r[2];
+	up = rot.r[1];
+	right = rot.r[0];
 }

@@ -125,6 +125,7 @@ copy "$(SolutionDir)Resources\" "$(SolutionDir)Binary\Resources"</Command>
     <ClInclude Include="Globals.h" />
     <ClInclude Include="Material.h" />
     <ClInclude Include="Mesh.h" />
+    <ClInclude Include="MoveableEntity.h" />
     <ClInclude Include="resource.h" />
     <ClInclude Include="ResourceManager.h" />
     <ClInclude Include="Vertex.h" />
@@ -140,6 +141,7 @@ copy "$(SolutionDir)Resources\" "$(SolutionDir)Binary\Resources"</Command>
     <ClCompile Include="GameTimer.cpp" />
     <ClCompile Include="Material.cpp" />
     <ClCompile Include="Mesh.cpp" />
+    <ClCompile Include="MoveableEntity.cpp" />
     <ClCompile Include="ResourceManager.cpp" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />

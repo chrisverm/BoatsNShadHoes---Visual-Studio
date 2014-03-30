@@ -1,15 +1,17 @@
 #ifndef BOAT_H
 #define BOAT_H
 
-#include "Entity.h"
+#include "MoveableEntity.h"
 #include "ResourceManager.h"
 
 class Boat 
-	: public Entity
+	: public MoveableEntity
 {
 public:
 	Boat(std::string, std::string);
 	~Boat();
+
+	void Initialize(ID3D11Buffer* modelConstBuffer, VSPerModelData* modelConstBufferData);
 };
 
 #endif
