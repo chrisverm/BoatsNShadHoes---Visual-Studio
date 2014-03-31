@@ -71,7 +71,8 @@ mkdir "$(SolutionDir)Binary\Shaders\"
 copy "$(OutDir)$(TargetName)$(TargetExt)" "$(SolutionDir)Binary"
 copy "$(SolutionDir)\$(ProjectName)\OpenAL\bin" "$(SolutionDir)Binary"
 copy "$(SolutionDir)\$(ProjectName)\oggvorbis\bin" "$(SolutionDir)Binary"
-copy "$(SolutionDir)Resources\" "$(SolutionDir)Binary\Resources"</Command>
+copy "$(SolutionDir)Resources\" "$(SolutionDir)Binary\Resources"
+copy "$(SolutionDir)Libraries\" "$(SolutionDir)Binary"</Command>
     </PostBuildEvent>
     <FxCompile>
       <ObjectFileOutput>$(SolutionDir)Binary\Shaders\%(Filename).cso</ObjectFileOutput>
@@ -101,7 +102,8 @@ mkdir "$(SolutionDir)Binary\Shaders\"
 copy "$(OutDir)$(TargetName)$(TargetExt)" "$(SolutionDir)Binary"
 copy "$(SolutionDir)\$(ProjectName)\OpenAL\bin" "$(SolutionDir)Binary"
 copy "$(SolutionDir)\$(ProjectName)\oggvorbis\bin" "$(SolutionDir)Binary"
-copy "$(SolutionDir)Resources\" "$(SolutionDir)Binary\Resources"</Command>
+copy "$(SolutionDir)Resources\" "$(SolutionDir)Binary\Resources"
+copy "$(SolutionDir)Libraries\" "$(SolutionDir)Binary"</Command>
     </PostBuildEvent>
     <FxCompile>
       <ObjectFileOutput>$(SolutionDir)Binary\Shaders\%(Filename).cso</ObjectFileOutput>
