@@ -17,7 +17,6 @@ float4 main(VertexToPixel input) : SV_TARGET
 {
 	input.normal = normalize(input.normal);
 
-	float4 lightColor = float4(0.0f, 1.0f, 0.0f, 1.0f);
 	float3 lightDirection = normalize(float3(0, 0, 1));
 	float nDotL = saturate(dot(input.normal, -lightDirection));
 

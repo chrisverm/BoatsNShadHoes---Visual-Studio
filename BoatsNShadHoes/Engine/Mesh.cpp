@@ -105,11 +105,13 @@ Mesh* Mesh::LoadFromOBJ(std::string objFilePath)
 	std::string* split = nullptr;
 
 	XMFLOAT3* tempVerts = new XMFLOAT3[numVerts]; int iTV = 0;
-	XMFLOAT2* tempUVs = new XMFLOAT2[numVerts]; int iUV = 0;
+	XMFLOAT2* tempUVs   = new XMFLOAT2[numVerts]; int iUV = 0;
 	XMFLOAT3* tempNorms = new XMFLOAT3[numVerts]; int iNO = 0;
+	XMFLOAT4* tempCols  = new XMFLOAT4[numVerts]; int iCO = 0;
 	USHORT* vertIndices = new USHORT[numIndices]; int iIS = 0;
 	USHORT* uvIndices	= new USHORT[numIndices];
 	USHORT* normIndices = new USHORT[numIndices];
+	USHORT* colIndices  = new USHORT[numIndices];
 
 	while (data.length() > 0)
 	{
@@ -120,12 +122,21 @@ Mesh* Mesh::LoadFromOBJ(std::string objFilePath)
 		int commented = line.find_first_of('#');
 		if (commented >= 0) line = line.substr(0, commented);
 
-		if (line[0] == 'v' && line[1] != 't' && line[1] != 'n') // v = Vertex
+		if (line[0] == 'v' && line[1] != 't' && line[1] != 'n' && line[1] != 'c') // v = Vertex
 		{
 			line = line.substr(2, line.length() - 1);
 			split = Split(line, ' ');
 
 			tempVerts[iTV++] = XMFLOAT3((float)atof(split[0].c_str()),
+										(float)atof(split[1].c_str()),
+										(float)atof(split[2].c_str()));
+		}
+		else if (line[0] == 'v' && line[1] == 'n') // vn = Vertex Normal
+		{
+			line = line.substr(3, line.length() - 1);
+			split = Split(line, ' ');
+
+			tempNorms[iNO++] = XMFLOAT3((float)atof(split[0].c_str()),
 										(float)atof(split[1].c_str()),
 										(float)atof(split[2].c_str()));
 		}
@@ -137,14 +148,15 @@ Mesh* Mesh::LoadFromOBJ(std::string objFilePath)
 			tempUVs[iUV++] = XMFLOAT2((float)atof(split[0].c_str()),
 									  (float)atof(split[1].c_str()));
 		}
-		else if (line[0] == 'v' && line[1] == 'n') // vn = Vertex Normal
+		else if (line[0] == 'v' && line[1] == 'c') // vc = Vertex Color
 		{
 			line = line.substr(3, line.length() - 1);
 			split = Split(line, ' ');
 
-			tempNorms[iNO++] = XMFLOAT3((float)atof(split[0].c_str()),
-										(float)atof(split[1].c_str()),
-										(float)atof(split[2].c_str()));
+			tempCols[iCO++] = XMFLOAT4((float)atof(split[0].c_str()),
+									   (float)atof(split[1].c_str()),
+									   (float)atof(split[2].c_str()),
+									   (float)atof(split[3].c_str()));
 		}
 		else if (line[0] == 'f')
 		{
@@ -159,6 +171,7 @@ Mesh* Mesh::LoadFromOBJ(std::string objFilePath)
 				vertIndices[iIS] = atoi(split2[0].c_str());
 				uvIndices[iIS]   = atoi(split2[1].c_str());
 				normIndices[iIS] = atoi(split2[2].c_str());
+				colIndices[iIS]  = atoi(split2[3].c_str());
 				iIS++;
 
 				delete[] split2;
@@ -173,7 +186,8 @@ Mesh* Mesh::LoadFromOBJ(std::string objFilePath)
 	Vertex* verts = new Vertex[numVerts];
 	for (int i = 0; i < numVerts; i++)
 	{
-		Vertex v = { tempVerts[vertIndices[i] - 1], tempUVs[uvIndices[i] - 1], tempNorms[normIndices[i] - 1] };
+		Vertex v = { tempVerts[vertIndices[i] - 1], tempUVs[uvIndices[i] - 1], 
+					 tempNorms[normIndices[i] - 1], tempCols[colIndices[i] - 1] };
 		verts[i] = v;
 	}
 
@@ -186,9 +200,11 @@ Mesh* Mesh::LoadFromOBJ(std::string objFilePath)
 	delete[] tempVerts;
 	delete[] tempUVs;
 	delete[] tempNorms;
+	delete[] tempCols;
 	delete[] vertIndices;
 	delete[] uvIndices;
 	delete[] normIndices;
+	delete[] colIndices;
 
 	return new Mesh(verts, numVerts, indices, numIndices);
 }

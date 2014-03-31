@@ -102,7 +102,7 @@ bool BoatGame::Init(int iconResource)
 	camDesc.FieldOfView = XMConvertToRadians(45.0f);
 	camDesc.NearPlane = 0.1f;
 	camDesc.FarPlane = 100.0f;
-	camDesc.InitialRoll = new float(1.0f);
+	camDesc.InitialRoll = new float(0.0f);
 	camDesc.InitialPosition = new XMVECTOR(XMVectorSet(0.0f, 0.0f, -5.0f, 0.0f));
 	camDesc.InitialForward = new XMVECTOR(XMVectorSet(0.0f, 0.0f, 1.0f, 0.0f));
 	camDesc.Position = STATIC;
@@ -195,7 +195,7 @@ void BoatGame::LoadShadersAndInputLayout()
 
 	// Load Vertex Shader --------------------------------------
 	ID3DBlob* vsBlob;
-	D3DReadFileToBlob(L"Shaders/Texture_VertexShader.cso", &vsBlob);
+	D3DReadFileToBlob(L"Shaders/VS_TexturedColored.cso", &vsBlob);
 
 	ID3D11VertexShader* vertexShader;
 	// Create the shader on the device
@@ -219,7 +219,7 @@ void BoatGame::LoadShadersAndInputLayout()
 
 	// Load Pixel Shader ---------------------------------------
 	ID3DBlob* psBlob;
-	D3DReadFileToBlob(L"Shaders/Texture_PixelShader.cso", &psBlob);
+	D3DReadFileToBlob(L"Shaders/PS_TexturedColored.cso", &psBlob);
 
 	ID3D11PixelShader* texturePixelShader;
 	// Create the shader on the device
@@ -233,7 +233,7 @@ void BoatGame::LoadShadersAndInputLayout()
 	// Clean up
 	ReleaseMacro(psBlob);
 
-	D3DReadFileToBlob(L"Shaders/Color_PixelShader.cso", &psBlob);
+	D3DReadFileToBlob(L"Shaders/PS_Colored.cso", &psBlob);
 
 	ID3D11PixelShader* colorPixelShader;
 	// Create the shader on the device

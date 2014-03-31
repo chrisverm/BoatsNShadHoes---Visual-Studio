@@ -49,13 +49,13 @@
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
-    <FxCompile Include="Shaders\Texture_VertexShader.hlsl">
+    <FxCompile Include="Shaders\VS_TexturedColored.hlsl">
       <Filter>Resource Files\Shaders</Filter>
     </FxCompile>
-    <FxCompile Include="Shaders\Texture_PixelShader.hlsl">
+    <FxCompile Include="Shaders\PS_TexturedColored.hlsl">
       <Filter>Resource Files\Shaders</Filter>
     </FxCompile>
-    <FxCompile Include="Shaders\Color_PixelShader.hlsl">
+    <FxCompile Include="Shaders\PS_Colored.hlsl">
       <Filter>Resource Files\Shaders</Filter>
     </FxCompile>
   </ItemGroup>

@@ -119,13 +119,13 @@ copy "$(OutDir)$(TargetName)$(TargetExt)" "$(SolutionDir)Binary"</Command>
     <ClCompile Include="Water.cpp" />
   </ItemGroup>
   <ItemGroup>
-    <FxCompile Include="Shaders\Color_PixelShader.hlsl">
+    <FxCompile Include="Shaders\PS_Colored.hlsl">
       <ShaderType Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">Pixel</ShaderType>
     </FxCompile>
-    <FxCompile Include="Shaders\Texture_PixelShader.hlsl">
+    <FxCompile Include="Shaders\PS_TexturedColored.hlsl">
       <ShaderType Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">Pixel</ShaderType>
     </FxCompile>
-    <FxCompile Include="Shaders\Texture_VertexShader.hlsl">
+    <FxCompile Include="Shaders\VS_TexturedColored.hlsl">
       <ShaderType Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">Vertex</ShaderType>
     </FxCompile>
   </ItemGroup>
