@@ -8,10 +8,6 @@
  */
 AudioManager::AudioManager()
 {
-	riff_header = nullptr;
-	wave_format = nullptr;
-	wave_data = new WAVE_Data();
-
 	data = nullptr;
 	vectorData = std::vector<char>();
 }
@@ -23,10 +19,6 @@ AudioManager::AudioManager()
  */
 AudioManager::AudioManager(std::string filepath)
 {
-	riff_header = new RIFF_Header();
-	wave_format = new WAVE_Format();
-	wave_data = new WAVE_Data();
-
 	data = nullptr;
 	vectorData = std::vector<char>();
 
@@ -54,28 +46,7 @@ AudioManager::AudioManager(std::string filepath)
 AudioManager::~AudioManager()
 {
 	if(data != nullptr)
-	{
 		delete[] data;
-		data = nullptr;
-	}
-
-	if(riff_header != nullptr)
-	{
-		delete riff_header;
-		riff_header = nullptr;
-	}
-
-	if(wave_format != nullptr)
-	{
-		delete wave_format;
-		wave_format = nullptr;
-	}
-
-	if(wave_data != nullptr)
-	{
-		delete wave_data;
-		wave_data = nullptr;
-	}
 }
 
 /*
@@ -100,7 +71,9 @@ uint32_t AudioManager::dataSize() const
 {
 	//return wave_data->subChunk2Size;
 
-	return (uint32_t)vectorData.size();
+	//return (uint32_t)vectorData.size();
+
+	return size;
 }
 
 /*
@@ -116,18 +89,18 @@ uint32_t AudioManager::Frequency() const
 /*
  * Returns the number of channels of the audio.
  */
-uint16_t AudioManager::numChannels() const
+/*uint16_t AudioManager::numChannels() const
 {
 	return wave_format->numChannels;
-}
+}*/
 
 /*
  * Returns the bits per sample of the audio
  */
-uint16_t AudioManager::bitsPerSample() const
+/*uint16_t AudioManager::bitsPerSample() const
 {
 	return wave_format->bitsPerSample;
-}
+}*/
 
 /*
  * Returns the format of the audio
@@ -191,16 +164,46 @@ void AudioManager::loadOGG(std::string filepath)
 		char array[AUDIO_BUFFER_SIZE];
 		int bitStream;
 
-		vectorData = std::vector<char>();
+		//data = new char[0];
+		//long currentSize = 0;
+
+		//vectorData = std::vector<char>();
 
 		do{
 			// read up to a buffer's worth of decoded sound data
 			bytes = ov_read(&oggFile, array, AUDIO_BUFFER_SIZE, 0, 2, 1, &bitStream);
 
+			// increase size of buffer
+			//data = (char*) realloc(data, currentSize + AUDIO_BUFFER_SIZE * sizeof(char));
+
+			//currentSize += AUDIO_BUFFER_SIZE;
+
 			// append to end of buffer
 			vectorData.insert(vectorData.end(), array, array + bytes);
+			//strcat(data, array);
+			//strcat_s(data, currentSize, array);
 
 		}while (bytes>0); // while not End of File
+
+		//vectorData.insert(vectorData.end(), '\0');
+
+		// set size
+		size = (uint32_t)vectorData.size();
+		//size = sizeof(data)/sizeof(char);
+
+		data = new char[size];
+
+		time_t timer;
+		
+		timer = time(NULL);
+
+		// copy data over! :D
+		for(int i=0; i < vectorData.size(); i++)
+			data[i] = vectorData[i];
+
+		//std::copy(vectorData.begin(), vectorData.end(), data);
+
+		std::cout << difftime(timer, time(NULL)) << std::endl;
 
 		// clean up memory
 		ov_clear(&oggFile);
@@ -219,6 +222,9 @@ void AudioManager::loadOGG(std::string filepath)
 void AudioManager::loadWAV(std::string filename)
 {
 	FILE* soundFile = NULL;
+	RIFF_Header* riff_header = new RIFF_Header();
+	WAVE_Format* wave_format = new WAVE_Format();
+	WAVE_Data* wave_data = new WAVE_Data();
 
 	try
 	{
@@ -276,6 +282,34 @@ void AudioManager::loadWAV(std::string filename)
 		if(wave_format->subChunkSize > 16)
 			fseek(soundFile, sizeof(short), SEEK_CUR);
 
+		// set frequency
+		audioFrequency = wave_format->sampleRate;
+
+		// set format
+		if(wave_format->numChannels == 1)
+		{
+			if(wave_format->bitsPerSample == 8)
+				audioFormat = AL_FORMAT_MONO8;
+
+			else if(wave_format->bitsPerSample == 16)
+				audioFormat = AL_FORMAT_MONO16;
+		}
+
+		else if(wave_format->numChannels == 2)
+		{
+			if(wave_format->bitsPerSample == 8)
+				audioFormat = AL_FORMAT_STEREO8;
+
+			else if(wave_format->bitsPerSample == 16)
+				audioFormat =  AL_FORMAT_STEREO16;
+		}
+
+		else
+			audioFormat = AL_INVALID_ENUM;
+
+		if(AL_INVALID_ENUM == audioFormat)
+			throw("Invalid audio format!");
+
 		/* 
 		 * read in the last bit of information before the actual raw sound data 
 		 * 
@@ -293,6 +327,7 @@ void AudioManager::loadWAV(std::string filename)
 		   wave_data->subChunkID[3] != 'a')
 				throw("Invalid data header!");
 
+		size = wave_data->subChunk2Size;
 		data = new char[wave_data->subChunk2Size];
 
 		// read in the raw sound data
@@ -301,6 +336,10 @@ void AudioManager::loadWAV(std::string filename)
 
 		// clean up memory
 		fclose(soundFile);
+
+		delete riff_header;
+		delete wave_format;
+		delete wave_data;
 	}
 
 	// catch any errors we throw
@@ -309,7 +348,11 @@ void AudioManager::loadWAV(std::string filename)
 		std::cerr << error << " trying to load " << filename << std::endl;
 
 		// clean up memory if necessary
-		if(soundFile != NULL)
+		//if(soundFile != NULL)
 			fclose(soundFile);
+
+		delete riff_header;
+		delete wave_format;
+		delete wave_data;
 	}
 }

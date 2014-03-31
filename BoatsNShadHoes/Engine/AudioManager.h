@@ -6,6 +6,8 @@
 #include <iostream>
 #include <vector>
 #include <string>
+#include <time.h>
+#include <strsafe.h>
 
 // Open AL
 #include "OpenAL\include\AL\al.h"
@@ -71,12 +73,9 @@ struct WAVE_Data
 class AudioManager
 {
 private:
-	RIFF_Header* riff_header;
-	WAVE_Format* wave_format;
-	WAVE_Data* wave_data;
-
 	uint32_t audioFrequency;
 	ALenum audioFormat;
+	uint32_t size;
 
 	char* data;
 	std::vector<char> vectorData;
@@ -90,8 +89,6 @@ public:
 	char* audioData();
 	uint32_t dataSize() const;
 	uint32_t Frequency() const;
-	uint16_t numChannels() const;
-	uint16_t bitsPerSample() const;
 	ALenum format() const;
 
 	void loadWAV(std::string);

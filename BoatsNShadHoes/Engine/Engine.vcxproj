@@ -126,7 +126,6 @@ copy "$(SolutionDir)Resources\" "$(SolutionDir)Binary\Resources"</Command>
     <ClInclude Include="Material.h" />
     <ClInclude Include="Mesh.h" />
     <ClInclude Include="MoveableEntity.h" />
-    <ClInclude Include="resource.h" />
     <ClInclude Include="ResourceManager.h" />
     <ClInclude Include="Vertex.h" />
   </ItemGroup>
