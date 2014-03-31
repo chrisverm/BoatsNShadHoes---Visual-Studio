@@ -60,7 +60,7 @@ protected:
 
 	bool viewChanged;
 	bool projChanged;
-
+	bool drawCoordinates;
 };
 
 #endif

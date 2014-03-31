@@ -27,6 +27,8 @@ public:
 	const DirectX::XMVECTOR* Up;
 	const DirectX::XMVECTOR* Right;
 
+	void setCB(ID3D11DeviceContext*);
+
 private:
 	Mesh* mesh;
 	Material* material;

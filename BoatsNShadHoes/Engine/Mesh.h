@@ -15,6 +15,8 @@ public:
 	~Mesh();
 	void Initialize(ID3D11Device* device);
 	void SetBuffers(ID3D11DeviceContext* deviceContext);
+	int Indices();
+	int Verticies();
 
 	static Mesh* LoadFromOBJ(std::string objFilePath);
 

@@ -47,15 +47,7 @@ void Entity::Update(ID3D11DeviceContext* deviceContext, float dt)
 
 void Entity::Render(ID3D11DeviceContext* deviceContext)
 {
-	modelConstBufferData->model = worldMatrix;
-
-	deviceContext->UpdateSubresource(
-		modelConstBuffer,
-		0,
-		NULL,
-		modelConstBufferData,
-		0,
-		0);
+	setCB(deviceContext);
 		
 	deviceContext->IASetPrimitiveTopology(topology);
 
@@ -82,4 +74,16 @@ void Entity::UpdateOrientation(const XMMATRIX& rot, bool transpose)
 	forward = rot.r[2];
 	up = rot.r[1];
 	right = rot.r[0];
+}
+
+void Entity::setCB(ID3D11DeviceContext* deviceContext)
+{
+	modelConstBufferData->model = worldMatrix;
+	deviceContext->UpdateSubresource(
+		modelConstBuffer,
+		0,
+		NULL,
+		modelConstBufferData,
+		0,
+		0);
 }

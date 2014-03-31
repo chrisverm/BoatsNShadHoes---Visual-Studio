@@ -38,6 +38,7 @@ BoatGame::BoatGame(HINSTANCE hInstance) : DXGame(hInstance)
 	windowHeight = 600;
 
 	state = Menu;
+	drawCoordinates = false;
 }
 
 
@@ -308,6 +309,32 @@ void BoatGame::LoadResources()
 	Mesh* quad = Mesh::LoadFromOBJ("Resources/water_obj.obj");
 	quad->Initialize(device);
 
+	// Begin Disgusting.
+	Vertex temp[] = 
+	{
+		{ XMFLOAT3(0,0,0), XMFLOAT2(0,0), XMFLOAT3(0,0,0), XMFLOAT4(0,1,0,1) },
+		{ XMFLOAT3(0,0,2), XMFLOAT2(0,0), XMFLOAT3(0,0,0), XMFLOAT4(0,1,0,1) },
+		{ XMFLOAT3(0,0,0), XMFLOAT2(0,0), XMFLOAT3(0,0,0), XMFLOAT4(0,0,1,1) },
+		{ XMFLOAT3(0,2,0), XMFLOAT2(0,0), XMFLOAT3(0,0,0), XMFLOAT4(0,0,1,1) },
+		{ XMFLOAT3(0,0,0), XMFLOAT2(0,0), XMFLOAT3(0,0,0), XMFLOAT4(1,0,0,1) },
+		{ XMFLOAT3(2,0,0), XMFLOAT2(0,0), XMFLOAT3(0,0,0), XMFLOAT4(1,0,0,1) }
+	};
+
+	Vertex* verts = new Vertex[6];
+
+	for (int i = 0; i < 6; i++)
+	{ verts[i] = temp[i]; }
+	
+	UINT32 itemp[] = { 0,1,2,3,4,5 };
+	UINT32* indices = new UINT[6];
+	for (int i = 0; i < 6; i++)
+	{ indices[i] = itemp[i]; }
+	// End Disgusting.
+
+	Mesh* coordinates = new Mesh(verts, 6, indices, 6);
+	coordinates->Initialize(device);
+
+	ResourceManager::AddMesh("coordinates", coordinates);
 	ResourceManager::AddMesh("cube", cube);
 	ResourceManager::AddMesh("quad", quad);
 
@@ -348,6 +375,11 @@ void BoatGame::UpdateScene(float dt)
 	Entity* e = entities[0];
 	e->rotation = XMVectorSetX((entities[0])->rotation, XMVectorGetX(entities[0]->rotation) + dt);
 	e->rotation = XMVectorSetZ((entities[0])->rotation, XMVectorGetZ(entities[0]->rotation) + dt);
+
+	// Toggle drawing entities coordinates in debug.
+	// TODO: Needs to be set to KeyUp once we have that implemented.
+	if (GetAsyncKeyState('I'))
+		drawCoordinates = !drawCoordinates;
 
 	switch (state)
 	{
@@ -412,6 +444,27 @@ void BoatGame::DrawScene()
 	{
 		(*it)->Render(deviceContext);
 	}
+
+#if defined(DEBUG) | defined(_DEBUG)
+	if (drawCoordinates)
+	{
+		ResourceManager::GetMaterial("water")->SetShaders(deviceContext);
+		Mesh* coords = ResourceManager::GetMesh("coordinates");
+		coords->SetBuffers(deviceContext);
+		deviceContext->IASetPrimitiveTopology(D3D11_PRIMITIVE_TOPOLOGY_LINELIST);
+
+		for (std::vector<Entity*>::iterator it = entities.begin(); it != entities.end(); it++)
+		{ 
+			(*it)->setCB(deviceContext); 
+
+			deviceContext->DrawIndexed(
+			coords->Indices(),
+			0,
+			0);
+		}
+	}
+	
+#endif
 	
 	// Present the buffer
 	HR(swapChain->Present(0, 0));

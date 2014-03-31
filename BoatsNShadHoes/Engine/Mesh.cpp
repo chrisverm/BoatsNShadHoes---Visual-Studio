@@ -208,3 +208,9 @@ Mesh* Mesh::LoadFromOBJ(std::string objFilePath)
 
 	return new Mesh(verts, numVerts, indices, numIndices);
 }
+
+int Mesh::Verticies()
+{ return numVerts; }
+
+int Mesh::Indices()
+{ return numInds; }
