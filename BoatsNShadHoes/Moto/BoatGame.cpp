@@ -372,10 +372,6 @@ void BoatGame::UpdateScene(float dt)
 		0,
 		0);
 
-	Entity* e = entities[0];
-	e->rotation = XMVectorSetX((entities[0])->rotation, XMVectorGetX(entities[0]->rotation) + dt);
-	e->rotation = XMVectorSetZ((entities[0])->rotation, XMVectorGetZ(entities[0]->rotation) + dt);
-
 	// Toggle drawing entities coordinates in debug.
 	// TODO: Needs to be set to KeyUp once we have that implemented.
 	if (GetAsyncKeyState('I'))
