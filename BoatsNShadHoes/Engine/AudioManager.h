@@ -75,9 +75,7 @@ class AudioManager
 private:
 	uint32_t audioFrequency;
 	ALenum audioFormat;
-	uint32_t size;
 
-	char* data;
 	std::vector<char> vectorData;
 
 public:

@@ -8,7 +8,6 @@
  */
 AudioManager::AudioManager()
 {
-	data = nullptr;
 	vectorData = std::vector<char>();
 }
 
@@ -19,7 +18,6 @@ AudioManager::AudioManager()
  */
 AudioManager::AudioManager(std::string filepath)
 {
-	data = nullptr;
 	vectorData = std::vector<char>();
 
 	// check file extension
@@ -44,24 +42,23 @@ AudioManager::AudioManager(std::string filepath)
  * Clear up any necessary memory
  */
 AudioManager::~AudioManager()
-{
-	if(data != nullptr)
-		delete[] data;
-}
+{ }
 
 /*
  * Returns our sound data (in bytes).
  */
 char* AudioManager::audioData()
 {
+	return &vectorData[0];
+	/*
 	if(data == nullptr)
 	{
-		data = &vectorData[0];
+		data = ;
 		return data;
 	}
 
 	else
-		return data;
+		return data;*/
 }
 
 /*
@@ -73,7 +70,7 @@ uint32_t AudioManager::dataSize() const
 
 	//return (uint32_t)vectorData.size();
 
-	return size;
+	return vectorData.size();
 }
 
 /*
@@ -135,6 +132,10 @@ ALenum AudioManager::format() const
 
 void AudioManager::loadOGG(std::string filepath)
 {
+#if defined(DEBUG) | defined(_DEBUG)
+	time_t timer = time(NULL);
+#endif
+
 	FILE* soundFile = NULL;
 
 	vorbis_info* pInfo;
@@ -164,63 +165,41 @@ void AudioManager::loadOGG(std::string filepath)
 		char array[AUDIO_BUFFER_SIZE];
 		int bitStream;
 
-		//data = new char[0];
-		//long currentSize = 0;
-
-		//vectorData = std::vector<char>();
-
 		do{
 			// read up to a buffer's worth of decoded sound data
 			bytes = ov_read(&oggFile, array, AUDIO_BUFFER_SIZE, 0, 2, 1, &bitStream);
 
-			// increase size of buffer
-			//data = (char*) realloc(data, currentSize + AUDIO_BUFFER_SIZE * sizeof(char));
-
-			//currentSize += AUDIO_BUFFER_SIZE;
-
 			// append to end of buffer
 			vectorData.insert(vectorData.end(), array, array + bytes);
-			//strcat(data, array);
-			//strcat_s(data, currentSize, array);
 
 		}while (bytes>0); // while not End of File
-
-		//vectorData.insert(vectorData.end(), '\0');
-
-		// set size
-		size = (uint32_t)vectorData.size();
-		//size = sizeof(data)/sizeof(char);
-
-		data = new char[size];
-
-		time_t timer;
 		
-		timer = time(NULL);
-
-		// copy data over! :D
-		for(int i=0; i < vectorData.size(); i++)
-			data[i] = vectorData[i];
-
-		//std::copy(vectorData.begin(), vectorData.end(), data);
-
-		std::cout << difftime(timer, time(NULL)) << std::endl;
-
 		// clean up memory
 		ov_clear(&oggFile);
 	}
 
 	catch(char* error)
 	{
+		std::cerr << error << " trying to load " << filepath << std::endl;
+
 		ov_clear(&oggFile);
 	}
+
+#if defined(DEBUG) | defined(_DEBUG)
+	std::cout << "Took " << -difftime(timer, time(NULL)) << " seconds to load : " << filepath <<std::endl;
+#endif
 }
 
 /* 
  * Loads the WAVE file and stores all of the information for it
  * in our variables
  */
-void AudioManager::loadWAV(std::string filename)
+void AudioManager::loadWAV(std::string filepath)
 {
+#if defined(DEBUG) | defined(_DEBUG)
+	time_t timer = time(NULL);
+#endif
+
 	FILE* soundFile = NULL;
 	RIFF_Header* riff_header = new RIFF_Header();
 	WAVE_Format* wave_format = new WAVE_Format();
@@ -229,7 +208,7 @@ void AudioManager::loadWAV(std::string filename)
 	try
 	{
 		// safely opens the file using read-only binary mode
-		fopen_s(&soundFile, filename.c_str(), "rb");
+		fopen_s(&soundFile, filepath.c_str(), "rb");
 
 		/* 
 		 * read in the first chunk of memory into our struct
@@ -327,11 +306,11 @@ void AudioManager::loadWAV(std::string filename)
 		   wave_data->subChunkID[3] != 'a')
 				throw("Invalid data header!");
 
-		size = wave_data->subChunk2Size;
-		data = new char[wave_data->subChunk2Size];
+		uint32_t size = wave_data->subChunk2Size;
+		vectorData.resize(size);
 
 		// read in the raw sound data
-		if(!fread(data, wave_data->subChunk2Size, 1, soundFile))
+		if(!fread(&vectorData[0], size, 1, soundFile))
 			throw("error loading WAVE data!");
 
 		// clean up memory
@@ -345,7 +324,7 @@ void AudioManager::loadWAV(std::string filename)
 	// catch any errors we throw
 	catch(char* error)
 	{
-		std::cerr << error << " trying to load " << filename << std::endl;
+		std::cerr << error << " trying to load " << filepath << std::endl;
 
 		// clean up memory if necessary
 		//if(soundFile != NULL)
@@ -355,4 +334,8 @@ void AudioManager::loadWAV(std::string filename)
 		delete wave_format;
 		delete wave_data;
 	}
+
+#if defined(DEBUG) | defined(_DEBUG)
+	std::cout << "Took " << -difftime(timer, time(NULL)) << " seconds to load : " << filepath <<std::endl;
+#endif
 }
