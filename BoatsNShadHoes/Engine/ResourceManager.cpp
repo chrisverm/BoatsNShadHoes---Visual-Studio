@@ -6,6 +6,7 @@ SRVMap ResourceManager::srvs;
 SSMap ResourceManager::samplerStates;
 PSMap ResourceManager::pixelShaders;
 VSMap ResourceManager::vertexShaders;
+ILMap ResourceManager::inputLayouts;
 
 bool ResourceManager::AddMesh(std::string id, Mesh* mesh)
 {
@@ -13,7 +14,6 @@ bool ResourceManager::AddMesh(std::string id, Mesh* mesh)
 		return false;
 
 	meshes[id] = mesh;
-	
 
 	return true;
 }
@@ -68,6 +68,16 @@ bool ResourceManager::AddVertexShader(std::string id, ID3D11VertexShader* vertex
 	return true;
 }
 
+bool ResourceManager::AddInputLayout(std::string id, ID3D11InputLayout* inputLayout)
+{
+	if (inputLayouts[id] != nullptr)
+		return false;
+
+	inputLayouts[id] = inputLayout;
+
+	return true;
+}
+
 Mesh* ResourceManager::GetMesh(std::string id)
 { return meshes[id]; }
 
@@ -85,6 +95,9 @@ ID3D11PixelShader* ResourceManager::GetPixelShader(std::string id)
 
 ID3D11VertexShader* ResourceManager::GetVertexShader(std::string id)
 { return vertexShaders[id]; }
+
+ID3D11InputLayout* ResourceManager::GetInputLayout(std::string id)
+{ return inputLayouts[id]; }
 
 void ResourceManager::Release()
 {
@@ -104,5 +117,8 @@ void ResourceManager::Release()
 	{ ReleaseMacro(it->second); }
 
 	for (PSMap::iterator it = pixelShaders.begin(); it != pixelShaders.end(); it++)
+	{ ReleaseMacro(it->second); }
+
+	for (ILMap::iterator it = inputLayouts.begin(); it != inputLayouts.end(); it++)
 	{ ReleaseMacro(it->second); }
 }

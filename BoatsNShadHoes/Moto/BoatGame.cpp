@@ -49,7 +49,6 @@ BoatGame::~BoatGame()
 	// Close cmd window.
 	_fcloseall();
 
-	ReleaseMacro(inputLayout);
 	ReleaseMacro(vsPerFrameConstantBuffer);
 	ReleaseMacro(vsPerModelConstantBuffer);
 
@@ -186,14 +185,6 @@ bool BoatGame::Init(int iconResource)
 
 void BoatGame::LoadShadersAndInputLayout()
 {
-	D3D11_INPUT_ELEMENT_DESC vertexDesc[] =
-	{
-		{ "POSITION", 0, DXGI_FORMAT_R32G32B32_FLOAT,	0, 0,	D3D11_INPUT_PER_VERTEX_DATA, 0 },
-		{ "TEXCOORD", 0, DXGI_FORMAT_R32G32_FLOAT,		0, 12,	D3D11_INPUT_PER_VERTEX_DATA, 0 }, 
-		{ "NORMAL"	, 0, DXGI_FORMAT_R32G32B32_FLOAT,	0, 20,	D3D11_INPUT_PER_VERTEX_DATA, 0 },
-		{ "COLOR"	, 0, DXGI_FORMAT_R32G32B32_FLOAT,	0, 32,	D3D11_INPUT_PER_VERTEX_DATA, 0 }
-	};
-
 	// Load Vertex Shader --------------------------------------
 	ID3DBlob* vsBlob;
 	D3DReadFileToBlob(L"Shaders/VS_TexturedColored.cso", &vsBlob);
@@ -207,13 +198,15 @@ void BoatGame::LoadShadersAndInputLayout()
 		&vertexShader));
 	ResourceManager::AddVertexShader("Texture", vertexShader);
 
+	ID3D11InputLayout* inputLayout;
 	// Before cleaning up the data, create the input layout
 	HR(device->CreateInputLayout(
-		vertexDesc,
-		ARRAYSIZE(vertexDesc),
+		vertex_PUNC_Desc,
+		ARRAYSIZE(vertex_PUNC_Desc),
 		vsBlob->GetBufferPointer(),
 		vsBlob->GetBufferSize(),
 		&inputLayout));
+	ResourceManager::AddInputLayout("PUNC", inputLayout);
 
 	// Clean up
 	ReleaseMacro(vsBlob);
@@ -303,14 +296,14 @@ void BoatGame::LoadResources()
 	ResourceManager::AddSamplerState("crate", ss);
 
 	// Meshes -------------------------------------------
-	Mesh* cube = Mesh::LoadFromOBJ("Resources/crate_obj.obj");
-	cube->Initialize(device);
+	Mesh* cube = Mesh::LoadFromOBJ2("Resources/crate_obj.obj");
+	cube->Initialize(device, ResourceManager::GetInputLayout("PUNC"));
 
-	Mesh* quad = Mesh::LoadFromOBJ("Resources/water_obj.obj");
-	quad->Initialize(device);
+	Mesh* quad = Mesh::LoadFromOBJ2("Resources/water_obj.obj");
+	quad->Initialize(device, ResourceManager::GetInputLayout("PUNC"));
 
 	// Begin Disgusting.
-	Vertex temp[] = 
+	Vertex_PUNC temp[] = 
 	{
 		{ XMFLOAT3(0,0,0), XMFLOAT2(0,0), XMFLOAT3(0,0,0), XMFLOAT4(0,1,0,1) },
 		{ XMFLOAT3(0,0,2), XMFLOAT2(0,0), XMFLOAT3(0,0,0), XMFLOAT4(0,1,0,1) },
@@ -320,7 +313,7 @@ void BoatGame::LoadResources()
 		{ XMFLOAT3(2,0,0), XMFLOAT2(0,0), XMFLOAT3(0,0,0), XMFLOAT4(1,0,0,1) }
 	};
 
-	Vertex* verts = new Vertex[6];
+	Vertex_PUNC* verts = new Vertex_PUNC[6];
 
 	for (int i = 0; i < 6; i++)
 	{ verts[i] = temp[i]; }
@@ -332,7 +325,7 @@ void BoatGame::LoadResources()
 	// End Disgusting.
 
 	Mesh* coordinates = new Mesh(verts, 6, indices, 6);
-	coordinates->Initialize(device);
+	coordinates->Initialize(device, ResourceManager::GetInputLayout("PUNC"));
 
 	ResourceManager::AddMesh("coordinates", coordinates);
 	ResourceManager::AddMesh("cube", cube);
@@ -431,7 +424,7 @@ void BoatGame::DrawScene()
 		0);
 
 	// Set up the input 
-	deviceContext->IASetInputLayout(inputLayout);
+	//deviceContext->IASetInputLayout(inputLayout);
 
 	deviceContext->VSSetConstantBuffers(0, 1, &vsPerFrameConstantBuffer);
 	deviceContext->VSSetConstantBuffers(1, 1, &vsPerModelConstantBuffer);

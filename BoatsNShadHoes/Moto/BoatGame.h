@@ -40,7 +40,6 @@ public:
 
 protected:
 
-	ID3D11InputLayout* inputLayout;
 	ID3D11Buffer* vsPerFrameConstantBuffer;
 	ID3D11Buffer* vsPerModelConstantBuffer;
 	VSPerFrameData* vsPerFrameData;
