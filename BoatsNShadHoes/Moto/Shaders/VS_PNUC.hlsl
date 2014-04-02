@@ -8,7 +8,7 @@ cbuffer perModel : register( b0 )
 	matrix projection;
 };
 
-cbuffer perFrame : register(b1)
+cbuffer perFrame : register( b1 )
 {
 	matrix world;
 };
@@ -18,8 +18,8 @@ cbuffer perFrame : register(b1)
 struct VertexShaderInput
 {
 	float3 position	: POSITION;
-	float2 uv		: TEXCOORD0;
 	float3 normal	: NORMAL;
+	float2 uv		: TEXCOORD0;
 	float4 color	: COLOR;
 };
 
@@ -29,8 +29,8 @@ struct VertexShaderInput
 struct VertexToPixel
 {
 	float4 position	: SV_POSITION;	// System Value Position - Has specific meaning to the pipeline!
-	float2 uv		: TEXCOORD0;
 	float3 normal	: NORMAL;
+	float2 uv		: TEXCOORD0;
 	float4 color	: Color;
 };
 

@@ -103,7 +103,7 @@ bool BoatGame::Init(int iconResource)
 	camDesc.NearPlane = 0.1f;
 	camDesc.FarPlane = 100.0f;
 	camDesc.InitialRoll = new float(0.0f);
-	camDesc.InitialPosition = new XMVECTOR(XMVectorSet(0.0f, 0.0f, -5.0f, 0.0f));
+	camDesc.InitialPosition = new XMVECTOR(XMVectorSet(0.0f, 0.0f, -10.0f, 0.0f));
 	camDesc.InitialForward = new XMVECTOR(XMVectorSet(0.0f, 0.0f, 1.0f, 0.0f));
 	camDesc.Position = STATIC;
 	camDesc.Forward = STATIC;
@@ -185,59 +185,97 @@ bool BoatGame::Init(int iconResource)
 
 void BoatGame::LoadShadersAndInputLayout()
 {
-	// Load Vertex Shader --------------------------------------
-	ID3DBlob* vsBlob;
-	D3DReadFileToBlob(L"Shaders/VS_TexturedColored.cso", &vsBlob);
+	ID3DBlob* vsBlob = nullptr;
+	ID3DBlob* psBlob = nullptr;
+	ID3D11InputLayout* inputLayout = nullptr;
+	ID3D11VertexShader* vertexShader = nullptr;
+	ID3D11PixelShader* pixelShader = nullptr;
 
-	ID3D11VertexShader* vertexShader;
-	// Create the shader on the device
+	// PNU Shaders -------------------------------------
+	D3DReadFileToBlob(L"Shaders/VS_PNU.cso", &vsBlob);
+	D3DReadFileToBlob(L"Shaders/PS_PNU.cso", &psBlob);
+
+	HR(device->CreateInputLayout(
+		vertex_PNU_Desc,
+		ARRAYSIZE(vertex_PNU_Desc),
+		vsBlob->GetBufferPointer(),
+		vsBlob->GetBufferSize(),
+		&inputLayout));
+	ResourceManager::AddInputLayout("PNU", inputLayout);
+
 	HR(device->CreateVertexShader(
 		vsBlob->GetBufferPointer(),
 		vsBlob->GetBufferSize(),
 		NULL,
 		&vertexShader));
-	ResourceManager::AddVertexShader("Texture", vertexShader);
+	ResourceManager::AddVertexShader("PNU", vertexShader);
 
-	ID3D11InputLayout* inputLayout;
-	// Before cleaning up the data, create the input layout
+	HR(device->CreatePixelShader(
+		psBlob->GetBufferPointer(),
+		psBlob->GetBufferSize(),
+		NULL,
+		&pixelShader));
+	ResourceManager::AddPixelShader("PNU", pixelShader);
+
+	ReleaseMacro(vsBlob);
+	ReleaseMacro(psBlob);
+
+	// PNC Shaders -------------------------------------
+	D3DReadFileToBlob(L"Shaders/VS_PNC.cso", &vsBlob);
+	D3DReadFileToBlob(L"Shaders/PS_PNC.cso", &psBlob);
+
 	HR(device->CreateInputLayout(
-		vertex_PUNC_Desc,
-		ARRAYSIZE(vertex_PUNC_Desc),
+		vertex_PNC_Desc,
+		ARRAYSIZE(vertex_PNC_Desc),
 		vsBlob->GetBufferPointer(),
 		vsBlob->GetBufferSize(),
 		&inputLayout));
-	ResourceManager::AddInputLayout("PUNC", inputLayout);
+	ResourceManager::AddInputLayout("PNC", inputLayout);
 
-	// Clean up
-	ReleaseMacro(vsBlob);
+	HR(device->CreateVertexShader(
+		vsBlob->GetBufferPointer(),
+		vsBlob->GetBufferSize(),
+		NULL,
+		&vertexShader));
+	ResourceManager::AddVertexShader("PNC", vertexShader);
 
-	// Load Pixel Shader ---------------------------------------
-	ID3DBlob* psBlob;
-	D3DReadFileToBlob(L"Shaders/PS_TexturedColored.cso", &psBlob);
-
-	ID3D11PixelShader* texturePixelShader;
-	// Create the shader on the device
 	HR(device->CreatePixelShader(
 		psBlob->GetBufferPointer(),
 		psBlob->GetBufferSize(),
 		NULL,
-		&texturePixelShader));
-	ResourceManager::AddPixelShader("Texture", texturePixelShader);
+		&pixelShader));
+	ResourceManager::AddPixelShader("PNC", pixelShader);
 
-	// Clean up
+	ReleaseMacro(vsBlob);
 	ReleaseMacro(psBlob);
 
-	D3DReadFileToBlob(L"Shaders/PS_Colored.cso", &psBlob);
+	// PNUC Shaders ------------------------------------
+	D3DReadFileToBlob(L"Shaders/VS_PNUC.cso", &vsBlob);
+	D3DReadFileToBlob(L"Shaders/PS_PNUC.cso", &psBlob);
 
-	ID3D11PixelShader* colorPixelShader;
-	// Create the shader on the device
+	HR(device->CreateInputLayout(
+		vertex_PNUC_Desc,
+		ARRAYSIZE(vertex_PNUC_Desc),
+		vsBlob->GetBufferPointer(),
+		vsBlob->GetBufferSize(),
+		&inputLayout));
+	ResourceManager::AddInputLayout("PNUC", inputLayout);
+
+	HR(device->CreateVertexShader(
+		vsBlob->GetBufferPointer(),
+		vsBlob->GetBufferSize(),
+		NULL,
+		&vertexShader));
+	ResourceManager::AddVertexShader("PNUC", vertexShader);
+
 	HR(device->CreatePixelShader(
 		psBlob->GetBufferPointer(),
 		psBlob->GetBufferSize(),
 		NULL,
-		&colorPixelShader));
-	ResourceManager::AddPixelShader("Color", colorPixelShader);
+		&pixelShader));
+	ResourceManager::AddPixelShader("PNUC", pixelShader);
 
+	ReleaseMacro(vsBlob);
 	ReleaseMacro(psBlob);
 }
 
@@ -296,24 +334,25 @@ void BoatGame::LoadResources()
 	ResourceManager::AddSamplerState("crate", ss);
 
 	// Meshes -------------------------------------------
-	Mesh* cube = Mesh::LoadFromOBJ2("Resources/crate_obj.obj");
-	cube->Initialize(device, ResourceManager::GetInputLayout("PUNC"));
+	std::string* vertexType = new std::string();
+	Mesh* cube = Mesh::LoadFromOBJ("Resources/boat_obj.obj");
+	cube->Initialize(device, ResourceManager::GetInputLayout(cube->ILName()));
 
-	Mesh* quad = Mesh::LoadFromOBJ2("Resources/water_obj.obj");
-	quad->Initialize(device, ResourceManager::GetInputLayout("PUNC"));
+	Mesh* quad = Mesh::LoadFromOBJ("Resources/water_obj.obj");
+	quad->Initialize(device, ResourceManager::GetInputLayout(quad->ILName()));
 
 	// Begin Disgusting.
-	Vertex_PUNC temp[] = 
+	Vertex_PNUC temp[] = 
 	{
-		{ XMFLOAT3(0,0,0), XMFLOAT2(0,0), XMFLOAT3(0,0,0), XMFLOAT4(0,1,0,1) },
-		{ XMFLOAT3(0,0,2), XMFLOAT2(0,0), XMFLOAT3(0,0,0), XMFLOAT4(0,1,0,1) },
-		{ XMFLOAT3(0,0,0), XMFLOAT2(0,0), XMFLOAT3(0,0,0), XMFLOAT4(0,0,1,1) },
-		{ XMFLOAT3(0,2,0), XMFLOAT2(0,0), XMFLOAT3(0,0,0), XMFLOAT4(0,0,1,1) },
-		{ XMFLOAT3(0,0,0), XMFLOAT2(0,0), XMFLOAT3(0,0,0), XMFLOAT4(1,0,0,1) },
-		{ XMFLOAT3(2,0,0), XMFLOAT2(0,0), XMFLOAT3(0,0,0), XMFLOAT4(1,0,0,1) }
+		{ XMFLOAT3(0,0,0), XMFLOAT3(0,0,0), XMFLOAT2(0,0), XMFLOAT4(0,1,0,1) },
+		{ XMFLOAT3(0,0,2), XMFLOAT3(0,0,0), XMFLOAT2(0,0), XMFLOAT4(0,1,0,1) },
+		{ XMFLOAT3(0,0,0), XMFLOAT3(0,0,0), XMFLOAT2(0,0), XMFLOAT4(0,0,1,1) },
+		{ XMFLOAT3(0,2,0), XMFLOAT3(0,0,0), XMFLOAT2(0,0), XMFLOAT4(0,0,1,1) },
+		{ XMFLOAT3(0,0,0), XMFLOAT3(0,0,0), XMFLOAT2(0,0), XMFLOAT4(1,0,0,1) },
+		{ XMFLOAT3(2,0,0), XMFLOAT3(0,0,0), XMFLOAT2(0,0), XMFLOAT4(1,0,0,1) }
 	};
 
-	Vertex_PUNC* verts = new Vertex_PUNC[6];
+	Vertex_PNUC* verts = new Vertex_PNUC[6];
 
 	for (int i = 0; i < 6; i++)
 	{ verts[i] = temp[i]; }
@@ -325,7 +364,7 @@ void BoatGame::LoadResources()
 	// End Disgusting.
 
 	Mesh* coordinates = new Mesh(verts, 6, indices, 6);
-	coordinates->Initialize(device, ResourceManager::GetInputLayout("PUNC"));
+	coordinates->Initialize(device, ResourceManager::GetInputLayout("PNUC"));
 
 	ResourceManager::AddMesh("coordinates", coordinates);
 	ResourceManager::AddMesh("cube", cube);
@@ -333,10 +372,10 @@ void BoatGame::LoadResources()
 
 	// Materials -----------------------------------------
 	Material* crateMat = new Material(srv, ss);
-	crateMat->Initialize(ResourceManager::GetVertexShader("Texture"), ResourceManager::GetPixelShader("Texture"));
+	crateMat->Initialize(ResourceManager::GetVertexShader("PNUC"), ResourceManager::GetPixelShader("PNUC"));
 
 	Material* waterMat = new Material(nullptr, nullptr);
-	waterMat->Initialize(ResourceManager::GetVertexShader("Texture"), ResourceManager::GetPixelShader("Color"));
+	waterMat->Initialize(ResourceManager::GetVertexShader("PNC"), ResourceManager::GetPixelShader("PNC"));
 
 	ResourceManager::AddMaterial("crate", crateMat);
 	ResourceManager::AddMaterial("water", waterMat);

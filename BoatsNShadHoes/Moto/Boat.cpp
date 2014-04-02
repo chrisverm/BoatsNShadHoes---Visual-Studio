@@ -4,7 +4,7 @@ using namespace DirectX;
 Boat::Boat(std::string meshId, std::string matId) 
 	: MoveableEntity(ResourceManager::GetMesh(meshId), ResourceManager::GetMaterial(matId))
 { 
-	angualrVelocity = XMVectorSet(0,1,1,0);
+	//angualrVelocity = XMVectorSet(0,1,1,0);
 	//velocity = XMVectorSet(0,0.25f,0.5f,0);
 
 	//friction = 0.9;

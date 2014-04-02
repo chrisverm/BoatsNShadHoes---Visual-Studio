@@ -7,7 +7,6 @@ SamplerState mySampler : register( s0 );
 struct VertexToPixel
 {
 	float4 position	: SV_POSITION;
-	float2 uv		: TEXCOORD0;
 	float3 normal	: NORMAL;
 	float4 color	: COLOR;
 };
@@ -17,8 +16,8 @@ float4 main(VertexToPixel input) : SV_TARGET
 {
 	input.normal = normalize(input.normal);
 
-	float3 lightDirection = normalize(float3(0, 0, 1));
+	float3 lightDirection = normalize(float3(0.0f, -1.0f, 1.0f));
 	float nDotL = saturate(dot(input.normal, -lightDirection));
 
-	return myTexture.Sample(mySampler, input.uv) * nDotL;
+	return input.color * nDotL;
 }
