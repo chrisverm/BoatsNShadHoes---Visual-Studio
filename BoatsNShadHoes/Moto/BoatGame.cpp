@@ -406,34 +406,44 @@ void BoatGame::UpdateScene(float dt)
 
 	// Toggle drawing entities coordinates in debug.
 	// TODO: Needs to be set to KeyUp once we have that implemented.
-	if (GetAsyncKeyState('I'))
+	if (Input::KeyUp('I'))
 		drawCoordinates = !drawCoordinates;
 
 	switch (state)
 	{
 		case Menu:
-			if (GetAsyncKeyState('G'))
+			if (Input::KeyUp('G'))
 			{
 				state = GameLoop;
 				main_bgm->start();
+				printf("Now in Game!\n");
 			}
 			break;
 		case GameLoop:
-			if (GetAsyncKeyState('P'))
+			if (Input::KeyUp('P'))
+			{
+				printf("Pause\n");
 				state = Paused;
+			}
 			
 			// change velocity of audio
-			if (GetAsyncKeyState('Q'))
+			if (Input::KeyUp('Q'))
 				main_bgm->changeVelocity(-.0001f);
-			if (GetAsyncKeyState('W'))
+			if (Input::KeyUp('W'))
 				main_bgm->changeVelocity(+.0001f);
 
 			break;
 		case Paused:
-			if (GetAsyncKeyState('G'))
+			if (Input::KeyUp('G'))
+			{
+				printf("Back to Game.\n");
 				state = GameLoop;
-			if (GetAsyncKeyState('M'))
+			}
+			if (Input::KeyUp('M'))
+			{
+				printf("Back to Menu.\n");
 				state = Menu;
+			}
 			break;
 		default:
 			break;

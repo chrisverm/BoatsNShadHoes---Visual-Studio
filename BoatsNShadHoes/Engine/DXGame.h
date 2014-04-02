@@ -61,11 +61,6 @@ public:
 	virtual void DrawScene()=0; 
 	virtual LRESULT MsgProc(HWND hwnd, UINT msg, WPARAM wParam, LPARAM lParam);
 
-	// Convenience overrides for handling mouse input.
-	virtual void OnMouseDown(WPARAM btnState, int x, int y){ }
-	virtual void OnMouseUp(WPARAM btnState, int x, int y) {}
-	virtual void OnMouseMove(WPARAM btnState, int x, int y){}
-
 private:
 	// Handles window and Direct3D initialization
 	bool InitMainWindow(int = 0);
