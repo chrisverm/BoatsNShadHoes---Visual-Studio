@@ -147,6 +147,11 @@ copy "$(OutDir)$(TargetName)$(TargetExt)" "$(SolutionDir)Binary"</Command>
   <ItemGroup>
     <ResourceCompile Include="Moto.rc" />
   </ItemGroup>
+  <ItemGroup>
+    <Text Include="..\Resources\Boat_obj.obj">
+      <FileType>Document</FileType>
+    </Text>
+  </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">
   </ImportGroup>

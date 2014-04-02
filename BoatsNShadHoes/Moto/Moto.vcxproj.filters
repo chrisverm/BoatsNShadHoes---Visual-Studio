@@ -66,6 +66,9 @@
     <Text Include="..\Resources\water_obj.obj">
       <Filter>Resource Files\Objects</Filter>
     </Text>
+    <Text Include="..\Resources\Boat_obj.obj">
+      <Filter>Resource Files\Objects</Filter>
+    </Text>
   </ItemGroup>
   <ItemGroup>
     <ResourceCompile Include="Moto.rc">
