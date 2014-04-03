@@ -1,4 +1,5 @@
 #include "Boat.h"
+#include "Input.h"
 
 using namespace DirectX;
 Boat::Boat(std::string meshId, std::string matId) 
@@ -7,7 +8,7 @@ Boat::Boat(std::string meshId, std::string matId)
 	//angualrVelocity = XMVectorSet(0,1,1,0);
 	//velocity = XMVectorSet(0,0.25f,0.5f,0);
 
-	//friction = 0.9;
+	friction = 0.9;
 }
 
 Boat::~Boat()
@@ -20,5 +21,19 @@ void Boat::Initialize(ID3D11Buffer* modelConstBuffer, VSPerModelData* modelConst
 
 void Boat::Update(ID3D11DeviceContext* deviceContext, float dt)
 {
+	if (Input::KeyDown('W'))
+	{
+		velocity = XMVECTOR(*Forward);
+	}
+
+	if (Input::KeyDown('Q'))
+	{
+		angualrVelocity = -XMVECTOR(*Up);
+	}
+	if (Input::KeyDown('E'))
+	{
+		angualrVelocity = XMVECTOR(*Up);
+	}
+
 	MoveableEntity::Update(deviceContext, dt);
 }
