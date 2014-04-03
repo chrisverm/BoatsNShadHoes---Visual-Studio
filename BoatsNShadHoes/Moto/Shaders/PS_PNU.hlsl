@@ -10,8 +10,7 @@ struct VertexToPixel
 	float4 position	: SV_POSITION;
 	float3 normal	: NORMAL;
 	float2 uv		: TEXCOORD0;
-	float4 color	: COLOR;
-	
+
 	float3 worldPos : POSITION;
 	PointLight pntLights[NUM_PNT_LIGHTS] : NEARESTLIGHT;
 };
@@ -44,5 +43,5 @@ float4 main(VertexToPixel input) : SV_TARGET
 		spec	+= S;
 	}
 
-	return myTexture.Sample(mySampler, input.uv) * input.color * (ambient + diffuse + spec);
+	return myTexture.Sample(mySampler, input.uv) * (ambient + diffuse + spec);
 }

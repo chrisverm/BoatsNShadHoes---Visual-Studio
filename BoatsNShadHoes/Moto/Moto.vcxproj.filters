@@ -61,10 +61,10 @@
     <FxCompile Include="Shaders\VS_PNC.hlsl">
       <Filter>Resource Files\Shaders</Filter>
     </FxCompile>
-    <FxCompile Include="PS_PNU.hlsl">
+    <FxCompile Include="Shaders\PS_PNU.hlsl">
       <Filter>Resource Files\Shaders</Filter>
     </FxCompile>
-    <FxCompile Include="VS_PNU.hlsl">
+    <FxCompile Include="Shaders\VS_PNU.hlsl">
       <Filter>Resource Files\Shaders</Filter>
     </FxCompile>
   </ItemGroup>
@@ -88,5 +88,10 @@
     <Image Include="..\Resources\ship_icon.ico">
       <Filter>Resource Files\Icon</Filter>
     </Image>
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Shaders\Lighting.hlsli">
+      <Filter>Resource Files\Shaders</Filter>
+    </None>
   </ItemGroup>
 </Project>

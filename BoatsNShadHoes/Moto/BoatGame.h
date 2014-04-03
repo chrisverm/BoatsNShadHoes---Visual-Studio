@@ -19,6 +19,8 @@
 #include "AudioPlayer.h"
 #include "AudioManager.h"
 
+#include "Lights.h"
+
 enum GameState
 {
 	Menu,
@@ -43,8 +45,10 @@ protected:
 
 	ID3D11Buffer* vsPerFrameConstantBuffer;
 	ID3D11Buffer* vsPerModelConstantBuffer;
+	ID3D11Buffer* vsPerSceneConstantBuffer;
 	VSPerFrameData* vsPerFrameData;
 	VSPerModelData* vsPerModelData;
+	VSPerSceneData* vsPerSceneData;
 
 	void LoadShadersAndInputLayout();
 	void CreateGeometryBuffers();

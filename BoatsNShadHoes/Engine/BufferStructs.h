@@ -2,6 +2,11 @@
 #define BUFFER_STRUCTS_H
 
 #include <DirectXMath.h>
+#include "Lights.h"
+
+#define NUM_DIR_LIGHTS 0
+#define NUM_PNT_LIGHTS 1
+#define NUM_SPT_LIGHTS 0
 
 struct VSPerFrameData
 {
@@ -12,6 +17,13 @@ struct VSPerFrameData
 struct VSPerModelData
 {
 	DirectX::XMFLOAT4X4 model;
+};
+
+struct VSPerSceneData
+{
+	//DirectionalLight dLight[NUM_DIR_LIGHTS];
+	PointLight pntLights[NUM_PNT_LIGHTS];
+	//SpotLight sLight[NUM_SPT_LIGHTS];
 };
 
 #endif

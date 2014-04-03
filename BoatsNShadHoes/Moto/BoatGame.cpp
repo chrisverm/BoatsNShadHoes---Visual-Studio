@@ -51,9 +51,11 @@ BoatGame::~BoatGame()
 
 	ReleaseMacro(vsPerFrameConstantBuffer);
 	ReleaseMacro(vsPerModelConstantBuffer);
+	ReleaseMacro(vsPerSceneConstantBuffer);
 
 	delete vsPerFrameData;
 	delete vsPerModelData;
+	delete vsPerSceneData;
 	
 	for (std::vector<Entity*>::iterator it = entities.begin(); it != entities.end() ; it++)
 	{ delete (*it); }
@@ -76,6 +78,7 @@ bool BoatGame::Init(int iconResource)
 {
 	vsPerFrameData = new VSPerFrameData();
 	vsPerModelData = new VSPerModelData();
+	vsPerSceneData = new VSPerSceneData();
 
 	if (!DXGame::Init(iconResource))
 		return false;
@@ -179,6 +182,22 @@ bool BoatGame::Init(int iconResource)
 	main_bgm->init();
 	main_bgm->generateBufferData();
 	main_bgm->setLooping(AL_TRUE);
+
+	// Lighting Setup ----------------------------------
+	PointLight pntLight1;
+	pntLight1.Range = 2.0f;
+	pntLight1.Position = XMFLOAT3(0.5f, -0.5f, -1.5f);
+	pntLight1.Diffuse = XMFLOAT4(0.0f, 0.0f, 0.0f, 0.0f);
+	pntLight1.Attenuation = XMFLOAT3(0.0f, 0.2f, 1.0f);
+
+	vsPerSceneData->pntLights[0] = pntLight1;
+	deviceContext->UpdateSubresource(
+		vsPerSceneConstantBuffer,
+		0,
+		NULL,
+		vsPerSceneData,
+		0,
+		0);
 
 	return true;
 }
@@ -305,6 +324,18 @@ void BoatGame::CreateGeometryBuffers()
 		&vsPerModelBufferDesc,
 		NULL,
 		&vsPerModelConstantBuffer));
+
+	D3D11_BUFFER_DESC vsPerSceneBufferDesc;
+	vsPerSceneBufferDesc.ByteWidth = sizeof(*vsPerSceneData);
+	vsPerSceneBufferDesc.Usage = D3D11_USAGE_DEFAULT;
+	vsPerSceneBufferDesc.BindFlags = D3D11_BIND_CONSTANT_BUFFER;
+	vsPerSceneBufferDesc.CPUAccessFlags = 0;
+	vsPerSceneBufferDesc.MiscFlags = 0;
+	vsPerSceneBufferDesc.StructureByteStride = 0;
+	HR(device->CreateBuffer(
+		&vsPerSceneBufferDesc,
+		NULL,
+		&vsPerSceneConstantBuffer));
 }
 
 void BoatGame::LoadResources()
@@ -477,6 +508,7 @@ void BoatGame::DrawScene()
 
 	deviceContext->VSSetConstantBuffers(0, 1, &vsPerFrameConstantBuffer);
 	deviceContext->VSSetConstantBuffers(1, 1, &vsPerModelConstantBuffer);
+	deviceContext->VSSetConstantBuffers(2, 1, &vsPerSceneConstantBuffer);
 	
 	for (std::vector<Entity*>::iterator it = entities.begin(); it != entities.end(); it++)
 	{

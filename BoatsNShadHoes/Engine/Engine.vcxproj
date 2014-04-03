@@ -126,6 +126,7 @@ copy "$(SolutionDir)Libraries\" "$(SolutionDir)Binary"</Command>
     <ClInclude Include="GameTimer.h" />
     <ClInclude Include="Globals.h" />
     <ClInclude Include="Input.h" />
+    <ClInclude Include="Lights.h" />
     <ClInclude Include="Material.h" />
     <ClInclude Include="Mesh.h" />
     <ClInclude Include="MoveableEntity.h" />

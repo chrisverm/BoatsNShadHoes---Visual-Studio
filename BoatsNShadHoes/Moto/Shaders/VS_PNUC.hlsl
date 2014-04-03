@@ -1,3 +1,4 @@
+#include "Lighting.hlsli"
 
 // The constant buffer that holds our "per model" data
 // - Each object you draw with this shader will probably have
@@ -11,6 +12,11 @@ cbuffer perModel : register( b0 )
 cbuffer perFrame : register( b1 )
 {
 	matrix world;
+};
+
+cbuffer perScene : register( b2 )
+{
+	PointLight pntLights[NUM_PNT_LIGHTS];
 };
 
 // Defines what kind of data to expect as input
@@ -32,6 +38,9 @@ struct VertexToPixel
 	float3 normal	: NORMAL;
 	float2 uv		: TEXCOORD0;
 	float4 color	: Color;
+	
+	float3 worldPos : POSITION;
+	PointLight pntLights[NUM_PNT_LIGHTS] : NEARESTLIGHT;
 };
 
 // The entry point for our vertex shader
@@ -43,11 +52,14 @@ VertexToPixel main( VertexShaderInput input )
 	// Calculate output position
 	matrix worldViewProj = mul(mul(world, view), projection);
 	output.position = mul(float4(input.position, 1.0f), worldViewProj);
+	output.worldPos = mul(input.position, worldViewProj);
 
 	output.uv	  = input.uv;
 	output.color  = input.color;
 	output.normal = mul(input.normal, (float3x3)world);
 	output.normal = normalize(output.normal);
+
+	output.pntLights = pntLights;
 
 	return output;
 }
