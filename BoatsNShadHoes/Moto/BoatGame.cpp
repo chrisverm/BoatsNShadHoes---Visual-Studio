@@ -56,14 +56,14 @@ BoatGame::~BoatGame()
 	delete vsPerFrameData;
 	delete vsPerModelData;
 	delete vsPerSceneData;
-	
-	for (std::vector<Entity*>::iterator it = entities.begin(); it != entities.end() ; it++)
-	{ delete (*it); }
 
 	alcDestroyContext(audioDeviceContext);
 	alcCloseDevice(audioDevice);
 
 	delete main_bgm;
+
+	for (std::vector<Entity*>::iterator it = entities.begin(); it != entities.end() ; it++)
+	{ delete (*it); }
 
 	ResourceManager::Release();
 	CameraManager::Release();
@@ -186,8 +186,8 @@ bool BoatGame::Init(int iconResource)
 	// Lighting Setup ----------------------------------
 	PointLight pntLight1;
 	pntLight1.Range = 2.0f;
-	pntLight1.Position = XMFLOAT3(0.5f, -0.5f, -1.5f);
-	pntLight1.Diffuse = XMFLOAT4(0.0f, 0.0f, 0.0f, 0.0f);
+	pntLight1.Position = XMFLOAT3(0.5f, 0.5f, -2.5f);
+	pntLight1.Diffuse = XMFLOAT4(1.0f, 0.0f, 0.0f, 1.0f);
 	pntLight1.Attenuation = XMFLOAT3(0.0f, 0.2f, 1.0f);
 
 	vsPerSceneData->pntLights[0] = pntLight1;
@@ -365,7 +365,6 @@ void BoatGame::LoadResources()
 	ResourceManager::AddSamplerState("crate", ss);
 
 	// Meshes -------------------------------------------
-	std::string* vertexType = new std::string();
 	Mesh* cube = Mesh::LoadFromOBJ("Resources/boat_obj.obj");
 	cube->Initialize(device, ResourceManager::GetInputLayout(cube->ILName()));
 
@@ -403,10 +402,10 @@ void BoatGame::LoadResources()
 
 	// Materials -----------------------------------------
 	Material* crateMat = new Material(srv, ss);
-	crateMat->Initialize(ResourceManager::GetVertexShader("PNUC"), ResourceManager::GetPixelShader("PNUC"));
+	crateMat->Initialize(ResourceManager::GetVertexShader(cube->ILName()), ResourceManager::GetPixelShader(cube->ILName()));
 
 	Material* waterMat = new Material(nullptr, nullptr);
-	waterMat->Initialize(ResourceManager::GetVertexShader("PNC"), ResourceManager::GetPixelShader("PNC"));
+	waterMat->Initialize(ResourceManager::GetVertexShader(quad->ILName()), ResourceManager::GetPixelShader(quad->ILName()));
 
 	ResourceManager::AddMaterial("crate", crateMat);
 	ResourceManager::AddMaterial("water", waterMat);

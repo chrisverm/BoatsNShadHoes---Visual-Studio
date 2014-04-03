@@ -40,6 +40,12 @@ Mesh::~Mesh()
 		vertices = nullptr;
 	}
 
+	if (vertices2.data != nullptr)
+	{
+		delete[] vertices2.data;
+		vertices2.data = nullptr;
+	}
+
 	if (indices != nullptr)
 	{
 		delete[] indices;
