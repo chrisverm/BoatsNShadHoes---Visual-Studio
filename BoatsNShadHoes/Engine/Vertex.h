@@ -3,7 +3,7 @@
 
 #include <DirectXMath.h>
 
-struct VERTEX_PNU // are these even needed?
+struct Vertex_PNU // are these even needed?
 {
 	DirectX::XMFLOAT3 Position;
 	DirectX::XMFLOAT3 Normal;
@@ -17,7 +17,7 @@ static D3D11_INPUT_ELEMENT_DESC vertex_PNU_Desc[] =
 	{ "TEXCOORD", 0, DXGI_FORMAT_R32G32_FLOAT,			0, 24,	D3D11_INPUT_PER_VERTEX_DATA, 0 }
 };
 
-struct VERTEX_PNC // are these even needed?
+struct Vertex_PNC // are these even needed?
 {
 	DirectX::XMFLOAT3 Position;
 	DirectX::XMFLOAT3 Normal;

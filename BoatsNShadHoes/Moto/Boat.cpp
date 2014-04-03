@@ -26,13 +26,13 @@ void Boat::Update(ID3D11DeviceContext* deviceContext, float dt)
 		velocity = XMVECTOR(*Forward);
 	}
 
-	if (Input::KeyDown('Q'))
+	if (Input::KeyDown('A'))
 	{
-		angualrVelocity = -XMVECTOR(*Up);
+		angualrVelocity = -XMVECTOR(*Up) / 5;
 	}
-	if (Input::KeyDown('E'))
+	if (Input::KeyDown('D'))
 	{
-		angualrVelocity = XMVECTOR(*Up);
+		angualrVelocity = XMVECTOR(*Up) / 5;
 	}
 
 	MoveableEntity::Update(deviceContext, dt);

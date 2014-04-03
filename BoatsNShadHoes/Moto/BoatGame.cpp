@@ -365,6 +365,14 @@ void BoatGame::LoadResources()
 		&ss));
 	ResourceManager::AddSamplerState("crate", ss);
 
+	HR(CreateWICTextureFromFile(
+		device,
+		deviceContext,
+		L"Resources/water.jpg",
+		0,
+		&srv));
+	ResourceManager::AddSRV("water",srv);
+
 	// Meshes -------------------------------------------
 	Mesh* cube = Mesh::LoadFromOBJ("Resources/boat_obj.obj");
 	cube->Initialize(device, ResourceManager::GetInputLayout(cube->ILName()));
@@ -373,43 +381,53 @@ void BoatGame::LoadResources()
 	quad->Initialize(device, ResourceManager::GetInputLayout(quad->ILName()));
 
 	// Begin Disgusting.
-	Vertex_PNUC temp[] = 
+	Vertex_PNC temp[] = 
 	{
-		{ XMFLOAT3(0,0,0), XMFLOAT3(0,0,0), XMFLOAT2(0,0), XMFLOAT4(0,1,0,1) },
-		{ XMFLOAT3(0,0,2), XMFLOAT3(0,0,0), XMFLOAT2(0,0), XMFLOAT4(0,1,0,1) },
-		{ XMFLOAT3(0,0,0), XMFLOAT3(0,0,0), XMFLOAT2(0,0), XMFLOAT4(0,0,1,1) },
-		{ XMFLOAT3(0,2,0), XMFLOAT3(0,0,0), XMFLOAT2(0,0), XMFLOAT4(0,0,1,1) },
-		{ XMFLOAT3(0,0,0), XMFLOAT3(0,0,0), XMFLOAT2(0,0), XMFLOAT4(1,0,0,1) },
-		{ XMFLOAT3(2,0,0), XMFLOAT3(0,0,0), XMFLOAT2(0,0), XMFLOAT4(1,0,0,1) }
+		{ XMFLOAT3(0,0,0), XMFLOAT3(0,0,0), XMFLOAT4(0,1,0,1) },
+		{ XMFLOAT3(0,0,2), XMFLOAT3(0,0,0), XMFLOAT4(0,1,0,1) },
+		{ XMFLOAT3(0,0,0), XMFLOAT3(0,0,0), XMFLOAT4(0,0,1,1) },
+		{ XMFLOAT3(0,2,0), XMFLOAT3(0,0,0), XMFLOAT4(0,0,1,1) },
+		{ XMFLOAT3(0,0,0), XMFLOAT3(0,0,0), XMFLOAT4(1,0,0,1) },
+		{ XMFLOAT3(2,0,0), XMFLOAT3(0,0,0), XMFLOAT4(1,0,0,1) }
 	};
 
-	Vertex_PNUC* verts = new Vertex_PNUC[6];
+	Vertex_PNC* verts = new Vertex_PNC[6];
 
 	for (int i = 0; i < 6; i++)
 	{ verts[i] = temp[i]; }
 	
+	VertexArray<void*> vertArray = VertexArray<void*>();
+	vertArray.data = verts;
+	vertArray.IndividualBytes = sizeof(Vertex_PNC);
+	vertArray.TotalArrayBytes = 6 * vertArray.IndividualBytes;
+	vertArray.InputLayoutName = "PNC";
+
 	UINT32 itemp[] = { 0,1,2,3,4,5 };
 	UINT32* indices = new UINT[6];
 	for (int i = 0; i < 6; i++)
 	{ indices[i] = itemp[i]; }
 	// End Disgusting.
 
-	Mesh* coordinates = new Mesh(verts, 6, indices, 6);
-	coordinates->Initialize(device, ResourceManager::GetInputLayout("PNUC"));
+	Mesh* coordinates = new Mesh(vertArray, 6, indices, 6);
+	coordinates->Initialize(device, ResourceManager::GetInputLayout("PNC"));
 
 	ResourceManager::AddMesh("coordinates", coordinates);
 	ResourceManager::AddMesh("cube", cube);
 	ResourceManager::AddMesh("quad", quad);
 
 	// Materials -----------------------------------------
-	Material* crateMat = new Material(srv, ss);
+	Material* crateMat = new Material(ResourceManager::GetSRV("crate"), ResourceManager::GetSamplerState("crate"));
 	crateMat->Initialize(ResourceManager::GetVertexShader(cube->ILName()), ResourceManager::GetPixelShader(cube->ILName()));
 
-	Material* waterMat = new Material(nullptr, nullptr);
+	Material* waterMat = new Material(ResourceManager::GetSRV("water"), ResourceManager::GetSamplerState("crate"));
 	waterMat->Initialize(ResourceManager::GetVertexShader(quad->ILName()), ResourceManager::GetPixelShader(quad->ILName()));
+
+	Material* coordinatesMat = new Material(nullptr, nullptr);
+	coordinatesMat->Initialize(ResourceManager::GetVertexShader(coordinates->ILName()), ResourceManager::GetPixelShader(coordinates->ILName()));
 
 	ResourceManager::AddMaterial("crate", crateMat);
 	ResourceManager::AddMaterial("water", waterMat);
+	ResourceManager::AddMaterial("coordinates", coordinatesMat);
 }
 
 void BoatGame::OnResize()
@@ -518,7 +536,7 @@ void BoatGame::DrawScene()
 #if defined(DEBUG) | defined(_DEBUG)
 	if (drawCoordinates)
 	{
-		ResourceManager::GetMaterial("water")->SetShaders(deviceContext);
+		ResourceManager::GetMaterial("coordinates")->SetShaders(deviceContext);
 		Mesh* coords = ResourceManager::GetMesh("coordinates");
 		coords->SetBuffers(deviceContext);
 		deviceContext->IASetPrimitiveTopology(D3D11_PRIMITIVE_TOPOLOGY_LINELIST);
