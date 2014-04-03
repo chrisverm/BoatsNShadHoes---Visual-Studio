@@ -342,6 +342,7 @@ int DXGame::Run()
 				CalculateFrameStats();
 				UpdateScene(timer.DeltaTime());
 				DrawScene();
+				Input::MouseUpdate();
 			}
 		}
 	}
@@ -522,7 +523,7 @@ LRESULT DXGame::MsgProc(HWND hwnd, UINT msg, WPARAM wParam, LPARAM lParam)
 		Input::KeyboardInput(msg, wParam, lParam);
 		return 0;
 	}
-
+	
 	return DefWindowProc(hwnd, msg, wParam, lParam);
 }
 

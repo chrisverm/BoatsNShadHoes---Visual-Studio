@@ -77,3 +77,8 @@ LRESULT Input::KeyboardInput(UINT msg, WPARAM wParam, LPARAM lParam)
 
 	return 0;
 }
+
+void Input::MouseUpdate()
+{
+	previousMouse = currentMouse;
+}

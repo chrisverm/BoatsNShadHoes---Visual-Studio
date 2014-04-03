@@ -180,6 +180,11 @@ copy "$(OutDir)$(TargetName)$(TargetExt)" "$(SolutionDir)Binary"</Command>
   <ItemGroup>
     <None Include="Shaders\Lighting.hlsli" />
   </ItemGroup>
+  <ItemGroup>
+    <Text Include="..\Resources\BasisVectors_obj.obj">
+      <FileType>Document</FileType>
+    </Text>
+  </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">
   </ImportGroup>

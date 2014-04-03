@@ -52,6 +52,8 @@ private:
 
 	static LRESULT MouseInput(UINT, WPARAM, LPARAM);
 	static LRESULT KeyboardInput(UINT, WPARAM, LPARAM);
+
+	static void MouseUpdate();
 };
 
 #endif

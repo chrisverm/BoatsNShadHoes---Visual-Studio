@@ -20,6 +20,7 @@ struct CAMERA_DESC
 	float FieldOfView;
 	float NearPlane;
 	float FarPlane;
+	float AttachedDist;
 	float* InitialRoll;
 	XMVECTOR* InitialPosition;
 	XMVECTOR* InitialForward;
@@ -27,6 +28,7 @@ struct CAMERA_DESC
 	CameraMountState Forward;
 	CameraMountState Roll;
 
+	CAMERA_DESC() { AttachedDist = 0; }
 	~CAMERA_DESC() {}
 };
 
@@ -36,13 +38,12 @@ public:
 	float fieldOfView;
 	float aspectRatio;
 	float nearPlane, farPlane;
+	float attachedDist;
 	float* roll;
 	XMVECTOR* position;
 	XMVECTOR* forward;
 	XMVECTOR* right;
 	XMVECTOR* up;
-
-	float attachedDist;
 
 	Camera(CAMERA_DESC* cDesc);
 	~Camera();

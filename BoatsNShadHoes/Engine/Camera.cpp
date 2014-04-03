@@ -6,6 +6,8 @@ Camera::Camera(CAMERA_DESC* cDesc)
 	nearPlane = cDesc->NearPlane;
 	farPlane = cDesc->FarPlane;
 
+	attachedDist = cDesc->AttachedDist;
+
 	roll = cDesc->InitialRoll;
 	rollState = cDesc->Roll;
 
@@ -17,8 +19,6 @@ Camera::Camera(CAMERA_DESC* cDesc)
 
 	right = new XMVECTOR();
 	up = new XMVECTOR();
-
-	attachedDist = 0.0f;
 
 	projMatrix = XMFLOAT4X4();
 	viewMatrix = XMFLOAT4X4();
@@ -135,7 +135,7 @@ void Camera::SetViewMatrix()
 {
 	SetUnitVectors();
 
-	XMVECTOR eye = *position - *forward * attachedDist;
+	XMVECTOR eye = *position - * forward * attachedDist;
 	XMVECTOR focus = eye + *forward;
 
 	XMStoreFloat4x4(&viewMatrix, XMMatrixTranspose(

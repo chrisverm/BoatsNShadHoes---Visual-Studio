@@ -105,10 +105,11 @@ bool BoatGame::Init(int iconResource)
 	camDesc.FieldOfView = XMConvertToRadians(45.0f);
 	camDesc.NearPlane = 0.1f;
 	camDesc.FarPlane = 100.0f;
+	camDesc.AttachedDist = 10.0f;
 	camDesc.InitialRoll = new float(0.0f);
 	camDesc.InitialPosition = new XMVECTOR(XMVectorSet(0.0f, 0.0f, -10.0f, 0.0f));
 	camDesc.InitialForward = new XMVECTOR(XMVectorSet(0.0f, 0.0f, 1.0f, 0.0f));
-	camDesc.Position = STATIC;
+	camDesc.Position = ATTACHED;
 	camDesc.Forward = STATIC;
 	camDesc.Roll = STATIC;
 	CameraManager::CreateNewCamera(&camDesc, true);
