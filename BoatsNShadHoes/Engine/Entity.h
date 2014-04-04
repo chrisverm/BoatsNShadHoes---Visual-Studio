@@ -6,15 +6,15 @@
 #include "Mesh.h"
 #include "Material.h"
 
+using namespace DirectX;
+
 class Entity
 {
 public:
-	Entity(Mesh* mesh, Material* material);
+	Entity();
 	~Entity();
 
-	virtual void Initialize(ID3D11Buffer* modelConstBuffer, VSPerModelData* modelConstBufferData);
 	virtual void Update(ID3D11DeviceContext* deviceContext, float dt);
-	virtual void Render(ID3D11DeviceContext* deviceContext);
 
 	DirectX::XMVECTOR position;
 	DirectX::XMVECTOR rotation;
@@ -27,15 +27,7 @@ public:
 	const DirectX::XMVECTOR* Up;
 	const DirectX::XMVECTOR* Right;
 
-	void setCB(ID3D11DeviceContext*);
-
-private:
-	Mesh* mesh;
-	Material* material;
-	D3D_PRIMITIVE_TOPOLOGY topology;
-	ID3D11Buffer* modelConstBuffer;
-	VSPerModelData* modelConstBufferData;
-
+protected:
 	DirectX::XMFLOAT4X4 worldMatrix;
 
 	DirectX::XMVECTOR forward;

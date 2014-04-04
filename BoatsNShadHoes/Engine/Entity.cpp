@@ -1,14 +1,7 @@
 #include "Entity.h"
 
-using namespace DirectX;
-
-Entity::Entity(Mesh* mesh, Material* material)
+Entity::Entity()
 {
-	this->mesh = mesh;
-	this->material = material;
-
-	topology = D3D11_PRIMITIVE_TOPOLOGY_TRIANGLELIST;
-
 	position = XMVectorSet(0.0f , 0.0f , 0.0f ,0.0f);
 	rotation = XMVectorSet(0.0f , 0.0f , 0.0f ,0.0f);
 	scale = XMVectorSet(1.0f, 1.0f, 1.0f, 0.0f);
@@ -23,14 +16,7 @@ Entity::Entity(Mesh* mesh, Material* material)
 	XMStoreFloat4x4(&worldMatrix, XMMatrixTranspose(XMMatrixIdentity()));
 }
 
-Entity::~Entity()
-{ }
-
-void Entity::Initialize(ID3D11Buffer* modelConstBuffer, VSPerModelData* modelConstBufferData)
-{
-	this->modelConstBuffer = modelConstBuffer;
-	this->modelConstBufferData = modelConstBufferData;
-}
+Entity::~Entity() { }
 
 void Entity::Update(ID3D11DeviceContext* deviceContext, float dt)
 {
@@ -43,22 +29,6 @@ void Entity::Update(ID3D11DeviceContext* deviceContext, float dt)
 	XMStoreFloat4x4(&worldMatrix, XMMatrixTranspose(worldMat));
 	
 	UpdateOrientation(worldMat);
-}
-
-void Entity::Render(ID3D11DeviceContext* deviceContext)
-{
-	setCB(deviceContext);
-		
-	deviceContext->IASetPrimitiveTopology(topology);
-
-	mesh->SetBuffers(deviceContext);
-	material->SetShaders(deviceContext);
-
-	deviceContext->DrawIndexed(
-		mesh->numInds,
-		0,
-		0);
-
 }
 
 void Entity::UpdateOrientation()
@@ -74,16 +44,4 @@ void Entity::UpdateOrientation(const XMMATRIX& rot, bool transpose)
 	forward = rot.r[2];
 	up = rot.r[1];
 	right = rot.r[0];
-}
-
-void Entity::setCB(ID3D11DeviceContext* deviceContext)
-{
-	modelConstBufferData->model = worldMatrix;
-	deviceContext->UpdateSubresource(
-		modelConstBuffer,
-		0,
-		NULL,
-		modelConstBufferData,
-		0,
-		0);
 }

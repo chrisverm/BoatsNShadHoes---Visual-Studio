@@ -66,6 +66,9 @@
     <ClInclude Include="BufferStructs.h">
       <Filter>Header Files</Filter>
     </ClInclude>
+    <ClInclude Include="DrawableEntity.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="dxerr.cpp">
@@ -105,6 +108,9 @@
       <Filter>Source Files</Filter>
     </ClCompile>
     <ClCompile Include="Input.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="DrawableEntity.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
   </ItemGroup>

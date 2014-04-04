@@ -1,20 +1,8 @@
 #include "Mesh.h"
 
-using namespace DirectX;
-
-Mesh::Mesh(Vertex_PNUC* verts, int vSize, UINT* inds, int iSize)
-{
-	vertices = verts;
-	numVerts = vSize;
-	indices = inds;
-	numInds = iSize;
-
-	vertices2.data = nullptr;
-}
-
 Mesh::Mesh(VertexArray<void*> verts, int vSize, UINT* inds, int iSize)
 {
-	vertices2 = verts;
+	vertices = verts;
 	numVerts = vSize;
 	indices = inds;
 	numInds = iSize;
@@ -33,17 +21,11 @@ Mesh::~Mesh()
 		ReleaseMacro(iBuffer);
 		iBuffer = nullptr;
 	}
-	
-	if (vertices != nullptr)
-	{
-		delete[] vertices;
-		vertices = nullptr;
-	}
 
-	if (vertices2.data != nullptr)
+	if (vertices.data != nullptr)
 	{
-		delete[] vertices2.data;
-		vertices2.data = nullptr;
+		delete[] vertices.data;
+		vertices.data = nullptr;
 	}
 
 	if (indices != nullptr)
@@ -57,34 +39,18 @@ void Mesh::Initialize(ID3D11Device* device, ID3D11InputLayout* inputLayout)
 {
 	this->inputLayout = inputLayout;
 
-	if (vertices2.data == nullptr)
-	{
-		// Create the vertex buffer
-		D3D11_BUFFER_DESC vbd;
-		vbd.Usage = D3D11_USAGE_IMMUTABLE;
-		vbd.ByteWidth = sizeof(Vertex_PNUC) * numVerts; // Number of vertices
-		vbd.BindFlags = D3D11_BIND_VERTEX_BUFFER;
-		vbd.CPUAccessFlags = 0;
-		vbd.MiscFlags = 0;
-		vbd.StructureByteStride = 0;
-		D3D11_SUBRESOURCE_DATA initialVertexData;
-		initialVertexData.pSysMem = vertices;
-		HR(device->CreateBuffer(&vbd, &initialVertexData, &vBuffer));
-	}
-	else
-	{
-		// Create the vertex buffer
-		D3D11_BUFFER_DESC vbd;
-		vbd.Usage = D3D11_USAGE_IMMUTABLE;
-		vbd.ByteWidth = vertices2.TotalArrayBytes; // Number of vertices
-		vbd.BindFlags = D3D11_BIND_VERTEX_BUFFER;
-		vbd.CPUAccessFlags = 0;
-		vbd.MiscFlags = 0;
-		vbd.StructureByteStride = 0;
-		D3D11_SUBRESOURCE_DATA initialVertexData;
-		initialVertexData.pSysMem = vertices2.data;
-		HR(device->CreateBuffer(&vbd, &initialVertexData, &vBuffer));
-	}
+	// Create the vertex buffer
+	D3D11_BUFFER_DESC vbd;
+	vbd.Usage = D3D11_USAGE_IMMUTABLE;
+	vbd.ByteWidth = vertices.TotalArrayBytes; // Number of vertices
+	vbd.BindFlags = D3D11_BIND_VERTEX_BUFFER;
+	vbd.CPUAccessFlags = 0;
+	vbd.MiscFlags = 0;
+	vbd.StructureByteStride = 0;
+	D3D11_SUBRESOURCE_DATA initialVertexData;
+	initialVertexData.pSysMem = vertices.data;
+	HR(device->CreateBuffer(&vbd, &initialVertexData, &vBuffer));
+
 	// Create the index buffer
 	D3D11_BUFFER_DESC ibd;
 	ibd.Usage = D3D11_USAGE_IMMUTABLE;
@@ -100,7 +66,7 @@ void Mesh::Initialize(ID3D11Device* device, ID3D11InputLayout* inputLayout)
 
 void Mesh::SetBuffers(ID3D11DeviceContext* deviceContext)
 {
-	UINT stride = vertices2.IndividualBytes;
+	UINT stride = vertices.IndividualBytes;
 	UINT offset = 0;
 
 	deviceContext->IASetInputLayout(inputLayout);

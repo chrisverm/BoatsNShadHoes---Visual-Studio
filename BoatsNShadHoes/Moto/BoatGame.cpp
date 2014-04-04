@@ -525,16 +525,14 @@ void BoatGame::DrawScene()
 		1.0f,
 		0);
 
-	// Set up the input 
-	//deviceContext->IASetInputLayout(inputLayout);
-
 	deviceContext->VSSetConstantBuffers(0, 1, &vsPerFrameConstantBuffer);
 	deviceContext->VSSetConstantBuffers(1, 1, &vsPerModelConstantBuffer);
 	deviceContext->VSSetConstantBuffers(2, 1, &vsPerSceneConstantBuffer);
 	
 	for (std::vector<Entity*>::iterator it = entities.begin(); it != entities.end(); it++)
 	{
-		(*it)->Render(deviceContext);
+		if (dynamic_cast<DrawableEntity*>(*it) != NULL)
+			dynamic_cast<DrawableEntity*>(*it)->Render(deviceContext);
 	}
 
 #if defined(DEBUG) | defined(_DEBUG)
@@ -547,12 +545,12 @@ void BoatGame::DrawScene()
 
 		for (std::vector<Entity*>::iterator it = entities.begin(); it != entities.end(); it++)
 		{ 
-			(*it)->setCB(deviceContext); 
+			dynamic_cast<DrawableEntity*>(*it)->SetConstantBuffer(deviceContext);
 
 			deviceContext->DrawIndexed(
-			coords->Indices(),
-			0,
-			0);
+				coords->Indices(),
+				0,
+				0);
 		}
 	}
 	

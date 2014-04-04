@@ -3,7 +3,7 @@
 using namespace DirectX;
 
 MoveableEntity::MoveableEntity(Mesh* mesh, Material*mat)
-	: Entity(mesh,mat)
+	: DrawableEntity(mesh,mat)
 {
 	velocity = XMVectorSet(0,0,0,0);
 	angualrVelocity = XMVectorSet(0,0,0,0);
@@ -21,7 +21,7 @@ MoveableEntity::~MoveableEntity(void)
 
 void MoveableEntity::Initialize(ID3D11Buffer* modelConstBuffer, VSPerModelData* modelConstBufferData)
 {
-	Entity::Initialize(modelConstBuffer, modelConstBufferData);
+	DrawableEntity::Initialize(modelConstBuffer, modelConstBufferData);
 }
 
 void MoveableEntity::Update(ID3D11DeviceContext* deviceContext, float dt)
@@ -35,10 +35,10 @@ void MoveableEntity::Update(ID3D11DeviceContext* deviceContext, float dt)
 	position += velocity * dt;
 	rotation += angualrVelocity * dt;
 
-	Entity::Update(deviceContext, dt);
+	DrawableEntity::Update(deviceContext, dt);
 }
 
 void MoveableEntity::Render(ID3D11DeviceContext* deviceContext)
 {
-	Entity::Render(deviceContext);
+	DrawableEntity::Render(deviceContext);
 }

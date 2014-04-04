@@ -1,11 +1,10 @@
 #ifndef WATER_H
 #define WATER_H
 
-#include "Entity.h"
+#include "DrawableEntity.h"
 #include "ResourceManager.h"
 
-class Water
-	: public Entity
+class Water : public DrawableEntity
 {
 public:
 	Water(std::string, std::string);

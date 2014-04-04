@@ -1,10 +1,9 @@
 #ifndef MOVEABLE_ENTITY_H
 #define MOVEABLE_ENTITY_H
 
-#include "entity.h"
+#include "DrawableEntity.h"
 
-class MoveableEntity :
-	public Entity
+class MoveableEntity : public DrawableEntity
 {
 public:
 	MoveableEntity(Mesh*, Material*);
