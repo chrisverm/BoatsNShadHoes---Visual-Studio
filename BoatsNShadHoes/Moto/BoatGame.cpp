@@ -127,7 +127,7 @@ bool BoatGame::Init(int iconResource)
 	// Lighting Setup ----------------------------------
 	PointLight pntLight1;
 	pntLight1.Range = 2.0f;
-	pntLight1.Position = XMFLOAT3(0.5f, 0.5f, -2.5f);
+	pntLight1.Position = XMFLOAT3(0.0f, 0.5f, -1.0f);
 	pntLight1.Diffuse = XMFLOAT4(1.0f, 0.0f, 0.0f, 1.0f);
 	pntLight1.Attenuation = XMFLOAT3(0.0f, 0.2f, 1.0f);
 
@@ -147,13 +147,13 @@ void BoatGame::setupAudio()
 {
 	// grab audio device
 	audioDevice = alcOpenDevice(NULL);
-#ifdef DEBUG
+#if defined(DEBUG) | defined(_DEBUG)
 	assert(audioDevice != NULL);
 #endif
 
 	// create context for device
 	audioDeviceContext = alcCreateContext(audioDevice, NULL);
-#ifdef DEBUG
+#if defined(DEBUG) | defined(_DEBUG)
 	assert(audioDeviceContext != NULL);
 #endif
 
@@ -176,7 +176,7 @@ void BoatGame::setupAudio()
 	alListener3f(AL_VELOCITY, 0.0f, 0.0f, 0.0f);
 	alListenerfv(AL_ORIENTATION, listenerOrientation);
 
-#ifdef DEBUG | _DEBUG
+#if defined(DEBUG) | defined(_DEBUG)
 	std::cout << "listener position:" << "[" << XMVectorGetX(*CameraManager::ActiveCamera()->position) 
 									  << ", " << XMVectorGetY(*CameraManager::ActiveCamera()->position) 
 									  << ", " << XMVectorGetZ(*CameraManager::ActiveCamera()->position) << "]" << std::endl;
@@ -185,7 +185,7 @@ void BoatGame::setupAudio()
 	// ^ using assert to replace the following:
 	/*audioDevice = alcOpenDevice(NULL);
 
-#ifdef DEBUG
+#ifdef defined(DEBUG)
 	if(audioDevice == NULL)
 		std::cout << "cannot open sound card!" << std::endl;
 #endif
@@ -196,7 +196,7 @@ void BoatGame::setupAudio()
 		// create context for device
 		audioDeviceContext = alcCreateContext(audioDevice, NULL);
 
-#ifdef DEBUG
+#ifdef defined(DEBUG)
 		if(audioDeviceContext == NULL)
 			std::cout << "cannot create context for our device!" << std::endl;
 #endif

@@ -1,4 +1,4 @@
-#include "DrawableEntity.h"+
+#include "DrawableEntity.h"
 
 DrawableEntity::DrawableEntity(Mesh* mesh, Material* material)
 	: Entity()

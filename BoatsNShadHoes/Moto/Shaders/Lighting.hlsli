@@ -64,7 +64,7 @@ void ComputePointLight(PointLight light, float3 position, float3 normal,
 
 	lightVec /= dist;
 
-	float nDotL = dot(lightVec, normal);
+	float nDotL = saturate(dot(lightVec, normal));
 
 	diffuse += light.Diffuse * nDotL;
 

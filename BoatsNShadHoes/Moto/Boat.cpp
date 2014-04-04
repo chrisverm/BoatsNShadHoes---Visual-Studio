@@ -8,7 +8,7 @@ Boat::Boat(std::string meshId, std::string matId)
 	//angualrVelocity = XMVectorSet(0,1,1,0);
 	//velocity = XMVectorSet(0,0.25f,0.5f,0);
 
-	friction = 0.9;
+	friction = 0.9f;
 }
 
 Boat::~Boat()
