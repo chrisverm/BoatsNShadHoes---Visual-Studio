@@ -342,7 +342,8 @@ int DXGame::Run()
 				CalculateFrameStats();
 				UpdateScene(timer.DeltaTime());
 				DrawScene();
-				Input::MouseUpdate();
+
+				if (Input::dirty) Input::Update();
 			}
 		}
 	}
@@ -417,7 +418,7 @@ LRESULT DXGame::MsgProc(HWND hwnd, UINT msg, WPARAM wParam, LPARAM lParam)
 			gamePaused = false;
 			timer.Start();
 		}
-		return 0;
+		break;
 
 		// WM_SIZE is sent when the user resizes the window.  
 	case WM_SIZE:
@@ -473,14 +474,14 @@ LRESULT DXGame::MsgProc(HWND hwnd, UINT msg, WPARAM wParam, LPARAM lParam)
 				}
 			}
 		}
-		return 0;
+		break;
 
 		// WM_EXITSIZEMOVE is sent when the user grabs the resize bars.
 	case WM_ENTERSIZEMOVE:
 		gamePaused = true;
 		resizing  = true;
 		timer.Stop();
-		return 0;
+		break;
 
 		// WM_EXITSIZEMOVE is sent when the user releases the resize bars.
 		// Here we reset everything based on the new window dimensions.
@@ -489,12 +490,12 @@ LRESULT DXGame::MsgProc(HWND hwnd, UINT msg, WPARAM wParam, LPARAM lParam)
 		resizing  = false;
 		timer.Start();
 		OnResize();
-		return 0;
+		break;
 
 		// WM_DESTROY is sent when the window is being destroyed.
 	case WM_DESTROY:
 		PostQuitMessage(0);
-		return 0;
+		break;
 
 		// The WM_MENUCHAR message is sent when a menu is active and the user presses 
 		// a key that does not correspond to any mnemonic or accelerator key. 
@@ -506,7 +507,7 @@ LRESULT DXGame::MsgProc(HWND hwnd, UINT msg, WPARAM wParam, LPARAM lParam)
 	case WM_GETMINMAXINFO:
 		((MINMAXINFO*)lParam)->ptMinTrackSize.x = 200;
 		((MINMAXINFO*)lParam)->ptMinTrackSize.y = 200; 
-		return 0;
+		break;
 
 	case WM_LBUTTONDOWN:
 	case WM_MBUTTONDOWN:
@@ -515,16 +516,17 @@ LRESULT DXGame::MsgProc(HWND hwnd, UINT msg, WPARAM wParam, LPARAM lParam)
 	case WM_MBUTTONUP:
 	case WM_RBUTTONUP:
 	case WM_MOUSEMOVE:
-		Input::MouseInput(msg, wParam, lParam);
-		return 0;
-
 	case WM_KEYDOWN:
 	case WM_KEYUP:
-		Input::KeyboardInput(msg, wParam, lParam);
-		return 0;
+		Input::ProcessInputMessage(msg, wParam, lParam);
+		break;
+
+	default: // If none of these.
+		return DefWindowProc(hwnd, msg, wParam, lParam);
 	}
 	
-	return DefWindowProc(hwnd, msg, wParam, lParam);
+	// if not already returned. Only cases that return themselves are (default: and WM_MENUCHAR:)
+	return 0;
 }
 
 #pragma endregion

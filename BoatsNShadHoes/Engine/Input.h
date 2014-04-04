@@ -32,28 +32,34 @@ class Input
 {
 	friend class DXGame;
 public:
-	static const XMFLOAT2* PreviousMouse;
-	static const XMFLOAT2* CurrentMouse;
+	static const XMINT2* PreviousMouse;
+	static const XMINT2* CurrentMouse;
 
 	static bool KeyUp(unsigned char);
 	static bool KeyDown(unsigned char);
 	static bool KeyJustPressed(unsigned char);
 
 private:
-	static void Initialize();
+	static bool dirty;
 
 	static KeyState mouseButtons[3];
-	static DirectX::XMFLOAT2 previousMouse;
-	static DirectX::XMFLOAT2 currentMouse;
+	static DirectX::XMINT2 previousMouse;
+	static DirectX::XMINT2 currentMouse;
 
 	static std::vector<unsigned char> keysDown;
 	static unsigned char keyJustPressed;
 	static unsigned char keyUp;
 
-	static LRESULT MouseInput(UINT, WPARAM, LPARAM);
-	static LRESULT KeyboardInput(UINT, WPARAM, LPARAM);
+	static void Initialize();
 
-	static void MouseUpdate();
+	static void ProcessInputMessage(UINT, WPARAM, LPARAM);
+
+	static void MouseMove(WPARAM, LPARAM);
+	static void MouseButton(UINT, WPARAM, LPARAM);
+	static void KeyboardInput(UINT, WPARAM, LPARAM);
+
+	static void Update();
+	static void Invalidate();
 };
 
 #endif
