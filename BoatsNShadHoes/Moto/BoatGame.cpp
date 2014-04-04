@@ -115,7 +115,36 @@ bool BoatGame::Init(int iconResource)
 	CameraManager::CreateNewCamera(&camDesc, true);
 
 	// AL setup --------------------------------~^^~-----
+	setupAudio();
 
+	// Audio ---------------------d[-_-]b-----------------
+	main_bgm = new AudioPlayer("Resources/Zedd-Clarity_BGM.ogg");
+
+	main_bgm->init();
+	//main_bgm->generateBufferData();
+	main_bgm->setLooping(AL_TRUE);
+
+	// Lighting Setup ----------------------------------
+	PointLight pntLight1;
+	pntLight1.Range = 2.0f;
+	pntLight1.Position = XMFLOAT3(0.5f, 0.5f, -2.5f);
+	pntLight1.Diffuse = XMFLOAT4(1.0f, 0.0f, 0.0f, 1.0f);
+	pntLight1.Attenuation = XMFLOAT3(0.0f, 0.2f, 1.0f);
+
+	vsPerSceneData->pntLights[0] = pntLight1;
+	deviceContext->UpdateSubresource(
+		vsPerSceneConstantBuffer,
+		0,
+		NULL,
+		vsPerSceneData,
+		0,
+		0);
+
+	return true;
+}
+
+void BoatGame::setupAudio()
+{
 	// grab audio device
 	audioDevice = alcOpenDevice(NULL);
 #ifdef DEBUG
@@ -147,7 +176,7 @@ bool BoatGame::Init(int iconResource)
 	alListener3f(AL_VELOCITY, 0.0f, 0.0f, 0.0f);
 	alListenerfv(AL_ORIENTATION, listenerOrientation);
 
-#ifdef DEBUG
+#ifdef DEBUG | _DEBUG
 	std::cout << "listener position:" << "[" << XMVectorGetX(*CameraManager::ActiveCamera()->position) 
 									  << ", " << XMVectorGetY(*CameraManager::ActiveCamera()->position) 
 									  << ", " << XMVectorGetZ(*CameraManager::ActiveCamera()->position) << "]" << std::endl;
@@ -176,31 +205,6 @@ bool BoatGame::Init(int iconResource)
 		else
 			alcMakeContextCurrent(audioDeviceContext); // assign our created context to 'current'
 	}*/
-
-	// Audio ---------------------d[-_-]b-----------------
-	main_bgm = new AudioPlayer("Resources/Zedd-Clarity_BGM.ogg");
-
-	main_bgm->init();
-	main_bgm->generateBufferData();
-	main_bgm->setLooping(AL_TRUE);
-
-	// Lighting Setup ----------------------------------
-	PointLight pntLight1;
-	pntLight1.Range = 2.0f;
-	pntLight1.Position = XMFLOAT3(0.5f, 0.5f, -2.5f);
-	pntLight1.Diffuse = XMFLOAT4(1.0f, 0.0f, 0.0f, 1.0f);
-	pntLight1.Attenuation = XMFLOAT3(0.0f, 0.2f, 1.0f);
-
-	vsPerSceneData->pntLights[0] = pntLight1;
-	deviceContext->UpdateSubresource(
-		vsPerSceneConstantBuffer,
-		0,
-		NULL,
-		vsPerSceneData,
-		0,
-		0);
-
-	return true;
 }
 
 void BoatGame::LoadShadersAndInputLayout()

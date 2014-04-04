@@ -53,6 +53,7 @@ protected:
 	void LoadShadersAndInputLayout();
 	void CreateGeometryBuffers();
 	void LoadResources();
+	void setupAudio();
 
 	std::vector<Entity*> entities;
 

@@ -61,6 +61,8 @@ void AudioPlayer::init()
 {
 	alGenSources(1, &source);
 	alGenBuffers(1, &abo);
+
+	generateBufferData();
 }
 
 void AudioPlayer::generateBufferData()
