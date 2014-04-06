@@ -67,11 +67,6 @@ BoatGame::~BoatGame()
 
 	ResourceManager::Release();
 	CameraManager::Release();
-
-	// Show memory leaks at end of program
-#if defined(DEBUG) | defined(_DEBUG)
-	_CrtDumpMemoryLeaks();
-#endif
 }
 
 bool BoatGame::Init(int iconResource)
@@ -109,7 +104,7 @@ bool BoatGame::Init(int iconResource)
 	camDesc.InitialRoll = new float(0.0f);
 	camDesc.InitialPosition = new XMVECTOR(XMVectorSet(0.0f, 0.0f, -10.0f, 0.0f));
 	camDesc.InitialForward = new XMVECTOR(XMVectorSet(0.0f, 0.0f, 1.0f, 0.0f));
-	camDesc.Position = ATTACHED;
+	camDesc.Position = STATIC;
 	camDesc.Forward = STATIC;
 	camDesc.Roll = STATIC;
 	CameraManager::CreateNewCamera(&camDesc, true);
