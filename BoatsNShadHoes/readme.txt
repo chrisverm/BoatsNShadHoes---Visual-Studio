@@ -1,8 +1,8 @@
 How to "Play"
 
-W = move foward.
+W = move forward.
 A = turn to the left.
-D = turn to the Right.
+D = turn to the right.
 
 Also, you can press 'i' to turn on a debug feature that draws the local basis vectors for every entity.
 
