@@ -19,6 +19,10 @@ int WINAPI WinMain(HINSTANCE hInstance, HINSTANCE prevInstance,
 	freopen("CON", "w", stdout);
 #endif
 
+#ifndef SOUND_PLAY
+	//#define SOUND_PLAY
+#endif
+
 	// Make the game, initialize and run
 	BoatGame game(hInstance);
 
@@ -57,10 +61,12 @@ BoatGame::~BoatGame()
 	delete vsPerModelData;
 	delete vsPerSceneData;
 
+#ifdef SOUND_PLAY
 	alcDestroyContext(audioDeviceContext);
 	alcCloseDevice(audioDevice);
 
 	delete main_bgm;
+#endif
 
 	for (std::vector<Entity*>::iterator it = entities.begin(); it != entities.end() ; it++)
 	{ delete (*it); }
@@ -109,6 +115,7 @@ bool BoatGame::Init(int iconResource)
 	camDesc.Roll = STATIC;
 	CameraManager::CreateNewCamera(&camDesc, true);
 
+#ifdef SOUND_PLAY
 	// AL setup --------------------------------~^^~-----
 	setupAudio();
 
@@ -118,6 +125,7 @@ bool BoatGame::Init(int iconResource)
 	main_bgm->init();
 	//main_bgm->generateBufferData();
 	main_bgm->setLooping(AL_TRUE);
+#endif
 
 	// Lighting Setup ----------------------------------
 	PointLight pntLight1;
@@ -463,7 +471,9 @@ void BoatGame::UpdateScene(float dt)
 			if (Input::KeyUp('G'))
 			{
 				state = GameLoop;
+#ifdef SOUND_PLAY
 				main_bgm->start();
+#endif
 				printf("Now in Game!\n");
 			}
 			break;
@@ -473,12 +483,13 @@ void BoatGame::UpdateScene(float dt)
 				printf("Pause\n");
 				state = Paused;
 			}
-			
+#ifdef SOUND_PLAY
 			// change velocity of audio
 			if (Input::KeyUp('Q'))
 				main_bgm->changeVelocity(-.0001f);
 			if (Input::KeyUp('W'))
 				main_bgm->changeVelocity(+.0001f);
+#endif
 
 			break;
 		case Paused:
@@ -502,10 +513,13 @@ void BoatGame::UpdateScene(float dt)
 		(*it)->Update(deviceContext, dt);
 	}
 
+#ifdef SOUND_PLAY
+	// updating audio source based on listener position
 	float listenerPos[3];
 	alGetListenerfv(AL_POSITION, listenerPos);
 	main_bgm->updateGain(listenerPos);
 	main_bgm->update();
+#endif
 }
 
 void BoatGame::DrawScene()
