@@ -41,6 +41,7 @@ class InputManager
 public:
 	static const XMINT2* PreviousMouse;
 	static const XMINT2* CurrentMouse;
+	static const XMINT2* DeltaMouse;
 	
 	static const KeyState* LeftMouseButton;
 	static const KeyState* RightMouseButton;
@@ -60,6 +61,7 @@ private:
 	static KeyState mouseButtons[3];
 	static DirectX::XMINT2 previousMouse;
 	static DirectX::XMINT2 currentMouse;
+	static DirectX::XMINT2 deltaMouse;
 
 	static std::vector<unsigned char> keysDown;
 	static unsigned char keyJustPressed;

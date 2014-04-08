@@ -8,9 +8,11 @@ const KeyState* InputManager::MiddleMouseButton = &mouseButtons[2];
 
 XMINT2 InputManager::previousMouse;
 XMINT2 InputManager::currentMouse;
+XMINT2 InputManager::deltaMouse;
 
 const XMINT2* InputManager::PreviousMouse = &InputManager::previousMouse;
 const XMINT2* InputManager::CurrentMouse = &InputManager::currentMouse;
+const XMINT2* InputManager::DeltaMouse = &InputManager::deltaMouse;
 
 std::vector<unsigned char> InputManager::keysDown;
 unsigned char InputManager::keyJustPressed;
@@ -72,8 +74,11 @@ void InputManager::MouseMoveMsg(WPARAM wParam, LPARAM lParam)
 	currentMouse.x = GET_X_LPARAM(lParam);
 	currentMouse.y = GET_Y_LPARAM(lParam);
 
+	deltaMouse.x = previousMouse.x - currentMouse.x;
+	deltaMouse.y = previousMouse.y - currentMouse.y;
+
 #if defined(PRINT_MOUSE_POSITIONS)
-	printf("Previous - (%f, %f), Current - (%f, %f) \n", previousMouse.x, previousMouse.y, currentMouse.x, currentMouse.y);
+	printf("Previous: (%i, %i), Current: (%i, %i) Delta: (%i, %i) \n", previousMouse.x, previousMouse.y, currentMouse.x, currentMouse.y, deltaMouse.x, deltaMouse.y);
 #endif
 }
 
@@ -127,6 +132,7 @@ void InputManager::Update()
 	previousMouse = currentMouse;
 	keyUp = 0;
 	keyJustPressed = 0;
+	deltaMouse.x = deltaMouse.y = 0;
 	for (int i = 0; i < 3; i++)
 	{ 
 		if (mouseButtons[i] == JustPressed) mouseButtons[i] = Down; 
