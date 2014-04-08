@@ -126,7 +126,7 @@ copy "$(SolutionDir)Libraries\" "$(SolutionDir)Binary"</Command>
     <ClInclude Include="Entity.h" />
     <ClInclude Include="GameTimer.h" />
     <ClInclude Include="Globals.h" />
-    <ClInclude Include="Input.h" />
+    <ClInclude Include="InputManager.h" />
     <ClInclude Include="Lights.h" />
     <ClInclude Include="Material.h" />
     <ClInclude Include="Mesh.h" />
@@ -144,7 +144,7 @@ copy "$(SolutionDir)Libraries\" "$(SolutionDir)Binary"</Command>
     <ClCompile Include="DXGame.cpp" />
     <ClCompile Include="Entity.cpp" />
     <ClCompile Include="GameTimer.cpp" />
-    <ClCompile Include="Input.cpp" />
+    <ClCompile Include="InputManager.cpp" />
     <ClCompile Include="Material.cpp" />
     <ClCompile Include="Mesh.cpp" />
     <ClCompile Include="MoveableEntity.cpp" />

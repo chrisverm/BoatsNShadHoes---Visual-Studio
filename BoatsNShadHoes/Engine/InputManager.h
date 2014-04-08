@@ -1,5 +1,5 @@
-#ifndef INPUT_H
-#define INPUT_H
+#ifndef INPUT_MANAGER_H
+#define INPUT_MANAGER_H
 
 #if defined(DEBUG) | defined(_DEBUG)
 
@@ -20,6 +20,13 @@
 
 using namespace DirectX;
 
+enum MouseButton
+{
+	LeftButton= 0,
+	RightButton = 1,
+	MiddleButton = 2
+};
+
 enum KeyState
 {
 	None = 0,
@@ -28,16 +35,24 @@ enum KeyState
 	Down = 4U,
 };
 
-class Input
+class InputManager
 {
 	friend class DXGame;
 public:
 	static const XMINT2* PreviousMouse;
 	static const XMINT2* CurrentMouse;
+	
+	static const KeyState* LeftMouseButton;
+	static const KeyState* RightMouseButton;
+	static const KeyState* MiddleMouseButton;
 
 	static bool KeyUp(unsigned char);
 	static bool KeyDown(unsigned char);
 	static bool KeyJustPressed(unsigned char);
+
+	static bool MouseButtonDown(MouseButton);
+	static bool MouseButtonUp(MouseButton);
+	static bool MouseButtonJustPressed(MouseButton);
 
 private:
 	static bool dirty;
@@ -51,15 +66,16 @@ private:
 	static unsigned char keyUp;
 
 	static void Initialize();
-
-	static void ProcessInputMessage(UINT, WPARAM, LPARAM);
-
-	static void MouseMove(WPARAM, LPARAM);
-	static void MouseButton(UINT, WPARAM, LPARAM);
-	static void KeyboardInput(UINT, WPARAM, LPARAM);
-
 	static void Update();
 	static void Invalidate();
+
+	static void ProcessInputMessage(UINT, WPARAM, LPARAM);
+	static void MouseMoveMsg(WPARAM, LPARAM);
+	static void MouseButtonMsg(UINT, WPARAM, LPARAM);
+	static void KeyboardInputMsg(UINT, WPARAM, LPARAM);
+
 };
+
+typedef InputManager Input;
 
 #endif

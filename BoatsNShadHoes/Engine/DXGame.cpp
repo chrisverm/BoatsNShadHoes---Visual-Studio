@@ -8,7 +8,7 @@
 // -------------------------------------------------------------
 
 #include "DXGame.h"
-#include "Input.h"
+#include "InputManager.h"
 #include <WindowsX.h>
 #include <sstream>
 

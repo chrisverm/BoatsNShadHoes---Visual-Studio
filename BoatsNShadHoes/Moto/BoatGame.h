@@ -11,7 +11,7 @@
 #include "Water.h"
 #include "Mesh.h"
 #include "ResourceManager.h"
-#include "Input.h"
+#include "InputManager.h"
 
 #include "Camera.h"
 #include "CameraManager.h"

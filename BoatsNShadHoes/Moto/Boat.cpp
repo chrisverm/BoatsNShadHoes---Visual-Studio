@@ -1,5 +1,5 @@
 #include "Boat.h"
-#include "Input.h"
+#include "InputManager.h"
 
 using namespace DirectX;
 Boat::Boat(std::string meshId, std::string matId) 
