@@ -1,10 +1,6 @@
 #include "InputManager.h"
 
-KeyState InputManager::mouseButtons[3];
-
-const KeyState* InputManager::LeftMouseButton = &mouseButtons[0];
-const KeyState* InputManager::RightMouseButton = &mouseButtons[1];
-const KeyState* InputManager::MiddleMouseButton = &mouseButtons[2];
+Input::KeyState InputManager::mouseButtons[3];
 
 XMINT2 InputManager::previousMouse;
 XMINT2 InputManager::currentMouse;
@@ -14,13 +10,13 @@ const XMINT2* InputManager::PreviousMouse = &InputManager::previousMouse;
 const XMINT2* InputManager::CurrentMouse = &InputManager::currentMouse;
 const XMINT2* InputManager::DeltaMouse = &InputManager::deltaMouse;
 
-std::vector<unsigned char> InputManager::keysDown;
+std::map<unsigned char, bool> InputManager::keysDown;
 unsigned char InputManager::keyJustPressed;
 unsigned char InputManager::keyUp;
 
-bool InputManager::dirty;
+bool InputManager::inValid;
 
-// Public stuff.
+// Public getters.
 bool InputManager::KeyUp(unsigned char key)
 { return key == keyUp; }
 
@@ -28,10 +24,10 @@ bool InputManager::KeyJustPressed(unsigned char key)
 { return key == keyJustPressed; }
 
 bool InputManager::KeyDown(unsigned char key)
-{ return std::find(keysDown.begin(), keysDown.end(), key) != keysDown.end(); }
+{ return keysDown[key]; }
 
 bool InputManager::MouseButtonDown(MouseButton mouseButton)
-{ return mouseButtons[mouseButton] ^ JustPressed == Down; }
+{ return (mouseButtons[mouseButton] | JustPressed) == (Down | JustPressed); }
 
 bool InputManager::MouseButtonJustPressed(MouseButton mouseButton)
 { return mouseButtons[mouseButton] == JustPressed; }
@@ -39,7 +35,7 @@ bool InputManager::MouseButtonJustPressed(MouseButton mouseButton)
 bool InputManager::MouseButtonUp(MouseButton mouseButton)
 { return mouseButtons[mouseButton] == Up; }
 
-// Private stuff.
+// MSG Proc
 void InputManager::ProcessInputMessage(UINT msg, WPARAM wParam, LPARAM lParam)
 {
 	switch (msg)
@@ -111,23 +107,24 @@ void InputManager::KeyboardInputMsg(UINT msg, WPARAM wParam, LPARAM lParam)
 
 	if (msg) // key up	 
 	{
-		keysDown.erase( find(keysDown.begin(), keysDown.end(), wParam));
+		keysDown.erase(wParam);
 		keyUp = wParam ;
 	}
-	else if (std::find(keysDown.begin(), keysDown.end(), wParam) == keysDown.end())// key down, and not already down
+	else if (!keysDown[wParam]) // key down, and not held
 	{ 
-		keysDown.push_back(wParam); 
+		keysDown[wParam] = true;
 		keyJustPressed = wParam;
 	}
 #if defined(PRINT_KEYBOARD_EVENTS)
-	else return; // dont print multiple keydowns.
+	else return; // dont print multiple keydowns. (part of the above if-else)
 
 	if (msg) printf("%c key up.\n", wParam);
 	else printf("%c key down.\n", wParam);
 #endif
 }
 
-void InputManager::Update()
+// Validation
+void InputManager::Validate()
 {
 	previousMouse = currentMouse;
 	keyUp = 0;
@@ -138,10 +135,9 @@ void InputManager::Update()
 		if (mouseButtons[i] == JustPressed) mouseButtons[i] = Down; 
 		if (mouseButtons[i] == Up) mouseButtons[i] = None; 
 	}
-
 	
-	dirty = false;
+	inValid = false;
 }
 
 void InputManager::Invalidate()
-{ dirty = true; }
+{ inValid = true; }

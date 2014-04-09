@@ -343,7 +343,7 @@ int DXGame::Run()
 				UpdateScene(timer.DeltaTime());
 				DrawScene();
 
-				if (Input::dirty) Input::Update();
+				if (Input::inValid) Input::Validate();
 			}
 		}
 	}
