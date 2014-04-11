@@ -21,19 +21,34 @@ void Boat::Initialize(ID3D11Buffer* modelConstBuffer, VSPerModelData* modelConst
 
 void Boat::Update(ID3D11DeviceContext* deviceContext, float dt)
 {
-	if (Input::KeyDown('W'))
-	{
-		velocity = XMVECTOR(*Forward);
-	}
-
-	if (Input::KeyDown('A'))
-	{
-		angualrVelocity = -XMVECTOR(*Up) / 5;
-	}
-	if (Input::KeyDown('D'))
-	{
-		angualrVelocity = XMVECTOR(*Up) / 5;
-	}
-
 	MoveableEntity::Update(deviceContext, dt);
+}
+
+void Boat::SetPosition(float x, float y, float z)
+{
+	XMFLOAT3 pos(x, y, z);
+	position = XMLoadFloat3(&pos);
+}
+
+void Boat::SetRotation(float roll, float pitch, float yaw)
+{
+	//Yaw Yaw Yaw YEET
+	XMFLOAT3 rot(roll, pitch, yaw);
+	rotation = XMLoadFloat3(&rot);
+	UpdateOrientation();
+}
+
+void Boat::MoveForward()
+{
+	velocity = XMVECTOR(*Forward);
+}
+
+void Boat::PortHelm()
+{
+	angualrVelocity = -XMVECTOR(*Up) / 5;
+}
+
+void Boat::StarboardHelm()
+{
+	angualrVelocity = XMVECTOR(*Up) / 5;
 }

@@ -92,10 +92,16 @@ bool BoatGame::Init(int iconResource)
 	Boat* boat = new Boat("cube", "crate");
 	boat->Initialize(vsPerModelConstantBuffer, vsPerModelData);
 
+	Boat* boat2 = new Boat("cube", "crate");
+	boat2->Initialize(vsPerModelConstantBuffer, vsPerModelData);
+	boat2->SetPosition(5, 0, 5);
+	boat2->SetRotation(0, 2, 0);
+
 	Water* water = new Water("quad", "water");
 	water->Initialize(vsPerModelConstantBuffer, vsPerModelData);
 
 	entities.push_back(boat);
+	entities.push_back(boat2);
 	entities.push_back(water);
 
 	// Camera Setup -----------[ o]---------------------
@@ -465,6 +471,19 @@ void BoatGame::UpdateScene(float dt)
 	if (Input::KeyUp('I'))
 		drawCoordinates = !drawCoordinates;
 
+	if (Input::KeyDown('W'))
+	{
+		((Boat*)(entities[0]))->MoveForward();
+	}
+	if (Input::KeyDown('A'))
+	{
+		((Boat*)(entities[0]))->PortHelm();
+	}
+	if (Input::KeyDown('D'))
+	{
+		((Boat*)(entities[0]))->StarboardHelm();
+	}
+
 	switch (state)
 	{
 		case Menu:
@@ -483,6 +502,7 @@ void BoatGame::UpdateScene(float dt)
 				printf("Pause\n");
 				state = Paused;
 			}
+
 #ifdef SOUND_PLAY
 			// change velocity of audio
 			if (Input::KeyUp('Q'))
