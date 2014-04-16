@@ -51,6 +51,7 @@ enum KeyState
 	Down = 4U 
 };
 	friend class DXGame;
+	friend class DX;
 public:
 
 	/*
