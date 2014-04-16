@@ -45,10 +45,10 @@ void Boat::MoveForward()
 
 void Boat::PortHelm()
 {
-	angualrVelocity = -XMVECTOR(*Up) / 5;
+	angularVelocity = -XMVECTOR(*Up) / 5;
 }
 
 void Boat::StarboardHelm()
 {
-	angualrVelocity = XMVECTOR(*Up) / 5;
+	angularVelocity = XMVECTOR(*Up) / 5;
 }

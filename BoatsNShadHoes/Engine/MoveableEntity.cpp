@@ -6,7 +6,7 @@ MoveableEntity::MoveableEntity(Mesh* mesh, Material*mat)
 	: DrawableEntity(mesh,mat)
 {
 	velocity = XMVectorSet(0,0,0,0);
-	angualrVelocity = XMVectorSet(0,0,0,0);
+	angularVelocity = XMVectorSet(0,0,0,0);
 
 	acceleration = XMVectorSet(0,0,0,0);
 	angularAcceleration = XMVectorSet(0,0,0,0);
@@ -27,13 +27,13 @@ void MoveableEntity::Initialize(ID3D11Buffer* modelConstBuffer, VSPerModelData* 
 void MoveableEntity::Update(ID3D11DeviceContext* deviceContext, float dt)
 {
 	velocity += acceleration * dt;
-	angualrVelocity += angularAcceleration * dt;
+	angularVelocity += angularAcceleration * dt;
 
 	velocity -= velocity * friction * dt;
-	angualrVelocity -= angualrVelocity * friction * dt;
+	angularVelocity -= angularVelocity * friction * dt;
 	
 	position += velocity * dt;
-	rotation += angualrVelocity * dt;
+	rotation += angularVelocity * dt;
 
 	DrawableEntity::Update(deviceContext, dt);
 }

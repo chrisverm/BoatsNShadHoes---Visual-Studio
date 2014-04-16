@@ -10,7 +10,7 @@ public:
 	~MoveableEntity(void);
 
 	DirectX::XMVECTOR velocity;
-	DirectX::XMVECTOR angualrVelocity;
+	DirectX::XMVECTOR angularVelocity;
 
 	DirectX::XMVECTOR acceleration;
 	DirectX::XMVECTOR angularAcceleration;
