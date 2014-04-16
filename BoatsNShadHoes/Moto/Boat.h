@@ -12,7 +12,7 @@ public:
 	~Boat();
 
 	void Initialize(ID3D11Buffer* modelConstBuffer, VSPerModelData* modelConstBufferData);
-	void Update(ID3D11DeviceContext* deviceContext, float dt);
+	void Update(float dt);
 
 	void SetPosition(float x, float y, float z);
 	void SetRotation(float r, float p, float y);

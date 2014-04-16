@@ -16,19 +16,34 @@ Entity::Entity()
 	XMStoreFloat4x4(&worldMatrix, XMMatrixTranspose(XMMatrixIdentity()));
 }
 
-Entity::~Entity() { }
-
-void Entity::Update(ID3D11DeviceContext* deviceContext, float dt)
+Entity::~Entity() 
 {
-	XMMATRIX worldMat = XMMatrixIdentity();
-	
+	for (std::vector<Entity*>::iterator it = children.begin(); it != children.end() ; it++)
+	{ delete (*it); }
+}
+
+void Entity::Update(float dt)
+{
 	XMMATRIX trans = XMMatrixTranslationFromVector(position);
 	XMMATRIX rot = XMMatrixRotationRollPitchYawFromVector(rotation);
 	XMMATRIX sca = XMMatrixScalingFromVector(scale);
-	worldMat *= sca * rot * trans;
+	XMMATRIX worldMat = sca * rot * trans;
+
+	if (parent != nullptr)
+	{
+		// Load parent (transpose the stored float4x4).
+		XMMATRIX parentMat = XMMatrixTranspose(XMLoadFloat4x4(&parent->worldMatrix));
+		
+		// Multiply on the left side.
+		worldMat *= parentMat;
+	}
+
 	XMStoreFloat4x4(&worldMatrix, XMMatrixTranspose(worldMat));
-	
-	UpdateOrientation(worldMat);
+
+	UpdateOrientation(worldMat);	
+
+	for (std::vector<Entity*>::iterator it = children.begin(); it != children.end(); it++)
+	{ (*it)->Update(dt); }
 }
 
 void Entity::UpdateOrientation()
@@ -44,4 +59,31 @@ void Entity::UpdateOrientation(const XMMATRIX& rot, bool transpose)
 	forward = rot.r[2];
 	up = rot.r[1];
 	right = rot.r[0];
+}
+
+int Entity::ChildCount()
+{ return children.size(); }
+
+Entity* Entity::AddChild(Entity* child)
+{
+	//TODO: check if already here.
+	children.push_back(child);
+
+	child->parent = this;
+	return child;
+}
+
+Entity* Entity::GetChild(int index)
+{
+	return children[index];
+}
+
+Entity* Entity::RemoveChild(int index)
+{
+	Entity* child = children[index];
+
+	children.erase(children.begin() + index);
+	child->parent = nullptr;
+
+	return child;
 }

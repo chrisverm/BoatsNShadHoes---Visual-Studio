@@ -19,9 +19,9 @@ void Boat::Initialize(ID3D11Buffer* modelConstBuffer, VSPerModelData* modelConst
 	MoveableEntity::Initialize(modelConstBuffer, modelConstBufferData);
 }
 
-void Boat::Update(ID3D11DeviceContext* deviceContext, float dt)
+void Boat::Update(float dt)
 {
-	MoveableEntity::Update(deviceContext, dt);
+	MoveableEntity::Update(dt);
 }
 
 void Boat::SetPosition(float x, float y, float z)

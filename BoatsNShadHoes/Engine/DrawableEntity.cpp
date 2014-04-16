@@ -20,9 +20,9 @@ void DrawableEntity::Initialize(ID3D11Buffer* modelConstBuffer, VSPerModelData* 
 	this->modelConstBufferData = modelConstBufferData;
 }
 
-void DrawableEntity::Update(ID3D11DeviceContext* deviceContext, float dt)
+void DrawableEntity::Update(float dt)
 {
-	Entity::Update(deviceContext, dt);
+	Entity::Update(dt);
 }
 
 void DrawableEntity::Render(ID3D11DeviceContext* deviceContext)
@@ -38,6 +38,12 @@ void DrawableEntity::Render(ID3D11DeviceContext* deviceContext)
 		mesh->numInds,
 		0,
 		0);
+
+	for (std::vector<Entity*>::iterator it = children.begin(); it != children.end(); it++)
+	{ 
+		if (dynamic_cast<DrawableEntity*>(*it) != NULL)
+			dynamic_cast<DrawableEntity*>(*it)->Render(deviceContext);
+	}
 }
 
 void DrawableEntity::SetConstantBuffer(ID3D11DeviceContext* deviceContext)

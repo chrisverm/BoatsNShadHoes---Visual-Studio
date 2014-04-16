@@ -530,7 +530,7 @@ void BoatGame::UpdateScene(float dt)
 	
 	for (std::vector<Entity*>::iterator it = entities.begin(); it != entities.end(); it++)
 	{
-		(*it)->Update(deviceContext, dt);
+		(*it)->Update(dt);
 	}
 
 #ifdef SOUND_PLAY
