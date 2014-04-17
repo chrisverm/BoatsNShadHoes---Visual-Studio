@@ -21,7 +21,7 @@ void Boat::Initialize(ID3D11Buffer* modelConstBuffer, VSPerModelData* modelConst
 
 void Boat::Update(float dt)
 {
-	MoveableEntity::Update(dt);
+	MoveableEntity::Update(dt, XMMatrixIdentity());
 }
 
 void Boat::SetPosition(float x, float y, float z)

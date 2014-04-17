@@ -24,7 +24,7 @@ void MoveableEntity::Initialize(ID3D11Buffer* modelConstBuffer, VSPerModelData* 
 	DrawableEntity::Initialize(modelConstBuffer, modelConstBufferData);
 }
 
-void MoveableEntity::Update(float dt)
+void MoveableEntity::Update(float dt, const XMMATRIX& parentMat)
 {
 	velocity += acceleration * dt;
 	angularVelocity += angularAcceleration * dt;
@@ -35,7 +35,7 @@ void MoveableEntity::Update(float dt)
 	position += velocity * dt;
 	rotation += angularVelocity * dt;
 
-	DrawableEntity::Update(dt);
+	DrawableEntity::Update(dt, parentMat);
 }
 
 void MoveableEntity::Render(ID3D11DeviceContext* deviceContext)

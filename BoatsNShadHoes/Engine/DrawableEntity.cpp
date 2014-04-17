@@ -20,9 +20,9 @@ void DrawableEntity::Initialize(ID3D11Buffer* modelConstBuffer, VSPerModelData* 
 	this->modelConstBufferData = modelConstBufferData;
 }
 
-void DrawableEntity::Update(float dt)
+void DrawableEntity::Update(float dt, const XMMATRIX& parentMat)
 {
-	Entity::Update(dt);
+	Entity::Update(dt, parentMat);
 }
 
 void DrawableEntity::Render(ID3D11DeviceContext* deviceContext)

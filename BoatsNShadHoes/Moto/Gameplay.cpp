@@ -465,7 +465,7 @@ void Gameplay::Update(float dt)
 #endif
 	for (std::vector<Entity*>::iterator it = entities.begin(); it != entities.end(); it++)
 	{
-		(*it)->Update(dt);
+		(*it)->Update(dt, XMMatrixIdentity());
 	}
 
 #ifdef SOUND_PLAY

@@ -22,28 +22,19 @@ Entity::~Entity()
 	{ delete (*it); }
 }
 
-void Entity::Update(float dt)
+void Entity::Update(float dt, const XMMATRIX& parentMat)
 {
 	XMMATRIX trans = XMMatrixTranslationFromVector(position);
 	XMMATRIX rot = XMMatrixRotationRollPitchYawFromVector(rotation);
 	XMMATRIX sca = XMMatrixScalingFromVector(scale);
-	XMMATRIX worldMat = sca * rot * trans;
-
-	if (parent != nullptr)
-	{
-		// Load parent (transpose the stored float4x4).
-		XMMATRIX parentMat = XMMatrixTranspose(XMLoadFloat4x4(&parent->worldMatrix));
-		
-		// Multiply on the left side.
-		worldMat *= parentMat;
-	}
+	XMMATRIX worldMat = sca * rot * trans * parentMat;
 
 	XMStoreFloat4x4(&worldMatrix, XMMatrixTranspose(worldMat));
 
 	UpdateOrientation(worldMat);	
 
 	for (std::vector<Entity*>::iterator it = children.begin(); it != children.end(); it++)
-	{ (*it)->Update(dt); }
+	{ (*it)->Update(dt, worldMat); }
 }
 
 void Entity::UpdateOrientation()

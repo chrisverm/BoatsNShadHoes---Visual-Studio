@@ -18,7 +18,7 @@ public:
 	/*
 	Update, called every frame, passed a deltaTime value for how long its been since the last update.
 	*/
-	virtual void Update(float dt);
+	virtual void Update(float dt, const XMMATRIX& parentMat);
 
 	/*
 	Basic position rotation scale needed to construct world matrix.

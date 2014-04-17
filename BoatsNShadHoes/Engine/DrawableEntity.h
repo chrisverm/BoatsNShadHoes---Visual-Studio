@@ -13,7 +13,7 @@ public:
 	~DrawableEntity();
 
 	virtual void Initialize(ID3D11Buffer* modelConstBuffer, VSPerModelData* modelConstBufferData);
-	virtual void Update(float dt);
+	virtual void Update(float dt, const XMMATRIX& parentMat);
 	virtual void Render(ID3D11DeviceContext* deviceContext);
 
 	void SetConstantBuffer(ID3D11DeviceContext*);

@@ -164,8 +164,8 @@ void CameraQuick::ResizeAspectRatio(float ratio)
 	aspectRatio = ratio;
 }
 
-void CameraQuick::Update(float dt)
+void CameraQuick::Update(float dt, const XMMATRIX& parentMat)
 {
-	Entity::Update(dt);
+	Entity::Update(dt, parentMat);
 	XMStoreFloat4x4(&viewMatrix, XMMatrixInverse(nullptr,(XMLoadFloat4x4(&worldMatrix))));
 }

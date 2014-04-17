@@ -79,7 +79,7 @@ public:
 
 	void ResizeAspectRatio(float ratio);
 
-	void Update(float dt);
+	void Update(float dt, const XMMATRIX&);
 
 	void SetProjMatrix();
 	
