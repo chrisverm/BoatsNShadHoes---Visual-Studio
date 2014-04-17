@@ -26,7 +26,7 @@ int DX::windowWidth = 800;
 int DX::windowHeight = 600;
 bool DX::enable4xMsaa = false;
 
-GameState** DX::currentState = nullptr;
+GameState** DX::currentState = &GameStateManager::currentState;
 
 LRESULT CALLBACK
 	MainWndProc2(HWND hwnd, UINT msg, WPARAM wParam, LPARAM lParam)
@@ -62,8 +62,6 @@ void DX::Release()
 bool DX::Initialize(int iconResource)
 {
 	ZeroMemory(&viewport, sizeof(D3D11_VIEWPORT));
-
-	currentState = &GameStateManager::currentState;
 
 	if (!InitMainWindow(iconResource))
 		return false;

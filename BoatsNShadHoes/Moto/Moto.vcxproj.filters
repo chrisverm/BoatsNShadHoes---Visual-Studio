@@ -27,9 +27,6 @@
     <ClInclude Include="Boat.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="BoatGame.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
     <ClInclude Include="Water.h">
       <Filter>Header Files</Filter>
     </ClInclude>
@@ -45,9 +42,6 @@
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="Boat.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="BoatGame.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
     <ClCompile Include="Water.cpp">

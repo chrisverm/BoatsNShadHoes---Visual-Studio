@@ -2,7 +2,7 @@
 
 using namespace DirectX;
 
-/*
+
 // Win32 Entry Point
 int WINAPI WinMain(HINSTANCE hInstance, HINSTANCE prevInstance,
 	PSTR cmdLine, int showCmd)
@@ -34,7 +34,14 @@ int WINAPI WinMain(HINSTANCE hInstance, HINSTANCE prevInstance,
 
 	return Game::Run();
 }
-*/
+
+
+ID3D11Buffer* Game::vsPerModelConstBuffer = nullptr;
+ID3D11Buffer* Game::vsPerFrameConstBuffer = nullptr;
+ID3D11Buffer* Game::vsPerSceneConstBuffer = nullptr;
+VSPerModelData* Game::vsPerModelData = new VSPerModelData();
+VSPerFrameData* Game::vsPerFrameData = new VSPerFrameData();
+VSPerSceneData* Game::vsPerSceneData =new VSPerSceneData();
 
 bool Game::Initialize(HINSTANCE hInstance, int iconResource)
 {
@@ -47,16 +54,88 @@ bool Game::Initialize(HINSTANCE hInstance, int iconResource)
 	if (!DX::Initialize(iconResource))
 		return false;
 
-	Gameplay* gameplay = new Gameplay();
+	Gameplay* gameplay = new Gameplay(device, deviceContext);
 	GameStateManager::AddState("Gameplay", gameplay);
 	GameStateManager::ChangeState("Gameplay");
 
 	return true;
 }
 
-void Game::Release()
+void Game::Release(bool local)
 {
-	DX::Release();
+	if (!local)	DX::Release();
+
+	if (vsPerModelConstBuffer != nullptr)
+	{
+		ReleaseMacro(vsPerModelConstBuffer);
+		vsPerModelConstBuffer = nullptr;
+	}
+
+	if (vsPerFrameConstBuffer != nullptr)
+	{
+		ReleaseMacro(vsPerFrameConstBuffer);
+		vsPerFrameConstBuffer = nullptr;
+	}
+
+	if (vsPerSceneConstBuffer != nullptr)
+	{
+		ReleaseMacro(vsPerSceneConstBuffer);
+		vsPerSceneConstBuffer = nullptr;
+	}
+
+	if (vsPerModelData != nullptr)
+	{
+		delete vsPerModelData;
+		vsPerModelData = nullptr;
+	}
+
+	if (vsPerFrameData != nullptr)
+	{
+		delete vsPerFrameData;
+		vsPerFrameData = nullptr;
+	}
+
+	if (vsPerSceneData != nullptr)
+	{
+		delete vsPerSceneData;
+		vsPerSceneData = nullptr;
+	}
+}
+
+void Game::Reset()
+{
+	if (vsPerModelData != nullptr)
+		delete vsPerModelData;
+	vsPerModelData = new VSPerModelData();
+	deviceContext->UpdateSubresource(
+		vsPerModelConstBuffer,
+		0,
+		NULL,
+		vsPerModelData,
+		0,
+		0);
+
+	if (vsPerFrameData != nullptr)
+		delete vsPerFrameData;
+	vsPerFrameData = new VSPerFrameData();
+	deviceContext->UpdateSubresource(
+		vsPerFrameConstBuffer,
+		0,
+		NULL,
+		vsPerFrameData,
+		0,
+		0);
+
+	if (vsPerSceneData != nullptr)
+		delete vsPerSceneData;
+	vsPerSceneData = new VSPerSceneData();
+	deviceContext->UpdateSubresource(
+		vsPerSceneConstBuffer,
+		0,
+		NULL,
+		vsPerSceneData,
+		0,
+		0);
 }
 
 void Game::OnResize()

@@ -8,7 +8,7 @@ bool GameStateManager::ChangeState(std::string id, bool immediate)
 	if (states[id] == nullptr)
 		return false;
 
-	if (states[id]->Initialize(nullptr, nullptr))
+	if (states[id]->Initialize())
 	{
 		currentState = states[id];
 		return true;

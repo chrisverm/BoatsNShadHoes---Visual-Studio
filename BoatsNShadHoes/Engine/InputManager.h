@@ -1,7 +1,7 @@
 #ifndef INPUT_MANAGER_H
 #define INPUT_MANAGER_H
 
-#include "DXGame.h"
+#include <Windows.h>
 #include <map>
 #include <WindowsX.h>
 #include <DirectXMath.h>
