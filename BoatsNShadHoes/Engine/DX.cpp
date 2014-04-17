@@ -276,11 +276,14 @@ void DX::OnResize()
 	deviceContext->RSSetViewports(1, &viewport);
 }
 
-void DX::Update()
+void DX::PreUpdate()
 {
 	if (calcFrameStates)
 		CalculateFrameStats();
+}
 
+void DX::PostUpdate()
+{
 	if (Input::inValid) 
 		Input::Validate();
 }

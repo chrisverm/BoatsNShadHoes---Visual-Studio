@@ -67,4 +67,28 @@ private:
 
 };
 
+class CameraQuick : public Entity
+{
+public:
+	CameraQuick();
+	~CameraQuick();
+
+	float fieldOfView;
+	float aspectRatio;
+	float nearPlane, farPlane;
+
+	void ResizeAspectRatio(float ratio);
+
+	void Update(float dt);
+
+	void SetProjMatrix();
+	
+	XMFLOAT4X4 GetProjMatrix() const { return projMatrix; }
+	XMFLOAT4X4 GetViewMatrix() const { return viewMatrix; }
+private:
+	
+	XMFLOAT4X4 projMatrix;
+	XMFLOAT4X4 viewMatrix;
+};
+
 #endif

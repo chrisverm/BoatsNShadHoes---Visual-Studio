@@ -22,7 +22,8 @@ public:
 
 	static bool Initialize(int = 0);
 	static void OnResize();
-	static void Update();
+	static void PreUpdate();
+	static void PostUpdate();
 	static LRESULT MsgProc(HWND hwnd, UINT msg, WPARAM wParam, LPARAM lParam);
 
 	float AspectRatio() const;

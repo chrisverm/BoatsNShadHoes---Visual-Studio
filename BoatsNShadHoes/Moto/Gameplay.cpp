@@ -37,6 +37,16 @@ bool Gameplay::Initialize()
 	Water* water = new Water("quad", "water");
 	water->Initialize(Game::vsPerModelConstBuffer, Game::vsPerModelData);
 
+	cq = new CameraQuick();
+	cq->position = XMVectorSet(0,4.0f, -8.0f,0);
+	cq->rotation = XMVectorSet(0.25f, 0,0,0);
+	boat->AddChild(cq);
+	cq->ResizeAspectRatio(DX::windowWidth/ DX::windowHeight);
+	cq->nearPlane = 0.1f;
+	cq->farPlane = 100.0f;
+	cq->fieldOfView = XMConvertToRadians(45.0f);
+	cq->SetProjMatrix();
+
 	entities.push_back(boat);
 	entities.push_back(boat2);
 	entities.push_back(water);
@@ -382,10 +392,19 @@ void Gameplay::SetupAudio()
 
 void Gameplay::Update(float dt)
 {
+	if (projChanged)
+	{
+		cq->ResizeAspectRatio((float)DX::windowWidth / DX::windowHeight);
+		cq->SetProjMatrix();
+	}
+	if (viewChanged)
+	{
+		cq->GetViewMatrix();
+	}
 	CameraManager::Update();
 	
-	Game::vsPerFrameData->view		 = CameraManager::ActiveCamera()->GetViewMatrix();
-	Game::vsPerFrameData->projection = CameraManager::ActiveCamera()->GetProjMatrix();
+	Game::vsPerFrameData->view		 = cq->GetViewMatrix(); //CameraManager::ActiveCamera()->GetViewMatrix();
+	Game::vsPerFrameData->projection = cq->GetProjMatrix(); //CameraManager::ActiveCamera()->GetProjMatrix();
 
 	deviceContext->UpdateSubresource(
 		Game::vsPerFrameConstBuffer,
@@ -418,6 +437,7 @@ void Gameplay::Update(float dt)
 		main_bgm->start();
 	}
 
+#if defined(SOUND_PLAY)
 	// change velocity of audio
 	if (Input::KeyUp('Q'))
 	{
@@ -427,7 +447,7 @@ void Gameplay::Update(float dt)
 	{
 		main_bgm->changeVelocity(+0.0001f);
 	}
-
+#endif
 	for (std::vector<Entity*>::iterator it = entities.begin(); it != entities.end(); it++)
 	{
 		(*it)->Update(dt);

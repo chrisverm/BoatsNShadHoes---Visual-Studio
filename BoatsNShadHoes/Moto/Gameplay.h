@@ -12,6 +12,7 @@
 #include "AudioManager.h"
 #include "Boat.h"
 #include "Water.h"
+#include "Camera.h"
 
 class Gameplay : public GameState
 {
@@ -24,6 +25,7 @@ public:
 
 private:
 	std::vector<Entity*> entities;
+	CameraQuick* cq;
 
 	void LoadShadersAndInputLayout();
 	void CreateGeometryBuffers();

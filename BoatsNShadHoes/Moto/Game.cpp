@@ -1,4 +1,5 @@
 #include "Game.h"
+#include "InputManager.h"
 
 // Win32 Entry Point
 int WINAPI WinMain(HINSTANCE hInstance, HINSTANCE prevInstance,
@@ -165,10 +166,12 @@ int Game::Run()
 			}
 			else
 			{
-				DX::Update();
+				DX::PreUpdate();
 
 				Game::Update(timer.DeltaTime());
 				Game::Draw(timer.DeltaTime());
+
+				DX::PostUpdate();
 			}
 		}
 	}

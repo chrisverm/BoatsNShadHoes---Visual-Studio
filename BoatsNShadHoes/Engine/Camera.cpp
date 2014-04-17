@@ -141,3 +141,31 @@ void Camera::SetViewMatrix()
 	XMStoreFloat4x4(&viewMatrix, XMMatrixTranspose(
 		XMMatrixLookAtLH(eye, focus, *up)));
 }
+
+CameraQuick::CameraQuick()
+{
+}
+
+CameraQuick::~CameraQuick()
+{
+}
+
+void CameraQuick::SetProjMatrix()
+{
+	assert(aspectRatio != 0);
+	assert(farPlane != nearPlane);
+
+	XMStoreFloat4x4(&projMatrix, XMMatrixTranspose(XMMatrixPerspectiveFovLH(
+		fieldOfView, aspectRatio, nearPlane, farPlane)));
+}
+
+void CameraQuick::ResizeAspectRatio(float ratio)
+{
+	aspectRatio = ratio;
+}
+
+void CameraQuick::Update(float dt)
+{
+	Entity::Update(dt);
+	XMStoreFloat4x4(&viewMatrix, XMMatrixInverse(nullptr,(XMLoadFloat4x4(&worldMatrix))));
+}
