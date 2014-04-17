@@ -39,6 +39,9 @@
     <ClInclude Include="Gameplay.h">
       <Filter>Header Files</Filter>
     </ClInclude>
+    <ClInclude Include="CannonBall.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="Boat.cpp">
@@ -51,6 +54,9 @@
       <Filter>Source Files</Filter>
     </ClCompile>
     <ClCompile Include="Game.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="CannonBall.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
   </ItemGroup>
@@ -85,6 +91,9 @@
       <Filter>Resource Files\Objects</Filter>
     </Text>
     <Text Include="..\Resources\BasisVectors_obj.obj">
+      <Filter>Resource Files\Objects</Filter>
+    </Text>
+    <Text Include="..\Resources\cannonball_obj.obj">
       <Filter>Resource Files\Objects</Filter>
     </Text>
   </ItemGroup>

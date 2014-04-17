@@ -118,8 +118,7 @@ void InputManager::KeyboardInputMsg(UINT msg, WPARAM wParam, LPARAM lParam)
 #if defined(PRINT_KEYBOARD_EVENTS)
 	else return; // dont print multiple keydowns. (part of the above if-else)
 
-	if (msg) 
-		printf("%c key up.\n", wParam);
+	if (msg) printf("%c key up.\n", wParam);
 	else printf("%c key down.\n", wParam);
 #endif
 }

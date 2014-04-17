@@ -94,11 +94,13 @@ Mesh* Mesh::LoadFromOBJ(std::string objFilePath)
 	}
 	catch (std::ifstream::failure e)
 	{
+		/*
 		// how to catch here?
 		std::string errorText = "Could not find " + objFilePath + "\n\n" + e.what() + "\n\n" + e.code().message();
 
 		MessageBox(NULL, std::wstring(errorText.begin(), errorText.end()).c_str(),
 			L"File not found error!", MB_ICONEXCLAMATION | MB_OK);
+		*/
 	}
 
 	// remove all comments from file before reading data

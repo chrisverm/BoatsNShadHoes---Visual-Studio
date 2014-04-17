@@ -12,6 +12,7 @@
 #include "AudioManager.h"
 #include "Boat.h"
 #include "Water.h"
+#include "CannonBall.h"
 #include "Camera.h"
 
 class Gameplay : public GameState

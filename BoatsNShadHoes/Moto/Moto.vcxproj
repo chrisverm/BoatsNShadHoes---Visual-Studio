@@ -109,6 +109,7 @@ copy "$(OutDir)$(TargetName)$(TargetExt)" "$(SolutionDir)Binary"</Command>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Boat.h" />
+    <ClInclude Include="CannonBall.h" />
     <ClInclude Include="Game.h" />
     <ClInclude Include="Gameplay.h" />
     <ClInclude Include="resource.h" />
@@ -116,6 +117,7 @@ copy "$(OutDir)$(TargetName)$(TargetExt)" "$(SolutionDir)Binary"</Command>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="Boat.cpp" />
+    <ClCompile Include="CannonBall.cpp" />
     <ClCompile Include="Game.cpp" />
     <ClCompile Include="Gameplay.cpp" />
     <ClCompile Include="Water.cpp" />
@@ -184,6 +186,11 @@ copy "$(OutDir)$(TargetName)$(TargetExt)" "$(SolutionDir)Binary"</Command>
   </ItemGroup>
   <ItemGroup>
     <Text Include="..\Resources\BasisVectors_obj.obj">
+      <FileType>Document</FileType>
+    </Text>
+  </ItemGroup>
+  <ItemGroup>
+    <Text Include="..\Resources\cannonball_obj.obj">
       <FileType>Document</FileType>
     </Text>
   </ItemGroup>

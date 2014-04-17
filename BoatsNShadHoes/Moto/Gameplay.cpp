@@ -34,11 +34,15 @@ bool Gameplay::Initialize()
 	boat2->SetPosition(5, 0, 5);
 	boat2->SetRotation(0, 2, 0);
 
+	CannonBall* cannonBall = new CannonBall("sphere", "water");
+	cannonBall->Initialize(Game::vsPerModelConstBuffer, Game::vsPerModelData);
+	cannonBall->position = XMVectorSet(0,-10,0,0);
+
 	Water* water = new Water("quad", "water");
 	water->Initialize(Game::vsPerModelConstBuffer, Game::vsPerModelData);
 
 	cq = new CameraQuick();
-	cq->position = XMVectorSet(0,4.0f, -8.0f,0);
+	cq->position = XMVectorSet(0,7.0f, -15.0f,0);
 	cq->rotation = XMVectorSet(0.25f, 0,0,0);
 	boat->AddChild(cq);
 	cq->ResizeAspectRatio(DX::windowWidth/ DX::windowHeight);
@@ -50,6 +54,7 @@ bool Gameplay::Initialize()
 	entities.push_back(boat);
 	entities.push_back(boat2);
 	entities.push_back(water);
+	entities.push_back(cannonBall);
 
 	// Camera Setup -----------[ o]---------------------
 	viewChanged = false;
@@ -276,6 +281,9 @@ void Gameplay::LoadResources()
 	Mesh* quad = Mesh::LoadFromOBJ("Resources/water_obj.obj");
 	quad->Initialize(device, ResourceManager::GetInputLayout(quad->ILName()));
 
+	Mesh* sphere = Mesh::LoadFromOBJ("Resources/cannonball_obj.obj");
+	sphere->Initialize(device, ResourceManager::GetInputLayout(quad->ILName()));
+
 	// Begin Disgusting.
 	Vertex_PNC temp[] = 
 	{
@@ -310,6 +318,7 @@ void Gameplay::LoadResources()
 	ResourceManager::AddMesh("coordinates", coordinates);
 	ResourceManager::AddMesh("cube", cube);
 	ResourceManager::AddMesh("quad", quad);
+	ResourceManager::AddMesh("sphere", sphere);
 
 	// Materials -----------------------------------------
 	Material* crateMat = new Material(ResourceManager::GetSRV("crate"), ResourceManager::GetSamplerState("crate"));
@@ -432,6 +441,12 @@ void Gameplay::Update(float dt)
 		((Boat*)(entities[0]))->StarboardHelm();
 	}
 
+	if (Input::KeyUp(' '))
+	{
+		entities[3]->position =  XMVECTOR(entities[0]->position);
+		dynamic_cast<MoveableEntity*>(entities[3])->velocity = 
+			(XMVECTOR(*entities[0]->Right) + XMVECTOR(*entities[0]->Up)) * 10;
+	}
 	if (Input::KeyUp('G'))
 	{
 		main_bgm->start();
