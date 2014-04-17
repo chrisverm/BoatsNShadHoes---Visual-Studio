@@ -11,6 +11,7 @@ class GameStateManager
 {
 	friend class DX;
 public:
+	// if immediate no animation
 	static bool ChangeState(std::string id, bool immediate = true);
 	static bool AddState(std::string, GameState*);
 	static GameState* GetState(std::string);

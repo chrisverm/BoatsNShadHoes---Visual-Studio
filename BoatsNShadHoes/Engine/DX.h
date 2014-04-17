@@ -15,8 +15,6 @@
 #include "InputManager.h"
 #include "ResourceManager.h"
 
-#include <iostream>
-
 class DX
 {
 public:
@@ -62,6 +60,8 @@ protected:
 	static int windowHeight;
 	static bool enable4xMsaa;
 
+	// double pointer so when a state changes this 
+	// doesn't still point at the old state
 	static GameState** currentState;
 
 };

@@ -9,8 +9,11 @@ class Game : public DX
 {
 	friend class Gameplay;
 public:
+	// Main game loop
 	static int Run();
+	// if local, wont release memory in DX
 	static void Release(bool local = false);
+	// Zeros-out data in buffers 
 	static void Reset();
 
 	static bool Initialize(HINSTANCE hInstance, int iconResource);

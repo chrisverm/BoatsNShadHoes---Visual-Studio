@@ -1,8 +1,5 @@
 #include "Game.h"
 
-using namespace DirectX;
-
-
 // Win32 Entry Point
 int WINAPI WinMain(HINSTANCE hInstance, HINSTANCE prevInstance,
 	PSTR cmdLine, int showCmd)
@@ -34,7 +31,6 @@ int WINAPI WinMain(HINSTANCE hInstance, HINSTANCE prevInstance,
 
 	return Game::Run();
 }
-
 
 ID3D11Buffer* Game::vsPerModelConstBuffer = nullptr;
 ID3D11Buffer* Game::vsPerFrameConstBuffer = nullptr;
