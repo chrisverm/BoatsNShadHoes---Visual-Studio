@@ -12,7 +12,7 @@ using namespace DirectX;
 class Entity
 {
 public:
-	Entity();
+	Entity(bool useRotationMat = true);
 	~Entity();
 
 	/*
@@ -23,9 +23,11 @@ public:
 	/*
 	Basic position rotation scale needed to construct world matrix.
 	*/
-	DirectX::XMVECTOR position;
-	DirectX::XMVECTOR rotation;
-	DirectX::XMVECTOR scale;
+	XMVECTOR position;
+	XMVECTOR rotation;
+	XMVECTOR forward;
+	XMVECTOR scale;
+	float roll;
 
 	/*
 	Child management methods.
@@ -44,32 +46,34 @@ public:
 	Entity* Parent();
 
 	/*
-	Kinda messy, could be re-worked.
-	Call these to update the forward,up,right vectors with any changes to rotation.
+	Call these to convert between rotation angles and the forward vector
 	*/
-	void UpdateOrientation();
-	void UpdateOrientation(const DirectX::XMMATRIX&, bool = true);
+	void UpdateForwardFromRotation();
+	void UpdateRotationFromForward();
+
+	void SetUnitVectors();
 
 	/*
 	Pointers to vectors that cant be changed through here.
 	Represent unit vectors pointing in the local z, y, x axis respectively.
 	*/
-	const DirectX::XMVECTOR* Forward;
-	const DirectX::XMVECTOR* Up;
-	const DirectX::XMVECTOR* Right;
+	const XMVECTOR* Forward;
+	const XMVECTOR* Up;
+	const XMVECTOR* Right;
 
 protected:
+	bool useRotation;
+
 	/*
 	4x4 float thats passed into shaders for this entities world matrix.
 	*/
-	DirectX::XMFLOAT4X4 worldMatrix;
+	XMFLOAT4X4 worldMatrix;
 
 	/*
 	The values for f/u/r, changing these wont actualy change the rotation.
 	*/
-	DirectX::XMVECTOR forward;
-	DirectX::XMVECTOR up;
-	DirectX::XMVECTOR right;
+	XMVECTOR up;
+	XMVECTOR right;
 
 	/*
 	Children and parent of the entity.

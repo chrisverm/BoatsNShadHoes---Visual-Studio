@@ -3,6 +3,7 @@
 Gameplay::Gameplay(ID3D11Device* device, ID3D11DeviceContext* deviceContext)
 	: GameState(device, deviceContext)
 {
+	world = new Entity();
 	drawCoordinates = false;
 }
 
@@ -15,8 +16,12 @@ Gameplay::~Gameplay()
 	delete main_bgm;
 #endif
 
-	for (std::vector<Entity*>::iterator it = entities.begin(); it != entities.end() ; it++)
-	{ delete (*it); }
+	// every enetity if somehow connected to this
+	// thus this will destroy all entities
+	delete world;
+
+	/*for (std::vector<Entity*>::iterator it = entities.begin(); it != entities.end() ; it++)
+	{ delete (*it); }*/
 }
 
 bool Gameplay::Initialize()
@@ -71,10 +76,10 @@ bool Gameplay::Initialize()
 	cq->fieldOfView = XMConvertToRadians(45.0f);
 	cq->SetProjMatrix();
 
-	entities.push_back(boat);
-	entities.push_back(boat2);
-	entities.push_back(water);
-	entities.push_back(cannonBall);
+	entities.push_back(boat);		world->AddChild(boat);
+	entities.push_back(boat2);		world->AddChild(boat2);
+	entities.push_back(water);		world->AddChild(water);
+	entities.push_back(cannonBall);	world->AddChild(cannonBall);
 
 	// Camera Setup -----------[ o]---------------------
 	viewChanged = false;
@@ -492,30 +497,8 @@ void Gameplay::Update(float dt)
 		main_bgm->changeVelocity(+0.0001f);
 	}
 #endif
-	for (std::vector<Entity*>::iterator it = entities.begin(); it != entities.end(); it++)
-	{
-		(*it)->Update(dt, XMMatrixIdentity());
 
-		// type check
-		Boat* temp;
-		temp = dynamic_cast<Boat*>(*it);
-
-		// Boat checks
-		if(temp != NULL)
-		{
-			if(temp->IsDead())
-			{
-				// apply downward position change to sunken boat
-				XMVECTOR pos = (*it)->position;
-				XMVECTOR change = XMVectorSet(0.0, +0.001f, 0.0f, 0.0f);
-
-				pos -= change;
-
-				// position update
-				(*it)->position = pos;
-			}
-		}
-	}
+	world->Update(dt, XMMatrixIdentity());
 
 #ifdef SOUND_PLAY
 	// updating audio source based on listener position
@@ -542,10 +525,9 @@ void Gameplay::Draw(float dt)
 	deviceContext->VSSetConstantBuffers(1, 1, &Game::vsPerModelConstBuffer);
 	deviceContext->VSSetConstantBuffers(2, 1, &Game::vsPerSceneConstBuffer);
 
-	for (std::vector<Entity*>::iterator it = entities.begin(); it != entities.end(); it++)
+	for (std::vector<DrawableEntity*>::iterator it = entities.begin(); it != entities.end(); it++)
 	{
-		if (dynamic_cast<DrawableEntity*>(*it) != NULL)
-			dynamic_cast<DrawableEntity*>(*it)->Render(deviceContext);
+		(*it)->Render(deviceContext);
 	}
 	
 #if defined(DEBUG) | defined(_DEBUG)
@@ -556,9 +538,9 @@ void Gameplay::Draw(float dt)
 		coords->SetBuffers(deviceContext);
 		deviceContext->IASetPrimitiveTopology(D3D11_PRIMITIVE_TOPOLOGY_LINELIST);
 
-		for (std::vector<Entity*>::iterator it = entities.begin(); it != entities.end(); it++)
+		for (std::vector<DrawableEntity*>::iterator it = entities.begin(); it != entities.end(); it++)
 		{ 
-			dynamic_cast<DrawableEntity*>(*it)->SetConstantBuffer(deviceContext);
+			(*it)->SetConstantBuffer(deviceContext);
 
 			deviceContext->DrawIndexed(
 				coords->Indices(),

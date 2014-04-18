@@ -25,7 +25,8 @@ public:
 	void Draw(float dt);
 
 private:
-	std::vector<Entity*> entities;
+	Entity* world;
+	std::vector<DrawableEntity*> entities;
 	CameraQuick* cq;
 
 	void LoadShadersAndInputLayout();

@@ -1,13 +1,17 @@
 #include "Entity.h"
 
-Entity::Entity()
+Entity::Entity(bool useRotationMat)
 {
-	position = XMVectorSet(0.0f , 0.0f , 0.0f ,0.0f);
-	rotation = XMVectorSet(0.0f , 0.0f , 0.0f ,0.0f);
-	scale = XMVectorSet(1.0f, 1.0f, 1.0f, 0.0f);
-	forward = XMVectorSet(0,0,1.0f,0);
-	up = XMVectorSet(0,1.0f,0,0);
-	right = XMVectorSet(1.0f,0,0,0);
+	useRotation = useRotationMat;
+	
+	position = XMVectorSet(0.0f, 0.0f, 0.0f ,0.0f);
+	rotation = XMVectorSet(0.0f, 0.0f, 0.0f ,0.0f);
+	forward	 = XMVectorSet(0.0f, 0.0f, 1.0f, 0.0f);
+	scale	 = XMVectorSet(1.0f, 1.0f, 1.0f, 0.0f);
+	up		 = XMVectorSet(0.0f, 1.0f, 0.0f, 0.0f);
+	right	 = XMVectorSet(1.0f, 0.0f, 0.0f, 0.0f);
+
+	roll = 0;
 	
 	Forward = &forward;
 	Up = &up;
@@ -24,6 +28,11 @@ Entity::~Entity()
 
 void Entity::Update(float dt, const XMMATRIX& parentMat)
 {
+	// if rotations are based on forward vector
+	// fill in rotation angles with data from forward vector
+	if (!useRotation)
+		UpdateRotationFromForward();
+
 	XMMATRIX trans = XMMatrixTranslationFromVector(position);
 	XMMATRIX rot = XMMatrixRotationRollPitchYawFromVector(rotation);
 	XMMATRIX sca = XMMatrixScalingFromVector(scale);
@@ -31,25 +40,55 @@ void Entity::Update(float dt, const XMMATRIX& parentMat)
 
 	XMStoreFloat4x4(&worldMatrix, XMMatrixTranspose(worldMat));
 
-	UpdateOrientation(worldMat);	
+	// if rotations are based on rotation angles vector
+	// fill in forward vector with rotation angle conversion
+	if (useRotation)
+		UpdateForwardFromRotation();
+
+	SetUnitVectors();
 
 	for (std::vector<Entity*>::iterator it = children.begin(); it != children.end(); it++)
 	{ (*it)->Update(dt, worldMat); }
 }
 
-void Entity::UpdateOrientation()
+void Entity::UpdateForwardFromRotation()
 {
-	UpdateOrientation(XMMatrixRotationRollPitchYawFromVector(rotation));
-}
-
-void Entity::UpdateOrientation(const XMMATRIX& rot, bool transpose)
-{
-	// transpose so we can access the columns as xmvectors.
-	XMMATRIX r = (transpose) ? XMMatrixTranspose(rot) : rot;
+	XMMATRIX rot = XMMatrixRotationRollPitchYawFromVector(rotation);
+	rot = XMMatrixTranspose(rot);
 
 	forward = rot.r[2];
-	up = rot.r[1];
-	right = rot.r[0];
+}
+
+void Entity::UpdateRotationFromForward()
+{
+	// for the love of all that is holy, someone improve this
+	// (I don't even know if it works 100%, I think it does but ...?)
+	XMVECTOR absoluteForward = XMVectorSet(0, 0, 1, 0);
+
+	XMVECTOR xPlane = XMVectorSet(0, forward.m128_f32[1], forward.m128_f32[2], 0);
+	XMVECTOR yPlane = XMVectorSet(forward.m128_f32[0], 0, forward.m128_f32[2], 0);
+	float xAngle = XMVector3AngleBetweenVectors(absoluteForward, yPlane).m128_f32[0];
+	float yAngle = XMVector3AngleBetweenVectors(absoluteForward, xPlane).m128_f32[1];
+
+	rotation.m128_f32[0] = xAngle;
+	rotation.m128_f32[1] = yAngle;
+}
+
+void Entity::SetUnitVectors()
+{
+	forward = XMVector3Normalize(forward);
+
+	right = XMVector3Cross(XMVectorSet(0, 1, 0, 0), forward);
+	right = XMVector3Normalize(right);
+
+	up = XMVector3Cross(forward, right);
+	up = XMVector3Normalize(up);
+
+	// roll - rotate on the z axis
+	up = XMVectorSetX(up, sin( XMConvertToRadians(roll) ));
+	up = XMVectorSetY(up, cos( XMConvertToRadians(roll) ));
+
+	up = XMVector3Normalize(up);
 }
 
 int Entity::ChildCount()

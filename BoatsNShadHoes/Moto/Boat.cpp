@@ -25,9 +25,15 @@ void Boat::Initialize(ID3D11Buffer* modelConstBuffer, VSPerModelData* modelConst
 	SetStats(b);
 }
 
-void Boat::Update(float dt)
+void Boat::Update(float dt, const XMMATRIX& parentMat)
 {
-	MoveableEntity::Update(dt, XMMatrixIdentity());
+	MoveableEntity::Update(dt, parentMat);
+
+	if (IsDead())
+	{
+		// apply downward position change to sunken boat
+		position -= XMVectorSet(0.0, +0.001f, 0.0f, 0.0f);
+	}
 }
 
 /*
@@ -57,7 +63,7 @@ void Boat::SetRotation(float roll, float pitch, float yaw)
 	//Yaw Yaw Yaw YEET
 	XMFLOAT3 rot(roll, pitch, yaw);
 	rotation = XMLoadFloat3(&rot);
-	UpdateOrientation();
+	UpdateForwardFromRotation();
 }
 
 /*
