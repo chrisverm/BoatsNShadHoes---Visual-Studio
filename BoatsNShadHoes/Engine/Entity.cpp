@@ -54,7 +54,7 @@ void Entity::Update(float dt, const XMMATRIX& parentMat)
 void Entity::UpdateForwardFromRotation()
 {
 	XMMATRIX rot = XMMatrixRotationRollPitchYawFromVector(rotation);
-	rot = XMMatrixTranspose(rot);
+	//rot = XMMatrixTranspose(rot);
 
 	forward = rot.r[2];
 }
