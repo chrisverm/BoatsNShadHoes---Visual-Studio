@@ -3,8 +3,11 @@ How to "Play"
 W = move forward.
 A = turn to the left.
 D = turn to the right.
+Space = fire
 
 Also, you can press 'i' to turn on a debug feature that draws the local basis vectors for every entity.
+
+Be sure to check the console window for updates in the game that may not be visible.
 
 /* TROUBLESHOOTING */
 
