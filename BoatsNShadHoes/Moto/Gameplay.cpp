@@ -29,10 +29,30 @@ bool Gameplay::Initialize()
 	Boat* boat = new Boat("cube", "crate");
 	boat->Initialize(Game::vsPerModelConstBuffer, Game::vsPerModelData);
 
+	// stats for first boat
+	BOAT_STATS b1Stats;
+	b1Stats.health		= 100.0f;
+	b1Stats.armor		= 10.0f;
+	b1Stats.ammunition	= 25;
+	b1Stats.rateOfFire	= 0.7f;
+	b1Stats.damage		= 20;
+
+	boat->SetStats(b1Stats);
+
 	Boat* boat2 = new Boat("cube", "crate");
 	boat2->Initialize(Game::vsPerModelConstBuffer, Game::vsPerModelData);
 	boat2->SetPosition(5, 0, 5);
 	boat2->SetRotation(0, 2, 0);
+
+	// stats for second boat
+	BOAT_STATS b2Stats;
+	b2Stats.health		= 50.0f;
+	b2Stats.armor		= 15.0f;
+	b2Stats.ammunition	= 5;
+	b2Stats.rateOfFire	= 1.5f;
+	b2Stats.damage		= 10;
+
+	boat2->SetStats(b2Stats);
 
 	CannonBall* cannonBall = new CannonBall("sphere", "water");
 	cannonBall->Initialize(Game::vsPerModelConstBuffer, Game::vsPerModelData);
@@ -443,9 +463,18 @@ void Gameplay::Update(float dt)
 
 	if (Input::KeyUp(' '))
 	{
+		// Boat 1 fires at Boat 2
+		((Boat*)(entities[0]))->Fire(((Boat*)(entities[1])));
+
+		// cannonball
 		entities[3]->position =  XMVECTOR(entities[0]->position);
 		dynamic_cast<MoveableEntity*>(entities[3])->velocity = 
 			(XMVECTOR(*entities[0]->Right) + XMVECTOR(*entities[0]->Up)) * 10;
+
+		// text updates
+		std::cout << "Boat 1 fire() called!" << std::endl;
+		std::cout << "Boat 1 ammo left: " << ((Boat*)(entities[0]))->Ammunition() << std::endl;
+		std::cout << "Boat 2 hp left: " << ((Boat*)(entities[1]))->Health() << std::endl;
 	}
 	if (Input::KeyUp('G'))
 	{
@@ -466,6 +495,26 @@ void Gameplay::Update(float dt)
 	for (std::vector<Entity*>::iterator it = entities.begin(); it != entities.end(); it++)
 	{
 		(*it)->Update(dt, XMMatrixIdentity());
+
+		// type check
+		Boat* temp;
+		temp = dynamic_cast<Boat*>(*it);
+
+		// Boat checks
+		if(temp != NULL)
+		{
+			if(temp->IsDead())
+			{
+				// apply downward position change to sunken boat
+				XMVECTOR pos = (*it)->position;
+				XMVECTOR change = XMVectorSet(0.0, +0.001f, 0.0f, 0.0f);
+
+				pos -= change;
+
+				// position update
+				(*it)->position = pos;
+			}
+		}
 	}
 
 #ifdef SOUND_PLAY
