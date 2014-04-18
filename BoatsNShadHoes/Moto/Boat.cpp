@@ -2,12 +2,16 @@
 #include "InputManager.h"
 
 using namespace DirectX;
-Boat::Boat(std::string meshId, std::string matId) 
+Boat::Boat(std::string meshId, std::string matId, BOAT_STATS b) 
 	: MoveableEntity(ResourceManager::GetMesh(meshId), ResourceManager::GetMaterial(matId))
 { 
 	//angualrVelocity = XMVectorSet(0,1,1,0);
 	//velocity = XMVectorSet(0,0.25f,0.5f,0);
 
+	SetStats(b);
+
+	// default stats for boat
+	dead = false;
 	friction = 0.9f;
 }
 
@@ -17,12 +21,6 @@ Boat::~Boat()
 void Boat::Initialize(ID3D11Buffer* modelConstBuffer, VSPerModelData* modelConstBufferData)
 {
 	MoveableEntity::Initialize(modelConstBuffer, modelConstBufferData);
-
-	// default stats for boat
-	dead = false;
-
-	BOAT_STATS b = BOAT_STATS();
-	SetStats(b);
 }
 
 void Boat::Update(float dt, const XMMATRIX& parentMat)

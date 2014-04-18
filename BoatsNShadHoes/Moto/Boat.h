@@ -30,7 +30,7 @@ private:
 	bool dead;
 
 public:
-	Boat(std::string, std::string);
+	Boat(std::string, std::string, BOAT_STATS);
 	~Boat();
 
 	void Initialize(ID3D11Buffer* modelConstBuffer, VSPerModelData* modelConstBufferData);

@@ -30,10 +30,6 @@ bool Gameplay::Initialize()
 	CreateGeometryBuffers();
 	LoadResources();
 
-	// Entites -----------------------------------------
-	Boat* boat = new Boat("cube", "crate");
-	boat->Initialize(Game::vsPerModelConstBuffer, Game::vsPerModelData);
-
 	// stats for first boat
 	BOAT_STATS b1Stats;
 	b1Stats.health		= 100.0f;
@@ -42,12 +38,11 @@ bool Gameplay::Initialize()
 	b1Stats.rateOfFire	= 0.7f;
 	b1Stats.damage		= 20;
 
-	boat->SetStats(b1Stats);
+	// Entites -----------------------------------------
+	Boat* boat = new Boat("cube", "crate", b1Stats);
+	boat->Initialize(Game::vsPerModelConstBuffer, Game::vsPerModelData);
 
-	Boat* boat2 = new Boat("cube", "crate");
-	boat2->Initialize(Game::vsPerModelConstBuffer, Game::vsPerModelData);
-	boat2->SetPosition(5, 0, 5);
-	boat2->SetRotation(0, 2, 0);
+	//boat->SetStats(b1Stats);
 
 	// stats for second boat
 	BOAT_STATS b2Stats;
@@ -57,7 +52,12 @@ bool Gameplay::Initialize()
 	b2Stats.rateOfFire	= 1.5f;
 	b2Stats.damage		= 10;
 
-	boat2->SetStats(b2Stats);
+	Boat* boat2 = new Boat("cube", "crate", b2Stats);
+	boat2->Initialize(Game::vsPerModelConstBuffer, Game::vsPerModelData);
+	boat2->SetPosition(5, 0, 5);
+	boat2->SetRotation(0, 2, 0);
+
+	//boat2->SetStats(b2Stats);
 
 	CannonBall* cannonBall = new CannonBall("sphere", "water");
 	cannonBall->Initialize(Game::vsPerModelConstBuffer, Game::vsPerModelData);
