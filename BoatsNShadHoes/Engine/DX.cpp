@@ -56,7 +56,6 @@ void DX::Release()
 
 	GameStateManager::Release();
 	CameraManager::Release();
-	ResourceManager::Release();
 }
 
 bool DX::Initialize(int iconResource)

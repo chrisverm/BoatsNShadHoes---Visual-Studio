@@ -2,9 +2,9 @@
 
 Input::KeyState InputManager::mouseButtons[3];
 
-XMINT2 InputManager::previousMouse;
-XMINT2 InputManager::currentMouse;
-XMINT2 InputManager::deltaMouse;
+XMINT2 InputManager::previousMouse = XMINT2(-1, -1);
+XMINT2 InputManager::currentMouse = XMINT2(-1, -1);
+XMINT2 InputManager::deltaMouse = XMINT2(0, 0);
 
 const XMINT2* InputManager::PreviousMouse = &InputManager::previousMouse;
 const XMINT2* InputManager::CurrentMouse = &InputManager::currentMouse;
@@ -69,6 +69,9 @@ void InputManager::MouseMoveMsg(WPARAM wParam, LPARAM lParam)
 	previousMouse = currentMouse;
 	currentMouse.x = GET_X_LPARAM(lParam);
 	currentMouse.y = GET_Y_LPARAM(lParam);
+
+	if (previousMouse.x == -1 || previousMouse.y == -1)
+		previousMouse = currentMouse;
 
 	deltaMouse.x = previousMouse.x - currentMouse.x;
 	deltaMouse.y = previousMouse.y - currentMouse.y;

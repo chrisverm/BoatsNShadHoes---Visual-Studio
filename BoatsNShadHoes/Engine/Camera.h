@@ -4,6 +4,7 @@
 #include <assert.h>
 #include <DirectXMath.h>
 #include "Entity.h"
+#include "InputManager.h"
 
 using namespace DirectX;
 
@@ -41,6 +42,7 @@ public:
 	Camera(CAMERA_DESC* cDesc);
 	~Camera();
 	void Update(float dt, const XMMATRIX& parentMat);
+	void Move(const XMINT2* mouseDelta, float dt);
 	void ResizeAspectRatio(float ratio);
 	void LookAt(XMVECTOR focus);
 	void SetProjMatrix();

@@ -3,6 +3,7 @@
 
 #include <d3d11.h>
 #include <d3dcompiler.h>
+#include "ResourceManager.h"
 
 class GameState
 {
@@ -13,6 +14,10 @@ public:
 		this->deviceContext = deviceContext;
 	}
 	virtual ~GameState() { }
+	virtual void Unload()
+	{
+		ResourceManager::Release();
+	}
 	virtual bool Initialize() = 0;
 	virtual void Update(float dt) = 0;
 	virtual void Draw(float dt) = 0;

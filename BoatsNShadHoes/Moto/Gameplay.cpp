@@ -77,13 +77,13 @@ bool Gameplay::Initialize()
 	camDesc.FieldOfView = XMConvertToRadians(45.0f);
 	camDesc.NearPlane = 0.1f;
 	camDesc.FarPlane = 100.0f;
-	camDesc.AttachedDist = 10.0f;
+	camDesc.AttachedDist = 20.0f;
 	camDesc.Parent = boat;
 	camDesc.InitialRoll = 0.0f;
 	camDesc.InitialPosition = XMVectorSet(0.0f, 7.0f, -15.0f, 0.0f);
-	camDesc.InitialForward = XMVectorSet(-0.25f, 0.0f, 1.0f, 0.0f);
+	camDesc.InitialForward = XMVectorSet(0.0f, 0.0f, 1.0f, 0.0f);
 	camDesc.Position = STATIC;
-	camDesc.Forward = STATIC;
+	camDesc.Forward = THIRD_PERSON;
 	camDesc.Roll = STATIC;
 	CameraManager::CreateNewCamera(&camDesc, true);
 

@@ -1,7 +1,8 @@
 #include "Camera.h"
+#include <iostream>
 
 Camera::Camera(CAMERA_DESC* cDesc)
-	: Entity(false)
+	: Entity(true)
 {
 	fieldOfView = cDesc->FieldOfView;
 	nearPlane = cDesc->NearPlane;
@@ -28,6 +29,9 @@ Camera::~Camera() { }
 
 void Camera::Update(float dt, const XMMATRIX& parentMat)
 {
+	if (Input::DeltaMouse->x != 0 || Input::DeltaMouse->y != 0)
+		Move(Input::DeltaMouse, dt);
+
 	Entity::Update(dt, parentMat);
 	XMStoreFloat4x4(&viewMatrix, XMMatrixInverse(nullptr,(XMLoadFloat4x4(&worldMatrix))));
 
@@ -72,6 +76,22 @@ void Camera::Update(float dt, const XMMATRIX& parentMat)
 	case THIRD_PERSON:
 
 		break;
+	}
+}
+
+void Camera::Move(const XMINT2* mouseDelta, float dt)
+{
+	float horizAngle = mouseDelta->x * dt;
+	float vertAngle = mouseDelta->y * dt;
+
+	rotation.m128_f32[0] += XMConvertToRadians(vertAngle) * 50.0f;
+	rotation.m128_f32[1] += XMConvertToRadians(horizAngle) * 50.0f;
+
+	if (forwardState == THIRD_PERSON)
+	{
+		position.m128_f32[0] = 0 - attachedDist * forward.m128_f32[0];
+		position.m128_f32[1] = 0 - attachedDist * forward.m128_f32[1];
+		position.m128_f32[2] = 0 - attachedDist * forward.m128_f32[2];
 	}
 }
 

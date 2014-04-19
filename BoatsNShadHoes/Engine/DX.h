@@ -13,7 +13,6 @@
 #include "CameraManager.h"
 #include "GameStateManager.h"
 #include "InputManager.h"
-#include "ResourceManager.h"
 
 class DX
 {
