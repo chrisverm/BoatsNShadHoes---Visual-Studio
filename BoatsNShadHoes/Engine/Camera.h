@@ -21,37 +21,28 @@ struct CAMERA_DESC
 	float NearPlane;
 	float FarPlane;
 	float AttachedDist;
-	float* InitialRoll;
-	XMVECTOR* InitialPosition;
-	XMVECTOR* InitialForward;
+	Entity* Parent;
+	float InitialRoll;
+	XMVECTOR InitialPosition;
+	XMVECTOR InitialForward;
 	CameraMountState Position;
 	CameraMountState Forward;
 	CameraMountState Roll;
-
-	CAMERA_DESC() { AttachedDist = 0; }
-	~CAMERA_DESC() {}
 };
 
-class Camera
+class Camera : public Entity
 {
 public:
 	float fieldOfView;
 	float aspectRatio;
 	float nearPlane, farPlane;
 	float attachedDist;
-	float* roll;
-	XMVECTOR* position;
-	XMVECTOR* forward;
-	XMVECTOR* right;
-	XMVECTOR* up;
 
 	Camera(CAMERA_DESC* cDesc);
 	~Camera();
-	void Update();
+	void Update(float dt, const XMMATRIX& parentMat);
 	void ResizeAspectRatio(float ratio);
 	void LookAt(XMVECTOR focus);
-	void AttachTo(Entity* entity, float attachedDist);
-	void SetUnitVectors();
 	void SetProjMatrix();
 	void SetViewMatrix();
 
@@ -65,30 +56,6 @@ private:
 	XMFLOAT4X4 projMatrix;
 	XMFLOAT4X4 viewMatrix;
 
-};
-
-class CameraQuick : public Entity
-{
-public:
-	CameraQuick();
-	~CameraQuick();
-
-	float fieldOfView;
-	float aspectRatio;
-	float nearPlane, farPlane;
-
-	void ResizeAspectRatio(float ratio);
-
-	void Update(float dt, const XMMATRIX&);
-
-	void SetProjMatrix();
-	
-	XMFLOAT4X4 GetProjMatrix() const { return projMatrix; }
-	XMFLOAT4X4 GetViewMatrix() const { return viewMatrix; }
-private:
-	
-	XMFLOAT4X4 projMatrix;
-	XMFLOAT4X4 viewMatrix;
 };
 
 #endif

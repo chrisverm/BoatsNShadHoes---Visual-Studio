@@ -39,6 +39,7 @@ ID3D11Buffer* Game::vsPerSceneConstBuffer = nullptr;
 VSPerModelData* Game::vsPerModelData = new VSPerModelData();
 VSPerFrameData* Game::vsPerFrameData = new VSPerFrameData();
 VSPerSceneData* Game::vsPerSceneData =new VSPerSceneData();
+bool Game::projChanged = false;
 
 bool Game::Initialize(HINSTANCE hInstance, int iconResource)
 {
@@ -138,6 +139,8 @@ void Game::Reset()
 void Game::OnResize()
 {
 	DX::OnResize();
+
+	projChanged = true;
 }
 
 int Game::Run()

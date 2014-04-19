@@ -27,7 +27,6 @@ public:
 private:
 	Entity* world;
 	std::vector<DrawableEntity*> entities;
-	CameraQuick* cq;
 
 	void LoadShadersAndInputLayout();
 	void CreateGeometryBuffers();
@@ -40,7 +39,6 @@ private:
 	AudioPlayer* main_bgm;
 
 	bool viewChanged;
-	bool projChanged;
 	bool drawCoordinates;
 
 };

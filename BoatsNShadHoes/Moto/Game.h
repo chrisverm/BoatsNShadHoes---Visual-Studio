@@ -29,6 +29,8 @@ private:
 	static VSPerFrameData* vsPerFrameData;
 	static VSPerSceneData* vsPerSceneData;
 
+	static bool projChanged;
+
 };
 
 #endif

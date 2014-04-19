@@ -26,9 +26,6 @@ public:
 	static int activeIndex;
 	static Camera** cameras;
 
-	//static int numViewports;
-	//static D3D11_VIEWPORT* viewports;
-
 };
 
 #endif

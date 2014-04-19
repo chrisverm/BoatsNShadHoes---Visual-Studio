@@ -1,4 +1,5 @@
 #include "Entity.h"
+#include "Camera.h"
 
 Entity::Entity(bool useRotationMat)
 {
@@ -23,7 +24,10 @@ Entity::Entity(bool useRotationMat)
 Entity::~Entity() 
 {
 	for (std::vector<Entity*>::iterator it = children.begin(); it != children.end() ; it++)
-	{ delete (*it); }
+	{
+		if (dynamic_cast<Camera*>(*it) == NULL)
+			delete (*it);
+	}
 }
 
 void Entity::Update(float dt, const XMMATRIX& parentMat)
@@ -54,7 +58,6 @@ void Entity::Update(float dt, const XMMATRIX& parentMat)
 void Entity::UpdateForwardFromRotation()
 {
 	XMMATRIX rot = XMMatrixRotationRollPitchYawFromVector(rotation);
-	//rot = XMMatrixTranspose(rot);
 
 	forward = rot.r[2];
 }

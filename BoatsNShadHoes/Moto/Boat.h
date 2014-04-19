@@ -19,7 +19,7 @@ struct BOAT_STATS
 	//short maxAmmunition;	// maximum ammunition count for the boat
 	//short penetrationDamage;	// amount of enemy armor that is ignored upon hit
 
-	BOAT_STATS() { health = armor = ammunition = rateOfFire = 0; } // 0 defaults
+	BOAT_STATS() { health = armor = rateOfFire = 0.0f; ammunition = 0; } // 0 defaults
 	~BOAT_STATS() {}
 };
 

@@ -1,6 +1,7 @@
 #include "Camera.h"
 
 Camera::Camera(CAMERA_DESC* cDesc)
+	: Entity(false)
 {
 	fieldOfView = cDesc->FieldOfView;
 	nearPlane = cDesc->NearPlane;
@@ -17,30 +18,19 @@ Camera::Camera(CAMERA_DESC* cDesc)
 	forward = cDesc->InitialForward;
 	forwardState = cDesc->Forward;
 
-	right = new XMVECTOR();
-	up = new XMVECTOR();
-
 	projMatrix = XMFLOAT4X4();
 	viewMatrix = XMFLOAT4X4();
+
+	cDesc->Parent->AddChild(this);
 }
 
-Camera::~Camera()
+Camera::~Camera() { }
+
+void Camera::Update(float dt, const XMMATRIX& parentMat)
 {
-	if (positionState != ATTACHED)
-		delete position;
+	Entity::Update(dt, parentMat);
+	XMStoreFloat4x4(&viewMatrix, XMMatrixInverse(nullptr,(XMLoadFloat4x4(&worldMatrix))));
 
-	if (forwardState != ATTACHED)
-		delete forward;
-
-	if (rollState != ATTACHED)
-		delete roll;
-
-	delete right;
-	delete up;
-}
-
-void Camera::Update()
-{
 	// Mount stuff here
 	switch (positionState)
 	{
@@ -92,34 +82,7 @@ void Camera::ResizeAspectRatio(float ratio)
 
 void Camera::LookAt(XMVECTOR focus)
 {
-	*forward = XMVector3Normalize(focus - *position);
-}
-
-void Camera::AttachTo(Entity* entity, float attachedDist)
-{
-	if (positionState != ATTACHED)
-		return;
-
-	delete position; position = &entity->position;
-	//delete forward; forward = &entity->for
-	this->attachedDist = attachedDist;
-}
-
-void Camera::SetUnitVectors()
-{
-	*forward = XMVector3Normalize(*forward);
-
-	*right = XMVector3Cross(XMVectorSet(0, 1, 0, 0), *forward);
-	*right = XMVector3Normalize(*right);
-
-	*up = XMVector3Cross(*forward, *right);
-	*up = XMVector3Normalize(*up);
-
-	// roll - rotate on the z axis
-	*up = XMVectorSetX(*up, sin( XMConvertToRadians(*roll) ));
-	*up = XMVectorSetY(*up, cos( XMConvertToRadians(*roll) ));
-
-	*up = XMVector3Normalize(*up);
+	forward = XMVector3Normalize(focus - position);
 }
 
 void Camera::SetProjMatrix()
@@ -135,37 +98,9 @@ void Camera::SetViewMatrix()
 {
 	SetUnitVectors();
 
-	XMVECTOR eye = *position - * forward * attachedDist;
-	XMVECTOR focus = eye + *forward;
+	XMVECTOR eye = position - forward * attachedDist;
+	XMVECTOR focus = eye + forward;
 
 	XMStoreFloat4x4(&viewMatrix, XMMatrixTranspose(
-		XMMatrixLookAtLH(eye, focus, *up)));
-}
-
-CameraQuick::CameraQuick()
-{
-}
-
-CameraQuick::~CameraQuick()
-{
-}
-
-void CameraQuick::SetProjMatrix()
-{
-	assert(aspectRatio != 0);
-	assert(farPlane != nearPlane);
-
-	XMStoreFloat4x4(&projMatrix, XMMatrixTranspose(XMMatrixPerspectiveFovLH(
-		fieldOfView, aspectRatio, nearPlane, farPlane)));
-}
-
-void CameraQuick::ResizeAspectRatio(float ratio)
-{
-	aspectRatio = ratio;
-}
-
-void CameraQuick::Update(float dt, const XMMATRIX& parentMat)
-{
-	Entity::Update(dt, parentMat);
-	XMStoreFloat4x4(&viewMatrix, XMMatrixInverse(nullptr,(XMLoadFloat4x4(&worldMatrix))));
+		XMMatrixLookAtLH(eye, focus, up)));
 }

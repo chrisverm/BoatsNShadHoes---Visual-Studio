@@ -9,32 +9,13 @@ int CameraManager::numCameras = 0;
 int CameraManager::activeIndex = -1;
 Camera** CameraManager::cameras = nullptr;
 
-//int CameraManager::numViewports = 0;
-//D3D11_VIEWPORT* CameraManager::viewports = nullptr;
-
 void CameraManager::Initialize(ID3D11DeviceContext* deviceContext, int numViewports, 
 							   int* windowWidth, int* windowHeight, bool* viewChanged, bool* projChanged)
 {
-	//CameraManager::numViewports = numViewports;
 	CameraManager::windowWidth = windowWidth;
 	CameraManager::windowHeight = windowHeight;
 	CameraManager::viewChanged = viewChanged;
 	CameraManager::projChanged = projChanged;
-
-	/*
-	viewports = new D3D11_VIEWPORT[numViewports];
-	for (int i = 0; i < numViewports; i++)
-	{
-		viewports[i] = D3D11_VIEWPORT();
-		viewports[i].TopLeftX = (*windowWidth / 2.0f) * (i % 2);
-		viewports[i].TopLeftY = 0;
-		viewports[i].Width	  = (float)*windowWidth / (i % 2);
-		viewports[i].Height   = *windowHeight / 2.0f;
-		viewports[i].MinDepth = 0.0f;
-		viewports[i].MaxDepth = 1.0f;
-	}
-	deviceContext->RSSetViewports(numViewports, viewports);
-	*/
 }
 
 void CameraManager::CreateNewCamera(CAMERA_DESC* cDesc, bool makeActive)
@@ -91,8 +72,8 @@ void CameraManager::Update()
 		*projChanged = false;
 	}
 
-	if (!IsEmpty())
-		cameras[activeIndex]->Update();
+	//if (!IsEmpty())
+	//	cameras[activeIndex]->Update(0, XMMatrixIdentity()); // CHANGE THESE PARAMS // UNCOMMENT THIS
 }
 
 void CameraManager::Release()
@@ -106,5 +87,6 @@ void CameraManager::Release()
 		}
 
 		delete[] cameras;
+		cameras = nullptr;
 	}
 }

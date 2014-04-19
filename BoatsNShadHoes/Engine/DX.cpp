@@ -54,8 +54,8 @@ void DX::Release()
 	ReleaseMacro(deviceContext);
 	ReleaseMacro(device);
 
-	CameraManager::Release();
 	GameStateManager::Release();
+	CameraManager::Release();
 	ResourceManager::Release();
 }
 

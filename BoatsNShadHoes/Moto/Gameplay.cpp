@@ -16,12 +16,9 @@ Gameplay::~Gameplay()
 	delete main_bgm;
 #endif
 
-	// every enetity if somehow connected to this
+	// every entity if somehow connected to this
 	// thus this will destroy all entities
 	delete world;
-
-	/*for (std::vector<Entity*>::iterator it = entities.begin(); it != entities.end() ; it++)
-	{ delete (*it); }*/
 }
 
 bool Gameplay::Initialize()
@@ -66,16 +63,6 @@ bool Gameplay::Initialize()
 	Water* water = new Water("quad", "water");
 	water->Initialize(Game::vsPerModelConstBuffer, Game::vsPerModelData);
 
-	cq = new CameraQuick();
-	cq->position = XMVectorSet(0,7.0f, -15.0f,0);
-	cq->rotation = XMVectorSet(0.25f, 0,0,0);
-	boat->AddChild(cq);
-	cq->ResizeAspectRatio(DX::windowWidth/ DX::windowHeight);
-	cq->nearPlane = 0.1f;
-	cq->farPlane = 100.0f;
-	cq->fieldOfView = XMConvertToRadians(45.0f);
-	cq->SetProjMatrix();
-
 	entities.push_back(boat);		world->AddChild(boat);
 	entities.push_back(boat2);		world->AddChild(boat2);
 	entities.push_back(water);		world->AddChild(water);
@@ -83,22 +70,24 @@ bool Gameplay::Initialize()
 
 	// Camera Setup -----------[ o]---------------------
 	viewChanged = false;
-	CameraManager::Initialize(deviceContext, 1, &DX::windowWidth, &DX::windowHeight, &viewChanged, &projChanged);
+	CameraManager::Initialize(deviceContext, 1, &DX::windowWidth, &DX::windowHeight, &viewChanged, &Game::projChanged);
 
+	
 	CAMERA_DESC camDesc;
 	camDesc.FieldOfView = XMConvertToRadians(45.0f);
 	camDesc.NearPlane = 0.1f;
 	camDesc.FarPlane = 100.0f;
 	camDesc.AttachedDist = 10.0f;
-	camDesc.InitialRoll = new float(0.0f);
-	camDesc.InitialPosition = new XMVECTOR(XMVectorSet(0.0f, 0.0f, -10.0f, 0.0f));
-	camDesc.InitialForward = new XMVECTOR(XMVectorSet(0.0f, 0.0f, 1.0f, 0.0f));
+	camDesc.Parent = boat;
+	camDesc.InitialRoll = 0.0f;
+	camDesc.InitialPosition = XMVectorSet(0.0f, 7.0f, -15.0f, 0.0f);
+	camDesc.InitialForward = XMVectorSet(-0.25f, 0.0f, 1.0f, 0.0f);
 	camDesc.Position = STATIC;
 	camDesc.Forward = STATIC;
 	camDesc.Roll = STATIC;
 	CameraManager::CreateNewCamera(&camDesc, true);
 
-	#ifdef SOUND_PLAY
+#ifdef SOUND_PLAY
 	// AL setup --------------------------------~^^~-----
 	setupAudio();
 
@@ -377,26 +366,26 @@ void Gameplay::SetupAudio()
 	// assign context to 'current'
 	alcMakeContextCurrent(audioDeviceContext);
 
-	float listenerOrientation[] = {
-		XMVectorGetX(*CameraManager::ActiveCamera()->forward),
-		XMVectorGetY(*CameraManager::ActiveCamera()->forward),
-		XMVectorGetZ(*CameraManager::ActiveCamera()->forward),
-		XMVectorGetX(*CameraManager::ActiveCamera()->up),
-		XMVectorGetY(*CameraManager::ActiveCamera()->up),
-		XMVectorGetZ(*CameraManager::ActiveCamera()->up)
-	};
-	
-	// listener setup! :D
-	alListener3f(AL_POSITION, XMVectorGetX(*CameraManager::ActiveCamera()->position), 
-							  XMVectorGetY(*CameraManager::ActiveCamera()->position), 
-							  XMVectorGetZ(*CameraManager::ActiveCamera()->position));
-	alListener3f(AL_VELOCITY, 0.0f, 0.0f, 0.0f);
-	alListenerfv(AL_ORIENTATION, listenerOrientation);
+	//float listenerOrientation[] = {										// UNCOMMENT THIS
+	//	XMVectorGetX(CameraManager::ActiveCamera()->forward),
+	//	XMVectorGetY(CameraManager::ActiveCamera()->forward),
+	//	XMVectorGetZ(CameraManager::ActiveCamera()->forward),
+	//	XMVectorGetX(CameraManager::ActiveCamera()->up),
+	//	XMVectorGetY(CameraManager::ActiveCamera()->up),
+	//	XMVectorGetZ(CameraManager::ActiveCamera()->up)
+	//};
+	//
+	//// listener setup! :D
+	//alListener3f(AL_POSITION, XMVectorGetX(CameraManager::ActiveCamera()->position), 
+	//						  XMVectorGetY(CameraManager::ActiveCamera()->position), 
+	//						  XMVectorGetZ(CameraManager::ActiveCamera()->position));
+	//alListener3f(AL_VELOCITY, 0.0f, 0.0f, 0.0f);
+	//alListenerfv(AL_ORIENTATION, listenerOrientation);
 
 #if defined(DEBUG) | defined(_DEBUG)
-	std::cout << "listener position:" << "[" << XMVectorGetX(*CameraManager::ActiveCamera()->position) 
-									  << ", " << XMVectorGetY(*CameraManager::ActiveCamera()->position) 
-									  << ", " << XMVectorGetZ(*CameraManager::ActiveCamera()->position) << "]" << std::endl;
+	std::cout << "listener position:" << "[" << XMVectorGetX(CameraManager::ActiveCamera()->position) 
+									  << ", " << XMVectorGetY(CameraManager::ActiveCamera()->position) 
+									  << ", " << XMVectorGetZ(CameraManager::ActiveCamera()->position) << "]" << std::endl;
 #endif
 
 	// ^ using assert to replace the following:
@@ -426,19 +415,10 @@ void Gameplay::SetupAudio()
 
 void Gameplay::Update(float dt)
 {
-	if (projChanged)
-	{
-		cq->ResizeAspectRatio((float)DX::windowWidth / DX::windowHeight);
-		cq->SetProjMatrix();
-	}
-	if (viewChanged)
-	{
-		cq->GetViewMatrix();
-	}
 	CameraManager::Update();
 	
-	Game::vsPerFrameData->view		 = cq->GetViewMatrix(); //CameraManager::ActiveCamera()->GetViewMatrix();
-	Game::vsPerFrameData->projection = cq->GetProjMatrix(); //CameraManager::ActiveCamera()->GetProjMatrix();
+	Game::vsPerFrameData->view		 = CameraManager::ActiveCamera()->GetViewMatrix();
+	Game::vsPerFrameData->projection = CameraManager::ActiveCamera()->GetProjMatrix();
 
 	deviceContext->UpdateSubresource(
 		Game::vsPerFrameConstBuffer,
