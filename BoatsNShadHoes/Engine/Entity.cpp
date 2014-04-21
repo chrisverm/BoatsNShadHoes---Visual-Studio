@@ -1,10 +1,8 @@
 #include "Entity.h"
 #include "Camera.h"
 
-Entity::Entity(bool useRotationMat)
+Entity::Entity()
 {
-	useRotation = useRotationMat;
-	
 	position = XMVectorSet(0.0f, 0.0f, 0.0f ,0.0f);
 	rotation = XMVectorSet(0.0f, 0.0f, 0.0f ,0.0f);
 	forward	 = XMVectorSet(0.0f, 0.0f, 1.0f, 0.0f);
@@ -32,11 +30,6 @@ Entity::~Entity()
 
 void Entity::Update(float dt, const XMMATRIX& parentMat)
 {
-	// if rotations are based on forward vector
-	// fill in rotation angles with data from forward vector
-	if (!useRotation)
-		UpdateRotationFromForward();
-
 	XMMATRIX trans = XMMatrixTranslationFromVector(position);
 	XMMATRIX rot = XMMatrixRotationRollPitchYawFromVector(rotation);
 	XMMATRIX sca = XMMatrixScalingFromVector(scale);
@@ -44,10 +37,7 @@ void Entity::Update(float dt, const XMMATRIX& parentMat)
 
 	XMStoreFloat4x4(&worldMatrix, XMMatrixTranspose(worldMat));
 
-	// if rotations are based on rotation angles vector
-	// fill in forward vector with rotation angle conversion
-	if (useRotation)
-		UpdateForwardFromRotation();
+	UpdateForwardFromRotation();
 
 	SetUnitVectors();
 

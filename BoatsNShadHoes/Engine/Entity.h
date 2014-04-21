@@ -12,7 +12,7 @@ using namespace DirectX;
 class Entity
 {
 public:
-	Entity(bool useRotationMat = true);
+	Entity();
 	~Entity();
 
 	/*
@@ -62,8 +62,6 @@ public:
 	const XMVECTOR* Right;
 
 protected:
-	bool useRotation;
-
 	/*
 	4x4 float thats passed into shaders for this entities world matrix.
 	*/

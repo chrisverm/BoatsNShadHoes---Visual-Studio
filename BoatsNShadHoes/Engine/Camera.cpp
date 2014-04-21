@@ -2,7 +2,7 @@
 #include <iostream>
 
 Camera::Camera(CAMERA_DESC* cDesc)
-	: Entity(true)
+	: Entity()
 {
 	fieldOfView = cDesc->FieldOfView;
 	nearPlane = cDesc->NearPlane;
