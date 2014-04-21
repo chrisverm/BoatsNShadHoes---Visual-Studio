@@ -16,7 +16,7 @@ Gameplay::~Gameplay()
 	delete main_bgm;
 #endif
 
-	// every entity if somehow connected to this
+	// every entity is somehow connected to this
 	// thus this will destroy all entities
 	delete world;
 }
@@ -26,6 +26,8 @@ bool Gameplay::Initialize()
 	LoadShadersAndInputLayout();
 	CreateGeometryBuffers();
 	LoadResources();
+
+	Input::SetCursor(false);
 
 	// stats for first boat
 	BOAT_STATS b1Stats;
@@ -429,9 +431,12 @@ void Gameplay::Update(float dt)
 		0);
 
 	// Toggle drawing entities coordinates in debug.
-	// TODO: Needs to be set to KeyUp once we have that implemented.
 	if (Input::KeyUp('I'))
 		drawCoordinates = !drawCoordinates;
+
+	// Toggle showing the cursor (not locked yet).
+	if (Input::KeyUp('M'))
+		Input::ToggleCursor();
 
 	if (Input::KeyDown('W'))
 	{

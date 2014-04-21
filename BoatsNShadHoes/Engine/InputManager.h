@@ -77,8 +77,13 @@ public:
 	static bool MouseButtonUp(MouseButton);
 	static bool MouseButtonJustPressed(MouseButton);
 
+	static void ToggleCursor();
+	static void SetCursor(bool);
+
 // End Public
 private:
+
+	static bool cursorShowing;
 
 	/*
 	Holds data about the 3 mouse buttons.

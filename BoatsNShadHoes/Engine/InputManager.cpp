@@ -15,6 +15,7 @@ unsigned char InputManager::keyJustPressed;
 unsigned char InputManager::keyUp;
 
 bool InputManager::inValid;
+bool InputManager::cursorShowing;
 
 // Public getters.
 bool InputManager::KeyUp(unsigned char key)
@@ -144,3 +145,10 @@ void InputManager::Validate()
 
 void InputManager::Invalidate()
 { inValid = true; }
+
+// Cursor.
+void InputManager::ToggleCursor()
+{ ShowCursor(cursorShowing = !cursorShowing); }
+
+void InputManager::SetCursor(bool showCursor)
+{ ShowCursor(cursorShowing = showCursor); }
