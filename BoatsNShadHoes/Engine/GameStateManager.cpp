@@ -8,6 +8,9 @@ bool GameStateManager::ChangeState(std::string id, bool immediate)
 	if (states[id] == nullptr)
 		return false;
 
+	if (currentState != nullptr)
+		currentState->Unload();
+
 	if (states[id]->Initialize())
 	{
 		currentState = states[id];
@@ -38,4 +41,6 @@ void GameStateManager::Release()
 	{
 		delete it->second;
 	}
+
+	ResourceManager::Release();
 }
