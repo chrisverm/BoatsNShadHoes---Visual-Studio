@@ -1,42 +1,113 @@
 #include "InputManager.h"
 
+#pragma region Private Fields
+
 Input::KeyState InputManager::mouseButtons[3];
 
 XMINT2 InputManager::previousMouse = XMINT2(-1, -1);
 XMINT2 InputManager::currentMouse = XMINT2(-1, -1);
 XMINT2 InputManager::deltaMouse = XMINT2(0, 0);
 
-const XMINT2* InputManager::PreviousMouse = &InputManager::previousMouse;
-const XMINT2* InputManager::CurrentMouse = &InputManager::currentMouse;
-const XMINT2* InputManager::DeltaMouse = &InputManager::deltaMouse;
-
 std::map<unsigned char, bool> InputManager::keysDown;
 unsigned char InputManager::keyJustPressed;
 unsigned char InputManager::keyUp;
+
+#pragma endregion
+
+#pragma region Private Fields(Used by DX)
 
 bool InputManager::inValid;
 bool InputManager::cursorShowing;
 
 RECT InputManager::halfRect;
 
-// Public getters.
+#pragma endregion
+
+#pragma region Public Fields
+
+/*
+Pointer to an XMINT2 that defines where the mouse was one frame ago.
+This XMINT is const so you can't accidentaly change it.
+*/
+const XMINT2* InputManager::PreviousMouse = &InputManager::previousMouse;
+
+/*
+Pointer to an XMINT2 that defines where the mouse is this frame.
+This XMINT is const so you can't accidentaly change it.
+*/
+const XMINT2* InputManager::CurrentMouse = &InputManager::currentMouse;
+
+/*
+Pointer to an XMINT2 that defines how much the mouse moved between this frame and the previous frame.
+This XMINT is const so you can't accidentaly change it.
+*/
+const XMINT2* InputManager::DeltaMouse = &InputManager::deltaMouse;
+
+#pragma endregion
+
+#pragma region Public Getters
+
+/*
+Gets whether or not the 'key' was just released (up).
+'key' - Unsigned char representing the key on the keyboard
+*/
 bool InputManager::KeyUp(unsigned char key)
 { return key == keyUp; }
 
+/*
+Gets whether or not the 'key' was just pressed.
+'key' - Unsigned char representing the key on the keyboard
+*/
 bool InputManager::KeyJustPressed(unsigned char key)
 { return key == keyJustPressed; }
 
+/*
+Gets whether or not the 'key' is down OR just pressed.
+'key' - Unsigned char representing the key on the keyboard
+*/
 bool InputManager::KeyDown(unsigned char key)
 { return keysDown[key]; }
 
-bool InputManager::MouseButtonDown(MouseButton mouseButton)
-{ return (mouseButtons[mouseButton] | JustPressed) == (Down | JustPressed); }
+/*
+Gets whether or not the 'MouseButton' was just released (up).
+'MouseButton' - MouseButton enum specifying left, right, or middle mouse button.
+*/
+bool InputManager::MouseButtonUp(MouseButton mouseButton)
+{ return mouseButtons[mouseButton] == Up; }
 
+/*
+Gets whether or not the 'MouseButton' was just pressed.
+'MouseButton' - MouseButton enum specifying left, right, or middle mouse button.
+*/
 bool InputManager::MouseButtonJustPressed(MouseButton mouseButton)
 { return mouseButtons[mouseButton] == JustPressed; }
 
-bool InputManager::MouseButtonUp(MouseButton mouseButton)
-{ return mouseButtons[mouseButton] == Up; }
+/*
+Gets whether or not the 'MouseButton' is down OR just pressed.
+'MouseButton' - MouseButton enum specifying left, right, or middle mouse button.
+*/
+bool InputManager::MouseButtonDown(MouseButton mouseButton)
+{ return (mouseButtons[mouseButton] | JustPressed) == (Down | JustPressed); }
+
+#pragma endregion
+
+#pragma region Public Cursor
+
+/*
+Toggles whether or not the cursor is being hidden+locked.
+*/
+void InputManager::ToggleCursor()
+{ ShowCursor(cursorShowing = !cursorShowing); }
+
+/*
+Sets whether or not to hide+lock the cursor.
+*/
+void InputManager::SetCursor(bool showCursor)
+{ ShowCursor(cursorShowing = showCursor); }
+
+#pragma endregion
+
+#pragma region MsgProc
 
 // MSG Proc
 void InputManager::ProcessInputMessage(UINT msg, WPARAM wParam, LPARAM lParam)
@@ -129,7 +200,10 @@ void InputManager::KeyboardInputMsg(UINT msg, WPARAM wParam, LPARAM lParam)
 #endif
 }
 
-// Validation
+#pragma endregion
+
+#pragma region Validation
+
 void InputManager::Validate()
 {
 	previousMouse = currentMouse;
@@ -160,9 +234,4 @@ void InputManager::Validate()
 void InputManager::Invalidate()
 { inValid = true; }
 
-// Cursor.
-void InputManager::ToggleCursor()
-{ ShowCursor(cursorShowing = !cursorShowing); }
-
-void InputManager::SetCursor(bool showCursor)
-{ ShowCursor(cursorShowing = showCursor); }
+#pragma endregion
