@@ -13,6 +13,8 @@ Boat::Boat(std::string meshId, std::string matId, BOAT_STATS b)
 	// default stats for boat
 	dead = false;
 	friction = 0.9f;
+	roll = 0.0f;
+	maxRoll = 10.0f;
 }
 
 Boat::~Boat()
@@ -25,6 +27,12 @@ void Boat::Initialize(ID3D11Buffer* modelConstBuffer, VSPerModelData* modelConst
 
 void Boat::Update(float dt, const XMMATRIX& parentMat)
 {
+	// clamp maximum amount a ship can roll
+	if (roll < -(float)maxRoll)
+		roll = -(float)maxRoll;
+	else if (roll > maxRoll)
+		roll = maxRoll;
+
 	MoveableEntity::Update(dt, parentMat);
 
 	if (IsDead())
@@ -91,17 +99,20 @@ bool Boat::IsDead() const
 
 void Boat::MoveForward()
 {
-	velocity = XMVECTOR(*Forward);
+	//angularVelocity += forward;
+	velocity = XMVECTOR(*Forward) * 2.0f;
 }
 
 void Boat::PortHelm()
 {
-	angularVelocity = -XMVECTOR(*Up) / 5;
+	roll += 0.01f; // should be multipled by dt
+	angularVelocity = -XMVECTOR(*Up) / 25.0f;
 }
 
 void Boat::StarboardHelm()
 {
-	angularVelocity = XMVECTOR(*Up) / 5;
+	roll -= 0.01f; // should be multipled by dt
+	angularVelocity = XMVECTOR(*Up) / 25.0f;
 }
 
 /*

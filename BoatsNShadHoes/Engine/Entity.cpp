@@ -30,6 +30,8 @@ Entity::~Entity()
 
 void Entity::Update(float dt, const XMMATRIX& parentMat)
 {
+	rotation = XMVectorSetZ(rotation, XMConvertToRadians(roll));
+
 	XMMATRIX trans = XMMatrixTranslationFromVector(position);
 	XMMATRIX rot = XMMatrixRotationRollPitchYawFromVector(rotation);
 	XMMATRIX sca = XMMatrixScalingFromVector(scale);
@@ -77,11 +79,11 @@ void Entity::SetUnitVectors()
 	up = XMVector3Cross(forward, right);
 	up = XMVector3Normalize(up);
 
-	// roll - rotate on the z axis
-	up = XMVectorSetX(up, sin( XMConvertToRadians(roll) ));
-	up = XMVectorSetY(up, cos( XMConvertToRadians(roll) ));
+	//// roll - rotate on the z axis
+	//up = XMVectorSetX(up, sin( XMConvertToRadians(roll) ));
+	//up = XMVectorSetY(up, cos( XMConvertToRadians(roll) ));
 
-	up = XMVector3Normalize(up);
+	//up = XMVector3Normalize(up);
 }
 
 int Entity::ChildCount()

@@ -25,10 +25,6 @@ struct BOAT_STATS
 
 class Boat : public MoveableEntity
 {
-private:
-	BOAT_STATS stats;
-	bool dead;
-
 public:
 	Boat(std::string, std::string, BOAT_STATS);
 	~Boat();
@@ -49,6 +45,12 @@ public:
 	void StarboardHelm();
 	void Fire(Boat*); // testing purposes!
 	void TakeDamage(float);
+
+private:
+	BOAT_STATS stats;
+	bool dead;
+	UINT maxRoll;
+
 };
 
 #endif
