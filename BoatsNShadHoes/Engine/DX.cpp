@@ -349,6 +349,13 @@ LRESULT DX::MsgProc(HWND hwnd, UINT msg, WPARAM wParam, LPARAM lParam)
 		}
 		break;
 
+		// When the window is moved, update our x,y pos for the window.
+	case WM_MOVE:
+		GetWindowRect(hwnd, &Input::halfRect);
+		Input::halfRect.right -= (Input::halfRect.right - Input::halfRect.left)/2;
+		Input::halfRect.bottom -= (Input::halfRect.bottom - Input::halfRect.top)/2;
+		break;
+
 		// WM_SIZE is sent when the user resizes the window.  
 	case WM_SIZE:
 		// Save the new client area dimensions.

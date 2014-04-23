@@ -17,6 +17,8 @@ unsigned char InputManager::keyUp;
 bool InputManager::inValid;
 bool InputManager::cursorShowing;
 
+RECT InputManager::halfRect;
+
 // Public getters.
 bool InputManager::KeyUp(unsigned char key)
 { return key == keyUp; }
@@ -67,19 +69,19 @@ void InputManager::ProcessInputMessage(UINT msg, WPARAM wParam, LPARAM lParam)
 
 void InputManager::MouseMoveMsg(WPARAM wParam, LPARAM lParam)
 {
-	previousMouse = currentMouse;
 	currentMouse.x = GET_X_LPARAM(lParam);
 	currentMouse.y = GET_Y_LPARAM(lParam);
 
-	if (previousMouse.x == -1 || previousMouse.y == -1)
+	if (previousMouse.x < 0 || previousMouse.y < 0)
 		previousMouse = currentMouse;
 
 	deltaMouse.x = previousMouse.x - currentMouse.x;
 	deltaMouse.y = previousMouse.y - currentMouse.y;
-
+	
 #if defined(PRINT_MOUSE_POSITIONS)
 	printf("Previous: (%i, %i), Current: (%i, %i) Delta: (%i, %i) \n", previousMouse.x, previousMouse.y, currentMouse.x, currentMouse.y, deltaMouse.x, deltaMouse.y);
 #endif
+	previousMouse = currentMouse;
 }
 
 void InputManager::MouseButtonMsg(UINT msg, WPARAM wParam, LPARAM lParam)
@@ -133,13 +135,25 @@ void InputManager::Validate()
 	previousMouse = currentMouse;
 	keyUp = 0;
 	keyJustPressed = 0;
-	deltaMouse.x = deltaMouse.y = 0;
+	
+	// If cursor showing, and mouse has moved.
+	if (!cursorShowing && (deltaMouse.x != 0 || deltaMouse.y != 0))
+	{
+		// This will trigger a mousemove msg.
+		SetCursorPos(halfRect.right, halfRect.bottom);
+
+		// Set this to reset when the mousemove msg is recieved.
+		// If < 0, treated as though it hasnt been created yet.
+		previousMouse.x = -1;
+	}
+	
 	for (int i = 0; i < 3; i++)
 	{ 
 		if (mouseButtons[i] == JustPressed) mouseButtons[i] = Down; 
 		if (mouseButtons[i] == Up) mouseButtons[i] = None; 
 	}
 	
+	deltaMouse.x = deltaMouse.y = 0;
 	inValid = false;
 }
 

@@ -84,6 +84,7 @@ public:
 private:
 
 	static bool cursorShowing;
+	static RECT halfRect;
 
 	/*
 	Holds data about the 3 mouse buttons.
