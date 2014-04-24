@@ -25,7 +25,6 @@ public:
 	*/
 	XMVECTOR position;
 	XMVECTOR rotation;
-	XMVECTOR forward;
 	XMVECTOR scale;
 	float roll;
 	float maxRoll;
@@ -58,9 +57,9 @@ public:
 	Pointers to vectors that cant be changed through here.
 	Represent unit vectors pointing in the local z, y, x axis respectively.
 	*/
-	const XMVECTOR* Forward;
-	const XMVECTOR* Up;
-	const XMVECTOR* Right;
+	const XMVECTOR& Forward;
+	const XMVECTOR& Up;
+	const XMVECTOR& Right;
 
 protected:
 	/*
@@ -71,6 +70,7 @@ protected:
 	/*
 	The values for f/u/r, changing these wont actualy change the rotation.
 	*/
+	XMVECTOR forward;
 	XMVECTOR up;
 	XMVECTOR right;
 

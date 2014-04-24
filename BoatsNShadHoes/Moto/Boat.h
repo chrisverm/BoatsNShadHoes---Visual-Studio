@@ -49,7 +49,6 @@ public:
 private:
 	BOAT_STATS stats;
 	bool dead;
-	UINT maxRoll;
 
 };
 

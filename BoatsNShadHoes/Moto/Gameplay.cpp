@@ -463,7 +463,7 @@ void Gameplay::Update(float dt)
 		// cannonball
 		entities[3]->position =  XMVECTOR(entities[0]->position);
 		dynamic_cast<MoveableEntity*>(entities[3])->velocity = 
-			(XMVECTOR(*entities[0]->Right) + XMVECTOR(*entities[0]->Up)) * 10;
+			(XMVECTOR(entities[0]->Right) + XMVECTOR(entities[0]->Up)) * 10;
 
 		// text updates
 		std::cout << "Boat 1 fire() called!" << std::endl;

@@ -14,3 +14,12 @@ CannonBall::~CannonBall(void)
 {
 }
 
+void CannonBall::Initialize(ID3D11Buffer* modelConstBuffer, VSPerModelData* modelConstBufferData)
+{
+	MoveableEntity::Initialize(modelConstBuffer, modelConstBufferData);
+}
+
+void CannonBall::Update(float dt, const XMMATRIX& parentMat)
+{
+	MoveableEntity::Update(dt, parentMat);
+}

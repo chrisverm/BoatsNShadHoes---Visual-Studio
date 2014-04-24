@@ -3,7 +3,7 @@
 using namespace DirectX;
 
 MoveableEntity::MoveableEntity(Mesh* mesh, Material*mat)
-	: DrawableEntity(mesh,mat)
+	: DrawableEntity(mesh,mat), Velocity(velocity), AngularVelocity(angularVelocity)
 {
 	velocity = XMVectorSet(0,0,0,0);
 	angularVelocity = XMVectorSet(0,0,0,0);
@@ -16,7 +16,6 @@ MoveableEntity::MoveableEntity(Mesh* mesh, Material*mat)
 	friction = 0;
 }
 
-
 MoveableEntity::~MoveableEntity(void)
 {
 }
@@ -25,21 +24,24 @@ void MoveableEntity::Initialize(ID3D11Buffer* modelConstBuffer, VSPerModelData* 
 {
 	DrawableEntity::Initialize(modelConstBuffer, modelConstBufferData);
 }
-
+#include <iostream>
 void MoveableEntity::Update(float dt, const XMMATRIX& parentMat)
 {
-	XMVector3ClampLength(acceleration, -maxAccel, maxAccel);
+	acceleration = XMVector3ClampLength(acceleration, 0, maxAccel);
 
 	velocity += acceleration * dt;
 	angularVelocity += angularAcceleration * dt;
 
-	XMVector3ClampLength(velocity, -maxVel, maxVel);
+	velocity = XMVector3ClampLength(velocity, 0, maxVel);
 
 	velocity -= velocity * friction * dt;
 	angularVelocity -= angularVelocity * friction * dt;
 	
 	position += velocity * dt;
 	rotation += angularVelocity * dt;
+
+	acceleration = XMVectorZero();
+	angularAcceleration = XMVectorZero();
 
 	DrawableEntity::Update(dt, parentMat);
 }

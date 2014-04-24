@@ -12,6 +12,8 @@ Boat::Boat(std::string meshId, std::string matId, BOAT_STATS b)
 
 	// default stats for boat
 	dead = false;
+	maxVel = 3.0f;
+	maxAccel = 2.0f;
 	friction = 0.9f;
 	roll = 0.0f;
 	maxRoll = 10.0f;
@@ -94,19 +96,19 @@ bool Boat::IsDead() const
 void Boat::MoveForward()
 {
 	//angularVelocity += forward;
-	velocity = XMVECTOR(*Forward) * 2.0f;
+	acceleration = XMVECTOR(Forward) * 2.0f;
 }
 
 void Boat::PortHelm()
 {
 	roll += 0.01f; // should be multipled by dt
-	angularVelocity = -XMVECTOR(*Up) / 25.0f;
+	angularAcceleration = -XMVECTOR(Up) / 25.0f;
 }
 
 void Boat::StarboardHelm()
 {
 	roll -= 0.01f; // should be multipled by dt
-	angularVelocity = XMVECTOR(*Up) / 25.0f;
+	angularAcceleration = XMVECTOR(Up) / 25.0f;
 }
 
 /*

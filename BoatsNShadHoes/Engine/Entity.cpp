@@ -2,6 +2,7 @@
 #include "Camera.h"
 
 Entity::Entity()
+	: Forward(forward), Up(up), Right(right)
 {
 	position = XMVectorSet(0.0f, 0.0f, 0.0f ,0.0f);
 	rotation = XMVectorSet(0.0f, 0.0f, 0.0f ,0.0f);
@@ -11,11 +12,7 @@ Entity::Entity()
 	right	 = XMVectorSet(1.0f, 0.0f, 0.0f, 0.0f);
 
 	roll = 0;
-	maxRoll = 360;
-	
-	Forward = &forward;
-	Up = &up;
-	Right = &right;
+	maxRoll = 0;
 
 	XMStoreFloat4x4(&worldMatrix, XMMatrixTranspose(XMMatrixIdentity()));
 }
@@ -93,7 +90,6 @@ void Entity::SetUnitVectors()
 	//// roll - rotate on the z axis
 	//up = XMVectorSetX(up, sin( XMConvertToRadians(roll) ));
 	//up = XMVectorSetY(up, cos( XMConvertToRadians(roll) ));
-
 	//up = XMVector3Normalize(up);
 }
 
