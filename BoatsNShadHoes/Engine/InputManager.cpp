@@ -19,7 +19,8 @@ unsigned char InputManager::keyUp;
 #pragma region Private Fields(Used by DX)
 
 bool InputManager::inValid;
-bool InputManager::cursorShowing;
+bool InputManager::cursorShowing = true;
+bool InputManager::cursorLocking = false;
 
 RECT InputManager::halfRect;
 
@@ -105,16 +106,37 @@ bool InputManager::MouseButtonDown(MouseButton mouseButton)
 #pragma region Public Cursor
 
 /*
-Toggles whether or not the cursor is being hidden+locked.
+Toggles whether or not the cursor is being hidden.
 */
-void InputManager::ToggleCursor()
-{ ShowCursor(cursorShowing = !cursorShowing); }
+void InputManager::ToggleCursorVisibility()
+{ SetCursorVisibility(cursorShowing = !cursorShowing); }
 
 /*
-Sets whether or not to hide+lock the cursor.
+Toggles whether or not the cursor is being locked.
 */
-void InputManager::SetCursor(bool showCursor)
-{ ShowCursor(cursorShowing = showCursor); }
+void InputManager::ToggleCursorLocking()
+{ SetCursorLocking(cursorLocking = !cursorLocking); }
+
+/*
+Sets whether or not to hide the cursor.
+*/
+void InputManager::SetCursorVisibility(bool showCursor)
+{
+	if (cursorShowing = showCursor)
+		while (ShowCursor(cursorShowing) <= 0)
+			ShowCursor(cursorShowing);
+	else
+		while (ShowCursor(cursorShowing) >= 0)
+			ShowCursor(cursorShowing);
+}
+
+/*
+Sets whether or not to lock the cursor.
+*/
+void InputManager::SetCursorLocking(bool lockCursor)
+{
+	cursorLocking = lockCursor;
+}
 
 #pragma endregion
 
@@ -234,7 +256,7 @@ void InputManager::Validate()
 	scrollDelta = 0;
 	
 	// If cursor showing, and mouse has moved.
-	if (!cursorShowing && (deltaMouse.x != 0 || deltaMouse.y != 0))
+	if (cursorLocking && (deltaMouse.x != 0 || deltaMouse.y != 0))
 	{
 		// This will trigger a mousemove msg.
 		SetCursorPos(halfRect.right, halfRect.bottom);

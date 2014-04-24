@@ -74,13 +74,16 @@ public:
 	static bool MouseButtonUp(MouseButton);
 	static bool MouseButtonJustPressed(MouseButton);
 
-	static void ToggleCursor();
-	static void SetCursor(bool);
+	static void ToggleCursorVisibility();
+	static void ToggleCursorLocking();
+	static void SetCursorVisibility(bool);
+	static void SetCursorLocking(bool);
 
 // End Public
 private:
 
 	static bool cursorShowing;
+	static bool cursorLocking;
 	static RECT halfRect;
 	static KeyState mouseButtons[3];
 	static short scrollDelta;

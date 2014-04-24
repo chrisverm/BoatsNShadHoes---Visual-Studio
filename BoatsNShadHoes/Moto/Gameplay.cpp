@@ -27,7 +27,8 @@ bool Gameplay::Initialize()
 	CreateGeometryBuffers();
 	LoadResources();
 
-	Input::SetCursor(false);
+	Input::SetCursorVisibility(false);
+	Input::SetCursorLocking(true);
 
 	// stats for first boat
 	BOAT_STATS b1Stats;
@@ -436,7 +437,10 @@ void Gameplay::Update(float dt)
 
 	// Toggle showing the cursor (not locked yet).
 	if (Input::KeyUp('M'))
-		Input::ToggleCursor();
+	{
+		Input::ToggleCursorVisibility();
+		Input::ToggleCursorLocking();
+	}
 
 	if (Input::KeyDown('W'))
 	{

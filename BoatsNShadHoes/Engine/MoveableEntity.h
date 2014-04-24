@@ -9,11 +9,13 @@ public:
 	MoveableEntity(Mesh*, Material*);
 	~MoveableEntity(void);
 
-	DirectX::XMVECTOR velocity;
-	DirectX::XMVECTOR angularVelocity;
+	XMVECTOR velocity;
+	XMVECTOR angularVelocity;
+	float maxVel;
 
-	DirectX::XMVECTOR acceleration;
-	DirectX::XMVECTOR angularAcceleration;
+	XMVECTOR acceleration;
+	XMVECTOR angularAcceleration;
+	float maxAccel;
 
 	float friction;
 

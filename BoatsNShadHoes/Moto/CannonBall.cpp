@@ -6,7 +6,7 @@ CannonBall::CannonBall(std::string meshId, std::string matId)
 {
 	scale *= 0.4f;
 	friction = 0.9f;
-	acceleration = XMVectorSet(0,-9.81, 0,0);
+	acceleration = XMVectorSet(0,-9.81f, 0,0);
 }
 
 

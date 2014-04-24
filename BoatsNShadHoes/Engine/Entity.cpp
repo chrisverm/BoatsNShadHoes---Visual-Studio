@@ -11,6 +11,7 @@ Entity::Entity()
 	right	 = XMVectorSet(1.0f, 0.0f, 0.0f, 0.0f);
 
 	roll = 0;
+	maxRoll = 360;
 	
 	Forward = &forward;
 	Up = &up;
@@ -30,6 +31,16 @@ Entity::~Entity()
 
 void Entity::Update(float dt, const XMMATRIX& parentMat)
 {
+	// clamp maximum amount a ship can roll
+	if (roll < -maxRoll)
+		roll = -maxRoll;
+	else if (roll > maxRoll)
+		roll = maxRoll;
+	
+	// modular arithmetic on roll (no % operator on floats)
+	while (roll >= 360) roll -= 360;
+	while (roll <= -360) roll += 360;
+
 	rotation = XMVectorSetZ(rotation, XMConvertToRadians(roll));
 
 	XMMATRIX trans = XMMatrixTranslationFromVector(position);
@@ -60,13 +71,13 @@ void Entity::UpdateRotationFromForward()
 	// (I don't even know if it works 100%, I think it does but ...?)
 	XMVECTOR absoluteForward = XMVectorSet(0, 0, 1, 0);
 
-	XMVECTOR xPlane = XMVectorSet(0, forward.m128_f32[1], forward.m128_f32[2], 0);
-	XMVECTOR yPlane = XMVectorSet(forward.m128_f32[0], 0, forward.m128_f32[2], 0);
-	float xAngle = XMVector3AngleBetweenVectors(absoluteForward, yPlane).m128_f32[0];
-	float yAngle = XMVector3AngleBetweenVectors(absoluteForward, xPlane).m128_f32[1];
+	XMVECTOR xPlane = XMVectorSet(0, XMVectorGetY(forward), XMVectorGetZ(forward), 0);
+	XMVECTOR yPlane = XMVectorSet(XMVectorGetX(forward), 0, XMVectorGetZ(forward), 0);
+	float xAngle = XMVectorGetX(XMVector3AngleBetweenVectors(absoluteForward, yPlane));
+	float yAngle = XMVectorGetY(XMVector3AngleBetweenVectors(absoluteForward, xPlane));
 
-	rotation.m128_f32[0] = xAngle;
-	rotation.m128_f32[1] = yAngle;
+	rotation = XMVectorSetX(rotation, xAngle);
+	rotation = XMVectorSetY(rotation, yAngle);
 }
 
 void Entity::SetUnitVectors()

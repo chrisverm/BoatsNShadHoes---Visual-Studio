@@ -27,12 +27,6 @@ void Boat::Initialize(ID3D11Buffer* modelConstBuffer, VSPerModelData* modelConst
 
 void Boat::Update(float dt, const XMMATRIX& parentMat)
 {
-	// clamp maximum amount a ship can roll
-	if (roll < -(float)maxRoll)
-		roll = -(float)maxRoll;
-	else if (roll > maxRoll)
-		roll = maxRoll;
-
 	MoveableEntity::Update(dt, parentMat);
 
 	if (IsDead())

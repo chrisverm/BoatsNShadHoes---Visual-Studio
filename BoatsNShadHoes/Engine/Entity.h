@@ -28,6 +28,7 @@ public:
 	XMVECTOR forward;
 	XMVECTOR scale;
 	float roll;
+	float maxRoll;
 
 	/*
 	Child management methods.
