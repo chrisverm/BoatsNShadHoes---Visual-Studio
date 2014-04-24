@@ -109,34 +109,28 @@ bool InputManager::MouseButtonDown(MouseButton mouseButton)
 Toggles whether or not the cursor is being hidden.
 */
 void InputManager::ToggleCursorVisibility()
-{ SetCursorVisibility(cursorShowing = !cursorShowing); }
+{ SetCursorVisibility(!cursorShowing); }
 
 /*
 Toggles whether or not the cursor is being locked.
 */
 void InputManager::ToggleCursorLocking()
-{ SetCursorLocking(cursorLocking = !cursorLocking); }
+{ SetCursorLocking(!cursorLocking); }
 
 /*
 Sets whether or not to hide the cursor.
 */
 void InputManager::SetCursorVisibility(bool showCursor)
 {
-	if (cursorShowing = showCursor)
-		while (ShowCursor(cursorShowing) <= 0)
-			ShowCursor(cursorShowing);
-	else
-		while (ShowCursor(cursorShowing) >= 0)
-			ShowCursor(cursorShowing);
+	if (cursorShowing != showCursor)
+	{ ShowCursor(cursorShowing = showCursor); }
 }
 
 /*
 Sets whether or not to lock the cursor.
 */
 void InputManager::SetCursorLocking(bool lockCursor)
-{
-	cursorLocking = lockCursor;
-}
+{ cursorLocking = lockCursor; }
 
 #pragma endregion
 
