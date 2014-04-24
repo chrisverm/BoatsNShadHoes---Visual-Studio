@@ -33,65 +33,23 @@ void Camera::Update(float dt, const XMMATRIX& parentMat)
 		Move(Input::DeltaMouse, dt);
 
 	Entity::Update(dt, parentMat);
-	XMStoreFloat4x4(&viewMatrix, XMMatrixInverse(nullptr,(XMLoadFloat4x4(&worldMatrix))));
-
-	// Mount stuff here
-	switch (positionState)
-	{
-	case STATIC:
-		// do nothing?
-		break;
-	case ATTACHED:
-		SetViewMatrix();		// only if view changed
-		break;
-	case FIRST_PERSON:
-	case THIRD_PERSON:
-
-		break;
-	}
-
-	switch (forwardState)
-	{
-	case STATIC:
-		// do nothing?
-		break;
-	case ATTACHED:
-
-		break;
-	case FIRST_PERSON:
-	case THIRD_PERSON:
-
-		break;
-	}
-
-	switch (rollState)
-	{
-	case STATIC:
-		// do nothing?
-		break;
-	case ATTACHED:
-
-		break;
-	case FIRST_PERSON:
-	case THIRD_PERSON:
-
-		break;
-	}
+	XMStoreFloat4x4(&viewMatrix, XMMatrixInverse(nullptr, XMLoadFloat4x4(&worldMatrix)));
 }
 
 void Camera::Move(const XMINT2* mouseDelta, float dt)
 {
-	float horizAngle = mouseDelta->x * dt;
-	float vertAngle = mouseDelta->y * dt;
+	rotation = XMVectorSetX(rotation, XMVectorGetX(rotation) 
+		+ XMConvertToRadians(mouseDelta->y) * dt * 50);
+	rotation = XMVectorSetY(rotation, XMVectorGetY(rotation) 
+		+ XMConvertToRadians(mouseDelta->x) * dt * 50);
 
-	rotation.m128_f32[0] += XMConvertToRadians(vertAngle) * 50.0f;
-	rotation.m128_f32[1] += XMConvertToRadians(horizAngle) * 50.0f;
+	UpdateForwardFromRotation();
 
 	if (forwardState == THIRD_PERSON)
 	{
-		position.m128_f32[0] = 0 - attachedDist * forward.m128_f32[0];
-		position.m128_f32[1] = 0 - attachedDist * forward.m128_f32[1];
-		position.m128_f32[2] = 0 - attachedDist * forward.m128_f32[2];
+		position = XMVectorSetX(position, 0 - attachedDist * XMVectorGetX(forward));
+		position = XMVectorSetY(position, 0 - attachedDist * XMVectorGetY(forward));
+		position = XMVectorSetZ(position, 0 - attachedDist * XMVectorGetZ(forward));
 	}
 }
 
