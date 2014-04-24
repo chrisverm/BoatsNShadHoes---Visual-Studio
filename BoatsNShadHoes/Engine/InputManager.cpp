@@ -8,6 +8,8 @@ XMINT2 InputManager::previousMouse = XMINT2(-1, -1);
 XMINT2 InputManager::currentMouse = XMINT2(-1, -1);
 XMINT2 InputManager::deltaMouse = XMINT2(0, 0);
 
+short InputManager::scrollDelta;
+
 std::map<unsigned char, bool> InputManager::keysDown;
 unsigned char InputManager::keyJustPressed;
 unsigned char InputManager::keyUp;
@@ -42,6 +44,15 @@ Pointer to an XMINT2 that defines how much the mouse moved between this frame an
 This XMINT is const so you can't accidentaly change it.
 */
 const XMINT2* InputManager::DeltaMouse = &InputManager::deltaMouse;
+
+/*
+Pointer to an short that defines what state the scroll wheel is in.
+1  : one tick forward from where it was.
+-1 : one tick behind from where it was.
+0  : no change.
+This short is const so you can't accidentaly change it.
+*/
+const short* InputManager::ScrollDelta = &InputManager::scrollDelta;
 
 #pragma endregion
 
@@ -109,7 +120,6 @@ void InputManager::SetCursor(bool showCursor)
 
 #pragma region MsgProc
 
-// MSG Proc
 void InputManager::ProcessInputMessage(UINT msg, WPARAM wParam, LPARAM lParam)
 {
 	switch (msg)
@@ -130,6 +140,11 @@ void InputManager::ProcessInputMessage(UINT msg, WPARAM wParam, LPARAM lParam)
 	case WM_KEYDOWN:
 	case WM_KEYUP:
 		KeyboardInputMsg(msg, wParam, lParam);
+		break;
+
+	case WM_MOUSEWHEEL:
+		MouseWheelMsg(wParam);
+		break;
 
 	default:
 		break;
@@ -173,8 +188,15 @@ void InputManager::MouseButtonMsg(UINT msg, WPARAM wParam, LPARAM lParam)
 	XMINT2 blah;
 	blah.x = GET_X_LPARAM(lParam);
 	blah.y = GET_Y_LPARAM(lParam);
+	#endif
+}
 
-	if (blah.x != currentMouse.x || blah.y != currentMouse.y ) printf("the fuck?\n");
+void InputManager::MouseWheelMsg(WPARAM wParam)
+{
+	scrollDelta = (GET_WHEEL_DELTA_WPARAM(wParam) > 0) ? 1 : -1;
+
+#if defined(PRINT_MOUSE_WHEEL_TICKS)
+	printf("Z delta : %i \n", zDelta);
 #endif
 }
 
