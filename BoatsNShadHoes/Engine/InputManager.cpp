@@ -196,7 +196,7 @@ void InputManager::MouseWheelMsg(WPARAM wParam)
 	scrollDelta = (GET_WHEEL_DELTA_WPARAM(wParam) > 0) ? 1 : -1;
 
 #if defined(PRINT_MOUSE_WHEEL_TICKS)
-	printf("Z delta : %i \n", zDelta);
+	printf("Z delta : %i \n", scrollDelta);
 #endif
 }
 
@@ -231,6 +231,7 @@ void InputManager::Validate()
 	previousMouse = currentMouse;
 	keyUp = 0;
 	keyJustPressed = 0;
+	scrollDelta = 0;
 	
 	// If cursor showing, and mouse has moved.
 	if (!cursorShowing && (deltaMouse.x != 0 || deltaMouse.y != 0))
