@@ -13,5 +13,10 @@ public:
 	void Update(float dt, const XMMATRIX& parentMat);
 
 	void SetVel(XMVECTOR);
-};
 
+	void Fire(XMVECTOR position, XMVECTOR acceleration);
+
+private:
+	bool inPlay;
+
+};

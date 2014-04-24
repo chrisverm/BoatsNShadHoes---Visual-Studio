@@ -39,7 +39,7 @@ bool Gameplay::Initialize()
 	b1Stats.damage		= 20;
 
 	// Entites -----------------------------------------
-	Boat* boat = new Boat("cube", "crate", b1Stats);
+	Boat* boat = new Boat("cube", "crate", b1Stats, true);
 	boat->Initialize(Game::vsPerModelConstBuffer, Game::vsPerModelData);
 
 	//boat->SetStats(b1Stats);
@@ -52,7 +52,7 @@ bool Gameplay::Initialize()
 	b2Stats.rateOfFire	= 1.5f;
 	b2Stats.damage		= 10;
 
-	Boat* boat2 = new Boat("cube", "crate", b2Stats);
+	Boat* boat2 = new Boat("cube", "crate", b2Stats, false);
 	boat2->Initialize(Game::vsPerModelConstBuffer, Game::vsPerModelData);
 	boat2->SetPosition(5, 0, 5);
 	boat2->SetRotation(0, 2, 0);
@@ -442,28 +442,14 @@ void Gameplay::Update(float dt)
 		Input::ToggleCursorLocking();
 	}
 
-	if (Input::KeyDown('W'))
-	{
-		((Boat*)(entities[0]))->MoveForward();
-	}
-	if (Input::KeyDown('A'))
-	{
-		((Boat*)(entities[0]))->PortHelm();
-	}
-	if (Input::KeyDown('D'))
-	{
-		((Boat*)(entities[0]))->StarboardHelm();
-	}
-
 	if (Input::KeyUp(' '))
 	{
 		// Boat 1 fires at Boat 2
 		((Boat*)(entities[0]))->Fire(((Boat*)(entities[1])));
 
 		// cannonball
-		entities[3]->position =  XMVECTOR(entities[0]->position);
-		dynamic_cast<MoveableEntity*>(entities[3])->velocity = 
-			(XMVECTOR(entities[0]->Right) + XMVECTOR(entities[0]->Up)) * 10;
+		dynamic_cast<CannonBall*>(entities[3])->Fire(entities[0]->position, 
+			(entities[0]->Right + entities[0]->Up));
 
 		// text updates
 		std::cout << "Boat 1 fire() called!" << std::endl;

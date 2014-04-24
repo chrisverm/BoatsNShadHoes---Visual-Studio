@@ -3,6 +3,7 @@
 
 #include "MoveableEntity.h"
 #include "ResourceManager.h"
+#include "InputManager.h"
 
 /*
  * Basic stats that each boat will have
@@ -26,11 +27,13 @@ struct BOAT_STATS
 class Boat : public MoveableEntity
 {
 public:
-	Boat(std::string, std::string, BOAT_STATS);
+	Boat(std::string, std::string, BOAT_STATS, bool controllable);
 	~Boat();
 
 	void Initialize(ID3D11Buffer* modelConstBuffer, VSPerModelData* modelConstBufferData);
 	void Update(float dt, const XMMATRIX& parentMat);
+
+	void Move();
 
 	void SetPosition(float x, float y, float z);
 	void SetRotation(float r, float p, float y);
@@ -48,7 +51,7 @@ public:
 
 private:
 	BOAT_STATS stats;
-	bool dead;
+	bool dead, controllable;
 
 };
 

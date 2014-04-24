@@ -2,11 +2,10 @@
 #include "InputManager.h"
 
 using namespace DirectX;
-Boat::Boat(std::string meshId, std::string matId, BOAT_STATS b) 
+Boat::Boat(std::string meshId, std::string matId, BOAT_STATS b, bool controllable) 
 	: MoveableEntity(ResourceManager::GetMesh(meshId), ResourceManager::GetMaterial(matId))
 { 
-	//angualrVelocity = XMVectorSet(0,1,1,0);
-	//velocity = XMVectorSet(0,0.25f,0.5f,0);
+	this->controllable = controllable;
 
 	SetStats(b);
 
@@ -29,12 +28,30 @@ void Boat::Initialize(ID3D11Buffer* modelConstBuffer, VSPerModelData* modelConst
 
 void Boat::Update(float dt, const XMMATRIX& parentMat)
 {
+	if (controllable) Move();
+
 	MoveableEntity::Update(dt, parentMat);
 
 	if (IsDead())
 	{
 		// apply downward position change to sunken boat
 		position -= XMVectorSet(0.0, +0.001f, 0.0f, 0.0f);
+	}
+}
+
+void Boat::Move()
+{
+	if (Input::KeyDown('W'))
+	{
+		MoveForward();
+	}
+	if (Input::KeyDown('A'))
+	{
+		PortHelm();
+	}
+	if (Input::KeyDown('D'))
+	{
+		StarboardHelm();
 	}
 }
 
@@ -73,25 +90,16 @@ void Boat::SetRotation(float roll, float pitch, float yaw)
  *
  * @return	Ammunition left in the boat
  */
-short Boat::Ammunition() const
-{
-	return stats.ammunition;
-}
+short Boat::Ammunition() const { return stats.ammunition; }
 
 /*
  * Returns the current health of the boat
  *
  * @return	Current health of the boat
  */
-float Boat::Health() const
-{
-	return stats.health;
-}
+float Boat::Health() const { return stats.health; }
 
-bool Boat::IsDead() const
-{
-	return dead;
-}
+bool Boat::IsDead() const { return dead; }
 
 void Boat::MoveForward()
 {

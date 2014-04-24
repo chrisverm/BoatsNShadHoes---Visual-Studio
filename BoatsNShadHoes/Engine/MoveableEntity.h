@@ -6,8 +6,6 @@
 class MoveableEntity : public DrawableEntity
 {
 public:
-	XMVECTOR velocity; // should be moved into private
-
 	const XMVECTOR& Velocity;
 	const XMVECTOR& AngularVelocity;
 
@@ -16,6 +14,8 @@ protected:
 	~MoveableEntity(void);
 	
 	float maxVel, maxAccel, friction;
+	XMVECTOR velocity;
+	XMVECTOR angularVelocity;
 	XMVECTOR acceleration;
 	XMVECTOR angularAcceleration;
 
@@ -24,8 +24,6 @@ protected:
 	virtual void Render(ID3D11DeviceContext* deviceContext);
 
 private:
-	
-	XMVECTOR angularVelocity;
 
 };
 
