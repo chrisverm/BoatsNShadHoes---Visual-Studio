@@ -28,7 +28,7 @@ void Boat::Initialize(ID3D11Buffer* modelConstBuffer, VSPerModelData* modelConst
 
 void Boat::Update(float dt, const XMMATRIX& parentMat)
 {
-	if (controllable) Move();
+	if (controllable) Move(dt);
 
 	MoveableEntity::Update(dt, parentMat);
 
@@ -38,21 +38,39 @@ void Boat::Update(float dt, const XMMATRIX& parentMat)
 		position -= XMVectorSet(0.0, +0.001f, 0.0f, 0.0f);
 	}
 }
-
-void Boat::Move()
+#include <iostream>
+void Boat::Move(float dt)
 {
+	bool turning = false;
+
 	if (Input::KeyDown('W'))
 	{
 		MoveForward();
 	}
 	if (Input::KeyDown('A'))
 	{
+		turning = true;
 		PortHelm();
 	}
 	if (Input::KeyDown('D'))
 	{
+		turning = true;
 		StarboardHelm();
 	}
+
+	if (!turning) 
+	{
+		roll -= roll * 0.975f * dt;
+
+		if (abs(roll) < 0.1f) roll = 0;
+	}
+
+	angularAcceleration = XMVectorSet(0.0f, -roll / 50.0f, 0.0f, 0.0f);
+
+	/* This removed the ability to turn while not moving
+	angularAcceleration = XMVectorSet(0.0f, -roll, 0.0f, 0.0f);
+	angularAcceleration = XMVector3Normalize(angularAcceleration);
+	angularAcceleration *= XMVector3Length(velocity) / 25.0f;*/
 }
 
 /*
@@ -103,20 +121,17 @@ bool Boat::IsDead() const { return dead; }
 
 void Boat::MoveForward()
 {
-	//angularVelocity += forward;
-	acceleration = XMVECTOR(Forward) * 2.0f;
+	acceleration = forward * 2.0f;
 }
 
 void Boat::PortHelm()
 {
 	roll += 0.01f; // should be multipled by dt
-	angularAcceleration = -XMVECTOR(Up) / 25.0f;
 }
 
 void Boat::StarboardHelm()
 {
 	roll -= 0.01f; // should be multipled by dt
-	angularAcceleration = XMVECTOR(Up) / 25.0f;
 }
 
 /*

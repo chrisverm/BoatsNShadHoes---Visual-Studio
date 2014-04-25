@@ -24,7 +24,7 @@ void MoveableEntity::Initialize(ID3D11Buffer* modelConstBuffer, VSPerModelData* 
 {
 	DrawableEntity::Initialize(modelConstBuffer, modelConstBufferData);
 }
-#include <iostream>
+
 void MoveableEntity::Update(float dt, const XMMATRIX& parentMat)
 {
 	acceleration = XMVector3ClampLength(acceleration, 0, maxAccel);

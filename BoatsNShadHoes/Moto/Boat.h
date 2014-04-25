@@ -33,7 +33,7 @@ public:
 	void Initialize(ID3D11Buffer* modelConstBuffer, VSPerModelData* modelConstBufferData);
 	void Update(float dt, const XMMATRIX& parentMat);
 
-	void Move();
+	void Move(float dt);
 
 	void SetPosition(float x, float y, float z);
 	void SetRotation(float r, float p, float y);
