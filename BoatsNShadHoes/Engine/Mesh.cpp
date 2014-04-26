@@ -1,6 +1,6 @@
 #include "Mesh.h"
 
-Mesh::Mesh(VertexArray<void*> verts, int vSize, UINT* inds, int iSize)
+Mesh::Mesh(VertexArray verts, int vSize, UINT* inds, int iSize)
 {
 	vertices = verts;
 	numVerts = vSize;
@@ -249,7 +249,7 @@ Mesh* Mesh::LoadFromOBJ(std::string objFilePath)
 		indices[i] = i;
 	}
 
-	VertexArray<void*> verts;
+	VertexArray verts;
 	verts.data = vertexData;
 	verts.TotalArrayBytes = numIndices * vh.GetIndividualBytes();
 	verts.IndividualBytes = vh.GetIndividualBytes();
