@@ -373,7 +373,7 @@ void Gameplay::LoadResources()
 	for (int i = 0; i < 6; i++)
 	{ verts[i] = temp[i]; }
 	
-	VertexArray<void*> vertArray = VertexArray<void*>();
+	VertexArray vertArray = VertexArray();
 	vertArray.data = verts;
 	vertArray.IndividualBytes = sizeof(Vertex_PNC);
 	vertArray.TotalArrayBytes = 6 * vertArray.IndividualBytes;

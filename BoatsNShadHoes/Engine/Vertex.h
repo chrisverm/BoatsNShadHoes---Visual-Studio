@@ -75,10 +75,9 @@ static D3D11_INPUT_ELEMENT_DESC vertex_Skybox_Desc[] =
 	{ "TEXCOORD", 0, DXGI_FORMAT_R32G32_FLOAT,			0, 24,	D3D11_INPUT_PER_VERTEX_DATA, 0}
 };
 
-template <class T>
 struct VertexArray
 {
-	T data;
+	void* data;
 	UINT TotalArrayBytes;
 	UINT IndividualBytes;
 	std::string InputLayoutName;
