@@ -182,6 +182,7 @@ copy "$(OutDir)$(TargetName)$(TargetExt)" "$(SolutionDir)Binary"</Command>
     </Text>
   </ItemGroup>
   <ItemGroup>
+    <None Include="Shaders\ConstantBuffers.hlsli" />
     <None Include="Shaders\Lighting.hlsli" />
   </ItemGroup>
   <ItemGroup>

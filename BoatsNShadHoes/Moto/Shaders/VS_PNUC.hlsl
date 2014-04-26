@@ -1,23 +1,4 @@
-#include "Lighting.hlsli"
-
-// The constant buffer that holds our "per model" data
-// - Each object you draw with this shader will probably have
-//   slightly different data (at least for the world matrix)
-cbuffer perModel : register( b0 )
-{
-	matrix view;
-	matrix projection;
-};
-
-cbuffer perFrame : register( b1 )
-{
-	matrix world;
-};
-
-cbuffer perScene : register( b2 )
-{
-	PointLight pntLights[NUM_PNT_LIGHTS];
-};
+#include "ConstantBuffers.hlsli"
 
 // Defines what kind of data to expect as input
 // - This should match our input layout!

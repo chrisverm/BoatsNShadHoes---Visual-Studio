@@ -111,5 +111,8 @@
     <None Include="Shaders\Lighting.hlsli">
       <Filter>Resource Files\Shaders</Filter>
     </None>
+    <None Include="Shaders\ConstantBuffers.hlsli">
+      <Filter>Resource Files\Shaders</Filter>
+    </None>
   </ItemGroup>
 </Project>
