@@ -245,6 +245,32 @@ void Gameplay::LoadShadersAndInputLayout()
 
 	ReleaseMacro(vsBlob);
 	ReleaseMacro(psBlob);
+
+	// Skybox Shaders -----------------------------------
+	D3DReadFileToBlob(L"Shaders/VS_Skybox.cso", &vsBlob);
+	D3DReadFileToBlob(L"Shaders/PS_Skybox.cso", &psBlob);
+
+	HR(device->CreateInputLayout(
+		vertex_Skybox_Desc,
+		ARRAYSIZE(vertex_Skybox_Desc),
+		vsBlob->GetBufferPointer(),
+		vsBlob->GetBufferSize(),
+		&inputLayout));
+	ResourceManager::AddInputLayout("skybox", inputLayout);
+
+	HR(device->CreateVertexShader(
+		vsBlob->GetBufferPointer(),
+		vsBlob->GetBufferSize(),
+		NULL,
+		&vertexShader));
+	ResourceManager::AddVertexShader("skybox", vertexShader);
+
+	HR(device->CreatePixelShader(
+		psBlob->GetBufferPointer(),
+		psBlob->GetBufferSize(),
+		NULL,
+		&pixelShader))
+		ResourceManager::AddPixelShader("skybox", pixelShader);
 }
 
 void Gameplay::CreateGeometryBuffers()

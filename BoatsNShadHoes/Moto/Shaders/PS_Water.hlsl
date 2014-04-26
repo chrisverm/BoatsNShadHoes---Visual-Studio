@@ -8,7 +8,7 @@ SamplerState mySampler : register( s0 );
 struct VertexToPixel
 {
 	float4 position	: SV_POSITION;
-	float3 normal	: NORMAL;
+	float3 normal	: NORMAL0;
 	float2 uv		: TEXCOORD0;
 
 	float3 worldPos : POSITION;
