@@ -4,8 +4,8 @@
 // - This should match our input layout!
 struct VertexShaderInput
 {
-	float3 position	: POSITION;
-	float3 normal	: NORMAL;
+	float3 position	: POSITION0;
+	float3 normal	: NORMAL0;
 	float2 uv		: TEXCOORD0;
 };
 
@@ -15,7 +15,7 @@ struct VertexShaderInput
 struct VertexToPixel
 {
 	float4 position	: SV_POSITION;	// System Value Position - Has specific meaning to the pipeline!
-	float3 normal	: NORMAL;
+	float3 normal	: NORMAL0;
 	float2 uv		: TEXCOORD0;
 
 	float3 worldPos : POSITION;

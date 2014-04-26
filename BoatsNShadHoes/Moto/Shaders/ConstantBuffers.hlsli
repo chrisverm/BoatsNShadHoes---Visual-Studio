@@ -7,6 +7,9 @@ cbuffer perFrame : register( b0 )
 {
 	matrix view;
 	matrix projection;
+
+	float time;
+	float3 padding;
 };
 
 cbuffer perModel : register( b1 )

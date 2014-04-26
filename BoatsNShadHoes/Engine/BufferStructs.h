@@ -12,6 +12,9 @@ struct VSPerFrameData
 {
 	DirectX::XMFLOAT4X4 view;
 	DirectX::XMFLOAT4X4 projection;
+
+	float time;
+	DirectX::XMFLOAT3 padding;
 };
 
 struct VSPerModelData

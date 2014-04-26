@@ -74,7 +74,6 @@ bool Gameplay::Initialize()
 	// Camera Setup -----------[ o]---------------------
 	viewChanged = false;
 	CameraManager::Initialize(deviceContext, 1, &DX::windowWidth, &DX::windowHeight, &viewChanged, &Game::projChanged);
-
 	
 	CAMERA_DESC camDesc;
 	camDesc.FieldOfView = XMConvertToRadians(45.0f);
@@ -117,6 +116,8 @@ bool Gameplay::Initialize()
 		Game::vsPerSceneData,
 		0,
 		0);
+
+	Game::vsPerFrameData->time		   = 0;
 
 	return true;
 }
@@ -215,6 +216,35 @@ void Gameplay::LoadShadersAndInputLayout()
 
 	ReleaseMacro(vsBlob);
 	ReleaseMacro(psBlob);
+
+	// Water Shaders -----------------------------------
+	D3DReadFileToBlob(L"Shaders/VS_Water.cso", &vsBlob);
+	D3DReadFileToBlob(L"Shaders/PS_Water.cso", &psBlob);
+
+	HR(device->CreateInputLayout(
+		vertex_Water_Desc,
+		ARRAYSIZE(vertex_Water_Desc),
+		vsBlob->GetBufferPointer(),
+		vsBlob->GetBufferSize(),
+		&inputLayout));
+	ResourceManager::AddInputLayout("Water", inputLayout);
+
+	HR(device->CreateVertexShader(
+		vsBlob->GetBufferPointer(),
+		vsBlob->GetBufferSize(),
+		NULL,
+		&vertexShader));
+	ResourceManager::AddVertexShader("Water", vertexShader);
+
+	HR(device->CreatePixelShader(
+		psBlob->GetBufferPointer(),
+		psBlob->GetBufferSize(),
+		NULL,
+		&pixelShader));
+	ResourceManager::AddPixelShader("Water", pixelShader);
+
+	ReleaseMacro(vsBlob);
+	ReleaseMacro(psBlob);
 }
 
 void Gameplay::CreateGeometryBuffers()
@@ -296,7 +326,7 @@ void Gameplay::LoadResources()
 	cube->Initialize(device, ResourceManager::GetInputLayout(cube->ILName()));
 
 	Mesh* quad = Mesh::LoadFromOBJ("Resources/water_obj.obj");
-	quad->Initialize(device, ResourceManager::GetInputLayout(quad->ILName()));
+	quad->Initialize(device, ResourceManager::GetInputLayout("Water"));
 
 	Mesh* sphere = Mesh::LoadFromOBJ("Resources/cannonball_obj.obj");
 	sphere->Initialize(device, ResourceManager::GetInputLayout(quad->ILName()));
@@ -342,7 +372,7 @@ void Gameplay::LoadResources()
 	crateMat->Initialize(ResourceManager::GetVertexShader(cube->ILName()), ResourceManager::GetPixelShader(cube->ILName()));
 
 	Material* waterMat = new Material(ResourceManager::GetSRV("water"), ResourceManager::GetSamplerState("crate"));
-	waterMat->Initialize(ResourceManager::GetVertexShader(quad->ILName()), ResourceManager::GetPixelShader(quad->ILName()));
+	waterMat->Initialize(ResourceManager::GetVertexShader("Water"), ResourceManager::GetPixelShader("Water"));
 
 	Material* coordinatesMat = new Material(nullptr, nullptr);
 	coordinatesMat->Initialize(ResourceManager::GetVertexShader(coordinates->ILName()), ResourceManager::GetPixelShader(coordinates->ILName()));
@@ -420,8 +450,12 @@ void Gameplay::Update(float dt)
 {
 	CameraManager::Update();
 	
+	Game::vsPerFrameData->time		+= dt / 5.0f;
 	Game::vsPerFrameData->view		 = CameraManager::ActiveCamera()->GetViewMatrix();
 	Game::vsPerFrameData->projection = CameraManager::ActiveCamera()->GetProjMatrix();
+
+	if (Game::vsPerFrameData->time > 1.0f)
+		Game::vsPerFrameData->time -= 1.0f;
 
 	deviceContext->UpdateSubresource(
 		Game::vsPerFrameConstBuffer,

@@ -5,8 +5,8 @@
 struct VertexToPixel
 {
 	float4 position	: SV_POSITION;
-	float3 normal	: NORMAL;
-	float4 color	: COLOR;
+	float3 normal	: NORMAL0;
+	float4 color	: COLOR0;
 
 	float3 worldPos : POSITION;
 	PointLight pntLights[NUM_PNT_LIGHTS] : NEARESTLIGHT;
