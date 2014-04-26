@@ -5,7 +5,6 @@
 struct VertexShaderInput
 {
 	float3 position			: POSITION0;
-	float3 cameraPosition	: POSITION1;
 	float2 uv				: TEXCOORD0;	
 };
 
@@ -14,7 +13,6 @@ struct VertexShaderInput
 struct VertexShaderOutput
 {
 	float4 position			: SV_POSITION;	// System Value Position - Has specific meaning to the pipeline!
-	//float3 cameraPosition	: POSITION;
 	float3 uv				: TEXCOORD0;
 };
 
@@ -33,8 +31,8 @@ VertexShaderOutput main(VertexShaderInput input)
 
 	// output values
 	output.position			= mul(float4(input.position, 1.0f), worldViewProj);
-	float4 cameraPosition	= mul(float4(input.cameraPosition, 1.0f), worldViewProj);
-	output.uv				= vertexPosition - cameraPosition; // interpolates unit vector
+	float4 camPos			= mul(float4(cameraPosition, 1.0f), worldViewProj);
+	output.uv				= vertexPosition - camPos; // interpolates unit vector
 	//output.uv				= vertexPosition - input.cameraPosition;
 	//output.uv				= input.uv;
 

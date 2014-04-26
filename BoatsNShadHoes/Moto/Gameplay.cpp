@@ -475,10 +475,14 @@ void Gameplay::SetupAudio()
 void Gameplay::Update(float dt)
 {
 	CameraManager::Update();
+
+	XMFLOAT3 cameraPosition;
+	XMStoreFloat3(&cameraPosition, CameraManager::ActiveCamera()->position);
 	
 	Game::vsPerFrameData->time		+= dt / 5.0f;
 	Game::vsPerFrameData->view		 = CameraManager::ActiveCamera()->GetViewMatrix();
 	Game::vsPerFrameData->projection = CameraManager::ActiveCamera()->GetProjMatrix();
+	Game::vsPerFrameData->worldPosition = cameraPosition;
 
 	if (Game::vsPerFrameData->time > 1.0f)
 		Game::vsPerFrameData->time -= 1.0f;

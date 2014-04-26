@@ -9,7 +9,7 @@ cbuffer perFrame : register( b0 )
 	matrix projection;
 
 	float time;
-	float3 padding;
+	float3 cameraPosition;
 };
 
 cbuffer perModel : register( b1 )
