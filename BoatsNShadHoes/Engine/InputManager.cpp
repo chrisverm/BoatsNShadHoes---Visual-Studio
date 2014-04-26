@@ -162,6 +162,11 @@ void InputManager::ProcessInputMessage(UINT msg, WPARAM wParam, LPARAM lParam)
 		MouseWheelMsg(wParam);
 		break;
 
+	case WM_MOUSELEAVE:
+	case WM_NCMOUSELEAVE:
+		MouseLeaveMsg();
+		break;
+
 	default:
 		break;
 	}
@@ -175,7 +180,7 @@ void InputManager::MouseMoveMsg(WPARAM wParam, LPARAM lParam)
 	currentMouse.y = GET_Y_LPARAM(lParam);
 
 	if (previousMouse.x < 0 || previousMouse.y < 0)
-		previousMouse = currentMouse;
+	{ previousMouse = currentMouse; }
 
 	deltaMouse.x = previousMouse.x - currentMouse.x;
 	deltaMouse.y = previousMouse.y - currentMouse.y;
@@ -236,6 +241,14 @@ void InputManager::KeyboardInputMsg(UINT msg, WPARAM wParam, LPARAM lParam)
 	if (msg) printf("%c key up.\n", wParam);
 	else printf("%c key down.\n", wParam);
 #endif
+}
+
+void InputManager::MouseLeaveMsg()
+{
+	previousMouse.x = -1;
+#if defined(PRINT_MOUSE_BUTTON_EVENTS)
+	printf("Mouse left window. \n");
+#endif 
 }
 
 #pragma endregion

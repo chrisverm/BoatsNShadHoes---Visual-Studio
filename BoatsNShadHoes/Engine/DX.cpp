@@ -455,6 +455,8 @@ LRESULT DX::MsgProc(HWND hwnd, UINT msg, WPARAM wParam, LPARAM lParam)
 	case WM_KEYDOWN:
 	case WM_KEYUP:
 	case WM_MOUSEWHEEL:
+	case WM_MOUSELEAVE:
+	case WM_NCMOUSELEAVE:
 		Input::ProcessInputMessage(msg, wParam, lParam);
 		break;
 

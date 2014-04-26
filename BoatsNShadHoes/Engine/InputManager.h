@@ -106,6 +106,7 @@ private:
 	static void MouseButtonMsg(UINT, WPARAM, LPARAM);
 	static void KeyboardInputMsg(UINT, WPARAM, LPARAM);
 	static void MouseWheelMsg(WPARAM);
+	static void MouseLeaveMsg();
 
 // End Private.
 };
