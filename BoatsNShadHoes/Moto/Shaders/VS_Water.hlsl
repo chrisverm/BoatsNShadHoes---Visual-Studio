@@ -19,7 +19,7 @@ struct VertexToPixel
 	float3 normal	: NORMAL0;
 	float2 uv		: TEXCOORD0;
 
-	float3 worldPos : POSITION;
+	float3 worldPos : POSITION0;
 	PointLight pntLights[NUM_PNT_LIGHTS] : NEARESTLIGHT;
 };
 

@@ -49,4 +49,7 @@ private:
 
 };
 
+// Convienience.
+typedef ResourceManager Resources;
+
 #endif

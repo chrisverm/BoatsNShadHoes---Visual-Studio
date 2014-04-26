@@ -7,7 +7,7 @@
 class Water : public DrawableEntity
 {
 public:
-	Water(std::string, std::string);
+	Water(Mesh*, Material*);
 	~Water(void);
 };
 

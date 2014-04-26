@@ -39,7 +39,7 @@ bool Gameplay::Initialize()
 	b1Stats.damage		= 20;
 
 	// Entites -----------------------------------------
-	Boat* boat = new Boat("cube", "crate", b1Stats, true);
+	Boat* boat = new Boat(Resources::GetMesh("cube"), Resources::GetMaterial("crate"), b1Stats, true);
 	boat->Initialize(Game::vsPerModelConstBuffer, Game::vsPerModelData);
 
 	//boat->SetStats(b1Stats);
@@ -52,7 +52,7 @@ bool Gameplay::Initialize()
 	b2Stats.rateOfFire	= 1.5f;
 	b2Stats.damage		= 10;
 
-	Boat* boat2 = new Boat("cube", "crate", b2Stats, false);
+	Boat* boat2 = new Boat(Resources::GetMesh("cube"), Resources::GetMaterial("crate"), b2Stats, false);
 	boat2->Initialize(Game::vsPerModelConstBuffer, Game::vsPerModelData);
 	boat2->SetPosition(5, 0, 5);
 	boat2->SetRotation(0, 2, 0);
@@ -63,7 +63,7 @@ bool Gameplay::Initialize()
 	cannonBall->Initialize(Game::vsPerModelConstBuffer, Game::vsPerModelData);
 	cannonBall->position = XMVectorSet(0,-10,0,0);
 
-	Water* water = new Water("quad", "water");
+	Water* water = new Water(Resources::GetMesh("quad"), Resources::GetMaterial("water"));
 	water->Initialize(Game::vsPerModelConstBuffer, Game::vsPerModelData);
 
 	entities.push_back(boat);		world->AddChild(boat);
@@ -220,7 +220,7 @@ void Gameplay::LoadShadersAndInputLayout()
 	// Water Shaders -----------------------------------
 	D3DReadFileToBlob(L"Shaders/VS_Water.cso", &vsBlob);
 	D3DReadFileToBlob(L"Shaders/PS_Water.cso", &psBlob);
-
+	// "I Have no idea what the fuck."
 	HR(device->CreateInputLayout(
 		vertex_Water_Desc,
 		ARRAYSIZE(vertex_Water_Desc),

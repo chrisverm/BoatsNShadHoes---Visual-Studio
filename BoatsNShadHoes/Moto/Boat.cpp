@@ -2,8 +2,8 @@
 #include "InputManager.h"
 
 using namespace DirectX;
-Boat::Boat(std::string meshId, std::string matId, BOAT_STATS b, bool controllable) 
-	: MoveableEntity(ResourceManager::GetMesh(meshId), ResourceManager::GetMaterial(matId))
+Boat::Boat(Mesh* mesh, Material* material, BOAT_STATS b, bool controllable) 
+	: MoveableEntity(mesh, material)
 { 
 	this->controllable = controllable;
 

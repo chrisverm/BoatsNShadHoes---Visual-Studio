@@ -27,7 +27,7 @@ struct BOAT_STATS
 class Boat : public MoveableEntity
 {
 public:
-	Boat(std::string, std::string, BOAT_STATS, bool controllable);
+	Boat(Mesh*, Material*, BOAT_STATS, bool controllable);
 	~Boat();
 
 	void Initialize(ID3D11Buffer* modelConstBuffer, VSPerModelData* modelConstBufferData);
