@@ -1,8 +1,8 @@
 #include "CannonBall.h"
 
 
-CannonBall::CannonBall(std::string meshId, std::string matId)
-	: MoveableEntity(ResourceManager::GetMesh(meshId), ResourceManager::GetMaterial(matId))
+CannonBall::CannonBall(Mesh* mesh, Material* material)
+	: MoveableEntity(mesh, material)
 {
 	scale *= 0.4f;
 	maxAccel = 20000.0f;

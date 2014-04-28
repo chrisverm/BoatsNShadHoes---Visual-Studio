@@ -59,7 +59,7 @@ bool Gameplay::Initialize()
 
 	//boat2->SetStats(b2Stats);
 
-	CannonBall* cannonBall = new CannonBall("sphere", "water");
+	CannonBall* cannonBall = new CannonBall(Resources::GetMesh("sphere"), Resources::GetMaterial("cannonball"));
 	cannonBall->Initialize(Game::vsPerModelConstBuffer, Game::vsPerModelData);
 	cannonBall->position = XMVectorSet(0,-10,0,0);
 
@@ -117,7 +117,7 @@ bool Gameplay::Initialize()
 		0,
 		0);
 
-	Game::vsPerFrameData->time		   = 0;
+	Game::vsPerFrameData->time = 0;
 
 	return true;
 }
@@ -140,21 +140,21 @@ void Gameplay::LoadShadersAndInputLayout()
 		vsBlob->GetBufferPointer(),
 		vsBlob->GetBufferSize(),
 		&inputLayout));
-	ResourceManager::AddInputLayout("PNU", inputLayout);
+	Resources::AddInputLayout("PNU", inputLayout);
 
 	HR(device->CreateVertexShader(
 		vsBlob->GetBufferPointer(),
 		vsBlob->GetBufferSize(),
 		NULL,
 		&vertexShader));
-	ResourceManager::AddVertexShader("PNU", vertexShader);
+	Resources::AddVertexShader("PNU", vertexShader);
 
 	HR(device->CreatePixelShader(
 		psBlob->GetBufferPointer(),
 		psBlob->GetBufferSize(),
 		NULL,
 		&pixelShader));
-	ResourceManager::AddPixelShader("PNU", pixelShader);
+	Resources::AddPixelShader("PNU", pixelShader);
 
 	ReleaseMacro(vsBlob);
 	ReleaseMacro(psBlob);
@@ -169,21 +169,21 @@ void Gameplay::LoadShadersAndInputLayout()
 		vsBlob->GetBufferPointer(),
 		vsBlob->GetBufferSize(),
 		&inputLayout));
-	ResourceManager::AddInputLayout("PNC", inputLayout);
+	Resources::AddInputLayout("PNC", inputLayout);
 
 	HR(device->CreateVertexShader(
 		vsBlob->GetBufferPointer(),
 		vsBlob->GetBufferSize(),
 		NULL,
 		&vertexShader));
-	ResourceManager::AddVertexShader("PNC", vertexShader);
+	Resources::AddVertexShader("PNC", vertexShader);
 
 	HR(device->CreatePixelShader(
 		psBlob->GetBufferPointer(),
 		psBlob->GetBufferSize(),
 		NULL,
 		&pixelShader));
-	ResourceManager::AddPixelShader("PNC", pixelShader);
+	Resources::AddPixelShader("PNC", pixelShader);
 
 	ReleaseMacro(vsBlob);
 	ReleaseMacro(psBlob);
@@ -198,21 +198,21 @@ void Gameplay::LoadShadersAndInputLayout()
 		vsBlob->GetBufferPointer(),
 		vsBlob->GetBufferSize(),
 		&inputLayout));
-	ResourceManager::AddInputLayout("PNUC", inputLayout);
+	Resources::AddInputLayout("PNUC", inputLayout);
 
 	HR(device->CreateVertexShader(
 		vsBlob->GetBufferPointer(),
 		vsBlob->GetBufferSize(),
 		NULL,
 		&vertexShader));
-	ResourceManager::AddVertexShader("PNUC", vertexShader);
+	Resources::AddVertexShader("PNUC", vertexShader);
 
 	HR(device->CreatePixelShader(
 		psBlob->GetBufferPointer(),
 		psBlob->GetBufferSize(),
 		NULL,
 		&pixelShader));
-	ResourceManager::AddPixelShader("PNUC", pixelShader);
+	Resources::AddPixelShader("PNUC", pixelShader);
 
 	ReleaseMacro(vsBlob);
 	ReleaseMacro(psBlob);
@@ -227,21 +227,21 @@ void Gameplay::LoadShadersAndInputLayout()
 		vsBlob->GetBufferPointer(),
 		vsBlob->GetBufferSize(),
 		&inputLayout));
-	ResourceManager::AddInputLayout("Water", inputLayout);
+	Resources::AddInputLayout("Water", inputLayout);
 
 	HR(device->CreateVertexShader(
 		vsBlob->GetBufferPointer(),
 		vsBlob->GetBufferSize(),
 		NULL,
 		&vertexShader));
-	ResourceManager::AddVertexShader("Water", vertexShader);
+	Resources::AddVertexShader("Water", vertexShader);
 
 	HR(device->CreatePixelShader(
 		psBlob->GetBufferPointer(),
 		psBlob->GetBufferSize(),
 		NULL,
 		&pixelShader));
-	ResourceManager::AddPixelShader("Water", pixelShader);
+	Resources::AddPixelShader("Water", pixelShader);
 
 	ReleaseMacro(vsBlob);
 	ReleaseMacro(psBlob);
@@ -256,21 +256,21 @@ void Gameplay::LoadShadersAndInputLayout()
 		vsBlob->GetBufferPointer(),
 		vsBlob->GetBufferSize(),
 		&inputLayout));
-	ResourceManager::AddInputLayout("skybox", inputLayout);
+	Resources::AddInputLayout("skybox", inputLayout);
 
 	HR(device->CreateVertexShader(
 		vsBlob->GetBufferPointer(),
 		vsBlob->GetBufferSize(),
 		NULL,
 		&vertexShader));
-	ResourceManager::AddVertexShader("skybox", vertexShader);
+	Resources::AddVertexShader("skybox", vertexShader);
 
 	HR(device->CreatePixelShader(
 		psBlob->GetBufferPointer(),
 		psBlob->GetBufferSize(),
 		NULL,
 		&pixelShader))
-		ResourceManager::AddPixelShader("skybox", pixelShader);
+	Resources::AddPixelShader("skybox", pixelShader);
 }
 
 void Gameplay::CreateGeometryBuffers()
@@ -323,15 +323,23 @@ void Gameplay::LoadResources()
 		L"Resources/crate_texture.png", 
 		0, 
 		&srv));
-	ResourceManager::AddSRV("crate", srv);
+	Resources::AddSRV("crate", srv);
 
 	HR(CreateWICTextureFromFile(
 		device,
 		deviceContext,
-		L"Resources/water.jpg",
+		L"Resources/water_texture.jpg",
 		0,
 		&srv));
-	ResourceManager::AddSRV("water",srv);
+	Resources::AddSRV("water", srv);
+
+	HR(CreateWICTextureFromFile(
+		device,
+		deviceContext,
+		L"Resources/cannonball_texture.jpg",
+		0,
+		&srv));
+	Resources::AddSRV("cannonball", srv);
 
 	// Sampler States ------------------------------------
 	ID3D11SamplerState* ss = nullptr;
@@ -345,17 +353,17 @@ void Gameplay::LoadResources()
 	HR(device->CreateSamplerState(
 		&samplerDesc,
 		&ss));
-	ResourceManager::AddSamplerState("MIN_MAG_POINT_MIP_LINEAR", ss);
+	Resources::AddSamplerState("MIN_MAG_POINT_MIP_LINEAR", ss);
 
 	// Meshes -------------------------------------------
 	Mesh* cube = Mesh::LoadFromOBJ("Resources/boat_obj.obj");
-	cube->Initialize(device, ResourceManager::GetInputLayout(cube->ILName()));
+	cube->Initialize(device, Resources::GetInputLayout(cube->ILName()));
 
 	Mesh* quad = Mesh::LoadFromOBJ("Resources/water_obj.obj");
-	quad->Initialize(device, ResourceManager::GetInputLayout("Water"));
+	quad->Initialize(device, Resources::GetInputLayout("Water"));
 
 	Mesh* sphere = Mesh::LoadFromOBJ("Resources/cannonball_obj.obj");
-	sphere->Initialize(device, ResourceManager::GetInputLayout(quad->ILName()));
+	sphere->Initialize(device, Resources::GetInputLayout(quad->ILName()));
 
 	// Begin Disgusting.
 	Vertex_PNC temp[] = 
@@ -386,26 +394,30 @@ void Gameplay::LoadResources()
 	// End Disgusting.
 
 	Mesh* coordinates = new Mesh(vertArray, 6, indices, 6);
-	coordinates->Initialize(device, ResourceManager::GetInputLayout("PNC"));
+	coordinates->Initialize(device, Resources::GetInputLayout("PNC"));
 
-	ResourceManager::AddMesh("coordinates", coordinates);
-	ResourceManager::AddMesh("cube", cube);
-	ResourceManager::AddMesh("quad", quad);
-	ResourceManager::AddMesh("sphere", sphere);
+	Resources::AddMesh("coordinates", coordinates);
+	Resources::AddMesh("cube", cube);
+	Resources::AddMesh("quad", quad);
+	Resources::AddMesh("sphere", sphere);
 
 	// Materials -----------------------------------------
-	Material* crateMat = new Material(ResourceManager::GetSRV("crate"), ResourceManager::GetSamplerState("MIN_MAG_POINT_MIP_LINEAR"));
-	crateMat->Initialize(ResourceManager::GetVertexShader(cube->ILName()), ResourceManager::GetPixelShader(cube->ILName()));
+	Material* crateMat = new Material(Resources::GetSRV("crate"), Resources::GetSamplerState("MIN_MAG_POINT_MIP_LINEAR"));
+	crateMat->Initialize(Resources::GetVertexShader(cube->ILName()), Resources::GetPixelShader(cube->ILName()));
 
-	Material* waterMat = new Material(ResourceManager::GetSRV("water"), ResourceManager::GetSamplerState("MIN_MAG_POINT_MIP_LINEAR"));
-	waterMat->Initialize(ResourceManager::GetVertexShader("Water"), ResourceManager::GetPixelShader("Water"));
+	Material* waterMat = new Material(Resources::GetSRV("water"), Resources::GetSamplerState("MIN_MAG_POINT_MIP_LINEAR"));
+	waterMat->Initialize(Resources::GetVertexShader("Water"), Resources::GetPixelShader("Water"));
+
+	Material* cannonballMat = new Material(Resources::GetSRV("cannonball"), Resources::GetSamplerState("MIN_MAG_POINT_MIP_LINEAR"));
+	cannonballMat->Initialize(Resources::GetVertexShader(sphere->ILName()), Resources::GetPixelShader(sphere->ILName()));
 
 	Material* coordinatesMat = new Material(nullptr, nullptr);
-	coordinatesMat->Initialize(ResourceManager::GetVertexShader(coordinates->ILName()), ResourceManager::GetPixelShader(coordinates->ILName()));
+	coordinatesMat->Initialize(Resources::GetVertexShader(coordinates->ILName()), Resources::GetPixelShader(coordinates->ILName()));
 
-	ResourceManager::AddMaterial("crate", crateMat);
-	ResourceManager::AddMaterial("water", waterMat);
-	ResourceManager::AddMaterial("coordinates", coordinatesMat);
+	Resources::AddMaterial("crate", crateMat);
+	Resources::AddMaterial("water", waterMat);
+	Resources::AddMaterial("cannonball", cannonballMat);
+	Resources::AddMaterial("coordinates", coordinatesMat);
 }
 
 void Gameplay::SetupAudio()
@@ -572,8 +584,8 @@ void Gameplay::Draw(float dt)
 #if defined(DEBUG) | defined(_DEBUG)
 	if (drawCoordinates)
 	{
-		ResourceManager::GetMaterial("coordinates")->SetShaders(deviceContext);
-		Mesh* coords = ResourceManager::GetMesh("coordinates");
+		Resources::GetMaterial("coordinates")->SetShaders(deviceContext);
+		Mesh* coords = Resources::GetMesh("coordinates");
 		coords->SetBuffers(deviceContext);
 		deviceContext->IASetPrimitiveTopology(D3D11_PRIMITIVE_TOPOLOGY_LINELIST);
 
