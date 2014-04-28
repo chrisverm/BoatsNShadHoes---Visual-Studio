@@ -178,10 +178,10 @@ void Gameplay::LoadShadersAndInputLayout()
 	ZeroMemory(&rsDesc, sizeof(D3D11_RASTERIZER_DESC));
 
 	rsDesc.FillMode					= D3D11_FILL_SOLID;
-	rsDesc.CullMode					= D3D11_CULL_BACK;
+	rsDesc.CullMode					= D3D11_CULL_FRONT; // the face to "cull" - not show
 	rsDesc.FrontCounterClockwise	= false;
-	rsDesc.DepthBias				= 0.0f;
-	rsDesc.DepthBiasClamp			= 0.0f;
+	rsDesc.DepthBias				= 1.0f;
+	rsDesc.DepthBiasClamp			= 1.0f;
 	rsDesc.SlopeScaledDepthBias		= 0.0f;
 	rsDesc.ScissorEnable			= false;
 	rsDesc.MultisampleEnable		= true;
@@ -190,7 +190,7 @@ void Gameplay::LoadShadersAndInputLayout()
 	HR(device->CreateRasterizerState(
 		&rsDesc, &rasterizerState));
 
-	Resources::AddRasterizerState("backface", rasterizerState);
+	Resources::AddRasterizerState("skybox", rasterizerState);
 
 	// PNU Shaders -------------------------------------
 	D3DReadFileToBlob(L"Shaders/VS_PNU.cso", &vsBlob);
