@@ -15,68 +15,44 @@ public:
 	Entity();
 	~Entity();
 
-	/*
-	Update, called every frame, passed a deltaTime value for how long its been since the last update.
-	*/
-	virtual void Update(float dt, const XMMATRIX& parentMat);
-
-	/*
-	Basic position rotation scale needed to construct world matrix.
-	*/
+	// World
 	XMVECTOR position;
 	XMVECTOR rotation;
 	XMVECTOR scale;
 	float roll;
 	float maxRoll;
 
-	/*
-	Child management methods.
+	// Init, Update, Render
+	virtual void Initialize(ID3D11Buffer* modelConstBuffer, VSPerModelData* modelConstBufferData);
+	virtual void Update(float dt, const XMMATRIX& parentMat);
+	virtual void Render(ID3D11DeviceContext* deviceContext);
 
-	Get number of children / child at index.
-	Add child to entities children (right now no check for if its already there).
-	Remove child by index.
-	Get reference to the parent of this entity.
-
-	CAREFUL, if an entity is parented to 2 entities, only one will be called its "parent" but both will call its update.
-	*/
+	// Parenting
 	int ChildCount();
 	Entity* AddChild(Entity*);
 	Entity* GetChild(int);
 	Entity* RemoveChild(int);
 	Entity* Parent();
 
-	/*
-	Call these to convert between rotation angles and the forward vector
-	*/
+	// Orientation
+	const XMVECTOR& Forward;
+	const XMVECTOR& Up;
+	const XMVECTOR& Right;
+
 	void UpdateForwardFromRotation();
 	void UpdateRotationFromForward();
 
 	void SetUnitVectors();
 
-	/*
-	Pointers to vectors that cant be changed through here.
-	Represent unit vectors pointing in the local z, y, x axis respectively.
-	*/
-	const XMVECTOR& Forward;
-	const XMVECTOR& Up;
-	const XMVECTOR& Right;
-
 protected:
-	/*
-	4x4 float thats passed into shaders for this entities world matrix.
-	*/
 	XMFLOAT4X4 worldMatrix;
 
-	/*
-	The values for f/u/r, changing these wont actualy change the rotation.
-	*/
+	// Orientation
 	XMVECTOR forward;
 	XMVECTOR up;
 	XMVECTOR right;
 
-	/*
-	Children and parent of the entity.
-	*/
+	// Parenting
 	std::vector<Entity*> children;
 	Entity* parent;
 

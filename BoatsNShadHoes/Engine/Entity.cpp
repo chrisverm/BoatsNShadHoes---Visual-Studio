@@ -1,6 +1,13 @@
 #include "Entity.h"
 #include "Camera.h"
 
+#pragma region Construct/Destruct
+
+/*
+Constructor
+
+Sets defaults for pos, rot, scale, fwd, right, and up.
+*/
 Entity::Entity()
 	: Forward(forward), Up(up), Right(right)
 {
@@ -17,6 +24,9 @@ Entity::Entity()
 	XMStoreFloat4x4(&worldMatrix, XMMatrixTranspose(XMMatrixIdentity()));
 }
 
+/*
+Destructor, loops through children and deletes them, (ignores cameras because they're handled in camera manager).
+*/
 Entity::~Entity() 
 {
 	for (std::vector<Entity*>::iterator it = children.begin(); it != children.end() ; it++)
@@ -26,6 +36,20 @@ Entity::~Entity()
 	}
 }
 
+#pragma endregion
+
+#pragma region Initialize, Update, Render
+
+/*
+Initialize this entity with the constant buffer to use and the buffer data to pass through.
+*/
+void Entity::Initialize(ID3D11Buffer* modelConstBuffer, VSPerModelData* modelConstBufferData)
+{ }
+
+/*
+Updates this entity to the current timestep.
+Needs a reference to the parents world matrix.
+*/
 void Entity::Update(float dt, const XMMATRIX& parentMat)
 {
 	// clamp maximum amount a ship can roll
@@ -33,7 +57,7 @@ void Entity::Update(float dt, const XMMATRIX& parentMat)
 		roll = -maxRoll;
 	else if (roll > maxRoll)
 		roll = maxRoll;
-	
+
 	// modular arithmetic on roll (no % operator on floats)
 	while (roll >= 360) roll -= 360;
 	while (roll <= -360) roll += 360;
@@ -55,6 +79,23 @@ void Entity::Update(float dt, const XMMATRIX& parentMat)
 	{ (*it)->Update(dt, worldMat); }
 }
 
+/*
+Render this entity ( and all of its children ).
+Entity dosnt actualy render. //TODO: Debug render?
+*/
+void Entity::Render(ID3D11DeviceContext* deviceContext)
+{
+	for (std::vector<Entity*>::iterator it = children.begin(); it != children.end() ; it++)
+	{ (*it)->Render(deviceContext); }
+}
+
+#pragma endregion
+
+#pragma region Orientation
+
+/*
+banana banana banana.
+*/
 void Entity::UpdateForwardFromRotation()
 {
 	XMMATRIX rot = XMMatrixRotationRollPitchYawFromVector(rotation);
@@ -62,6 +103,9 @@ void Entity::UpdateForwardFromRotation()
 	forward = rot.r[2];
 }
 
+/*
+banana banana banana.
+*/
 void Entity::UpdateRotationFromForward()
 {
 	// for the love of all that is holy, someone improve this
@@ -77,6 +121,9 @@ void Entity::UpdateRotationFromForward()
 	rotation = XMVectorSetY(rotation, yAngle);
 }
 
+/*
+banana banana banana.
+*/
 void Entity::SetUnitVectors()
 {
 	forward = XMVector3Normalize(forward);
@@ -93,9 +140,21 @@ void Entity::SetUnitVectors()
 	//up = XMVector3Normalize(up);
 }
 
+#pragma endregion
+
+#pragma region Parenting
+
+/*
+Returns the number of children this entity contains.
+*/
 int Entity::ChildCount()
 { return children.size(); }
 
+/*
+Parents the given entity to this entity.
+Warning, currently no check for whether or not its already a child here, or parented elsewhere.
+Returns the entity for chaining.
+*/
 Entity* Entity::AddChild(Entity* child)
 {
 	//TODO: check if already here.
@@ -105,11 +164,18 @@ Entity* Entity::AddChild(Entity* child)
 	return child;
 }
 
+/*
+Gets the child at the given index.
+*/
 Entity* Entity::GetChild(int index)
 {
 	return children[index];
 }
 
+/*
+Removes the child at the given index.
+Returns it for chaining.
+*/
 Entity* Entity::RemoveChild(int index)
 {
 	Entity* child = children[index];
@@ -119,3 +185,5 @@ Entity* Entity::RemoveChild(int index)
 
 	return child;
 }
+
+#pragma endregion

@@ -576,10 +576,7 @@ void Gameplay::Draw(float dt)
 	deviceContext->VSSetConstantBuffers(1, 1, &Game::vsPerModelConstBuffer);
 	deviceContext->VSSetConstantBuffers(2, 1, &Game::vsPerSceneConstBuffer);
 
-	for (std::vector<DrawableEntity*>::iterator it = entities.begin(); it != entities.end(); it++)
-	{
-		(*it)->Render(deviceContext);
-	}
+	world->Render(deviceContext);
 	
 #if defined(DEBUG) | defined(_DEBUG)
 	if (drawCoordinates)

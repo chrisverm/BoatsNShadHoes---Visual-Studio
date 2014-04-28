@@ -2,6 +2,15 @@
 
 using namespace DirectX;
 
+#pragma region Constructor/Destructor
+
+/*
+Constructor
+
+Uses parents constructor.
+Requires a Mesh and a Material to draw with.
+Initializes physics values (vel, angvel, accel, frict, ect).
+*/
 MoveableEntity::MoveableEntity(Mesh* mesh, Material*mat)
 	: DrawableEntity(mesh,mat), Velocity(velocity), AngularVelocity(angularVelocity)
 {
@@ -16,15 +25,22 @@ MoveableEntity::MoveableEntity(Mesh* mesh, Material*mat)
 	friction = 0;
 }
 
+/*
+Destructor, loops through children and deletes them, (ignores cameras because they're handled in camera manager).
+*/
 MoveableEntity::~MoveableEntity(void)
-{
-}
+{ DrawableEntity::~DrawableEntity(); }
 
-void MoveableEntity::Initialize(ID3D11Buffer* modelConstBuffer, VSPerModelData* modelConstBufferData)
-{
-	DrawableEntity::Initialize(modelConstBuffer, modelConstBufferData);
-}
+#pragma endregion
 
+#pragma region Init, Update, Render
+
+/*
+Updates this entity to the current timestep.
+Needs a reference to the parents world matrix.
+
+Performs velocity/acceleration calculations (integration).
+*/
 void MoveableEntity::Update(float dt, const XMMATRIX& parentMat)
 {
 	acceleration = XMVector3ClampLength(acceleration, 0, maxAccel);
@@ -46,7 +62,4 @@ void MoveableEntity::Update(float dt, const XMMATRIX& parentMat)
 	DrawableEntity::Update(dt, parentMat);
 }
 
-void MoveableEntity::Render(ID3D11DeviceContext* deviceContext)
-{
-	DrawableEntity::Render(deviceContext);
-}
+#pragma endregion

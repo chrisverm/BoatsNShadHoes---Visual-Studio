@@ -6,22 +6,22 @@
 class MoveableEntity : public DrawableEntity
 {
 public:
+	MoveableEntity(Mesh*, Material*);
+	~MoveableEntity(void);
+
 	const XMVECTOR& Velocity;
 	const XMVECTOR& AngularVelocity;
 
+	// Init, Update, Render
+	virtual void Update(float dt, const XMMATRIX& parentMat);
+
 protected:
-	MoveableEntity(Mesh*, Material*);
-	~MoveableEntity(void);
-	
+	// Physics stuff.
 	float maxVel, maxAccel, friction;
 	XMVECTOR velocity;
 	XMVECTOR angularVelocity;
 	XMVECTOR acceleration;
 	XMVECTOR angularAcceleration;
-
-	virtual void Initialize(ID3D11Buffer* modelConstBuffer, VSPerModelData* modelConstBufferData);
-	virtual void Update(float dt, const XMMATRIX& parentMat);
-	virtual void Render(ID3D11DeviceContext* deviceContext);
 
 private:
 

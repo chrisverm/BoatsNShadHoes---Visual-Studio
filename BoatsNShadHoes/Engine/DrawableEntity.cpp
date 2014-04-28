@@ -1,5 +1,13 @@
 #include "DrawableEntity.h"
 
+#pragma region Constructor/Destructor
+
+/*
+Constructor
+
+Usese parents constructor.
+Requires a Mesh and a Material to draw with.
+*/
 DrawableEntity::DrawableEntity(Mesh* mesh, Material* material)
 	: Entity()
 {
@@ -9,22 +17,28 @@ DrawableEntity::DrawableEntity(Mesh* mesh, Material* material)
 	topology = D3D11_PRIMITIVE_TOPOLOGY_TRIANGLELIST;
 }
 
+/*
+Destructor, loops through children and deletes them, (ignores cameras because they're handled in camera manager).
+*/
 DrawableEntity::~DrawableEntity()
-{
-	Entity::~Entity();
-}
+{ Entity::~Entity(); }
 
+#pragma endregion
+
+#pragma region Init, Update, Render
+
+/*
+Initialize this entity with the constant buffer to use and the buffer data to pass through.
+*/
 void DrawableEntity::Initialize(ID3D11Buffer* modelConstBuffer, VSPerModelData* modelConstBufferData)
 {
 	this->modelConstBuffer = modelConstBuffer;
 	this->modelConstBufferData = modelConstBufferData;
 }
 
-void DrawableEntity::Update(float dt, const XMMATRIX& parentMat)
-{
-	Entity::Update(dt, parentMat);
-}
-
+/*
+Render this entity ( and all of its children ).
+*/
 void DrawableEntity::Render(ID3D11DeviceContext* deviceContext)
 {
 	SetConstantBuffer(deviceContext);
@@ -38,14 +52,13 @@ void DrawableEntity::Render(ID3D11DeviceContext* deviceContext)
 		mesh->numInds,
 		0,
 		0);
-
-	for (std::vector<Entity*>::iterator it = children.begin(); it != children.end(); it++)
-	{ 
-		if (dynamic_cast<DrawableEntity*>(*it) != NULL)
-			dynamic_cast<DrawableEntity*>(*it)->Render(deviceContext);
-	}
 }
 
+#pragma endregion
+
+/*
+Passes this entity's information to the constant buffer.
+*/
 void DrawableEntity::SetConstantBuffer(ID3D11DeviceContext* deviceContext)
 {
 	modelConstBufferData->model = worldMatrix;
