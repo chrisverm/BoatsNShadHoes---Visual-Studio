@@ -325,6 +325,14 @@ void Gameplay::LoadResources()
 		&srv));
 	ResourceManager::AddSRV("crate", srv);
 
+	HR(CreateWICTextureFromFile(
+		device,
+		deviceContext,
+		L"Resources/water.jpg",
+		0,
+		&srv));
+	ResourceManager::AddSRV("water",srv);
+
 	// Sampler States ------------------------------------
 	ID3D11SamplerState* ss = nullptr;
 	D3D11_SAMPLER_DESC samplerDesc;
@@ -337,15 +345,7 @@ void Gameplay::LoadResources()
 	HR(device->CreateSamplerState(
 		&samplerDesc,
 		&ss));
-	ResourceManager::AddSamplerState("crate", ss);
-
-	HR(CreateWICTextureFromFile(
-		device,
-		deviceContext,
-		L"Resources/water.jpg",
-		0,
-		&srv));
-	ResourceManager::AddSRV("water",srv);
+	ResourceManager::AddSamplerState("MIN_MAG_POINT_MIP_LINEAR", ss);
 
 	// Meshes -------------------------------------------
 	Mesh* cube = Mesh::LoadFromOBJ("Resources/boat_obj.obj");
@@ -394,10 +394,10 @@ void Gameplay::LoadResources()
 	ResourceManager::AddMesh("sphere", sphere);
 
 	// Materials -----------------------------------------
-	Material* crateMat = new Material(ResourceManager::GetSRV("crate"), ResourceManager::GetSamplerState("crate"));
+	Material* crateMat = new Material(ResourceManager::GetSRV("crate"), ResourceManager::GetSamplerState("MIN_MAG_POINT_MIP_LINEAR"));
 	crateMat->Initialize(ResourceManager::GetVertexShader(cube->ILName()), ResourceManager::GetPixelShader(cube->ILName()));
 
-	Material* waterMat = new Material(ResourceManager::GetSRV("water"), ResourceManager::GetSamplerState("crate"));
+	Material* waterMat = new Material(ResourceManager::GetSRV("water"), ResourceManager::GetSamplerState("MIN_MAG_POINT_MIP_LINEAR"));
 	waterMat->Initialize(ResourceManager::GetVertexShader("Water"), ResourceManager::GetPixelShader("Water"));
 
 	Material* coordinatesMat = new Material(nullptr, nullptr);
