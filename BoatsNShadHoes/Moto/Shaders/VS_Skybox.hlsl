@@ -31,9 +31,9 @@ VertexShaderOutput main(VertexShaderInput input)
 
 	// output values
 	output.position			= mul(float4(input.position, 1.0f), worldViewProj);
-	float4 camPos			= mul(float4(cameraPosition, 1.0f), worldViewProj);
-	output.uv				= vertexPosition - camPos; // interpolates unit vector
-	//output.uv				= vertexPosition - input.cameraPosition;
+	//float4 camPos			= mul(float4(cameraPosition, 1.0f), worldViewProj);
+	//output.uv				= vertexPosition - camPos; // interpolates unit vector
+	output.uv				= vertexPosition - cameraPosition;
 	//output.uv				= input.uv;
 
 	return output;

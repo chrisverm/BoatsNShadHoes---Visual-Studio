@@ -3,6 +3,7 @@
 
 #include <vector>
 #include "WICTextureLoader.h"
+#include "DDSTextureLoader.h"
 #include "GameState.h"
 #include "Globals.h"
 #include "Game.h"

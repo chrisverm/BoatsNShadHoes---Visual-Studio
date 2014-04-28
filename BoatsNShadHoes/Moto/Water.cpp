@@ -9,7 +9,6 @@ Water::Water(Mesh* mesh, Material* material)
 	scale = XMVectorSet(50,1,50,0);
 }
 
-
 Water::~Water(void)
 {
 }

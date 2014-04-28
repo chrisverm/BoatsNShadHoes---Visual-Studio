@@ -63,6 +63,9 @@ bool Gameplay::Initialize()
 	cannonBall->Initialize(Game::vsPerModelConstBuffer, Game::vsPerModelData);
 	cannonBall->position = XMVectorSet(0,-10,0,0);
 
+	CannonBall* skyBall = new CannonBall(Resources::GetMesh("skybox"), Resources::GetMaterial("skybox"));
+	skyBall->Initialize(Game::vsPerModelConstBuffer, Game::vsPerModelData);
+
 	Water* water = new Water(Resources::GetMesh("quad"), Resources::GetMaterial("water"));
 	water->Initialize(Game::vsPerModelConstBuffer, Game::vsPerModelData);
 
@@ -70,6 +73,7 @@ bool Gameplay::Initialize()
 	entities.push_back(boat2);		world->AddChild(boat2);
 	entities.push_back(water);		world->AddChild(water);
 	entities.push_back(cannonBall);	world->AddChild(cannonBall);
+	entities.push_back(skyBall);	world->AddChild(skyBall);
 
 	// Camera Setup -----------[ o]---------------------
 	viewChanged = false;
@@ -317,6 +321,8 @@ void Gameplay::LoadResources()
 {
 	// Shader Resource Views -----------------------------
 	ID3D11ShaderResourceView* srv = nullptr;
+
+	// boat
 	HR(CreateWICTextureFromFile(
 		device, 
 		deviceContext, 
@@ -325,6 +331,7 @@ void Gameplay::LoadResources()
 		&srv));
 	Resources::AddSRV("crate", srv);
 
+	// water
 	HR(CreateWICTextureFromFile(
 		device,
 		deviceContext,
@@ -333,6 +340,7 @@ void Gameplay::LoadResources()
 		&srv));
 	Resources::AddSRV("water", srv);
 
+	// cannonball
 	HR(CreateWICTextureFromFile(
 		device,
 		deviceContext,
@@ -340,6 +348,14 @@ void Gameplay::LoadResources()
 		0,
 		&srv));
 	Resources::AddSRV("cannonball", srv);
+
+	// Skybox
+	HR(CreateDDSTextureFromFile(
+		device,
+		L"Resources/skybox_environment.dds",
+		0,
+		&srv));
+	Resources::AddSRV("skybox", srv);
 
 	// Sampler States ------------------------------------
 	ID3D11SamplerState* ss = nullptr;
@@ -364,6 +380,9 @@ void Gameplay::LoadResources()
 
 	Mesh* sphere = Mesh::LoadFromOBJ("Resources/cannonball_obj.obj");
 	sphere->Initialize(device, Resources::GetInputLayout(quad->ILName()));
+
+	Mesh* skybox = Mesh::LoadFromOBJ("Resources/cannonball_obj.obj");
+	skybox->Initialize(device, ResourceManager::GetInputLayout("skybox"));
 
 	// Begin Disgusting.
 	Vertex_PNC temp[] = 
@@ -400,6 +419,7 @@ void Gameplay::LoadResources()
 	Resources::AddMesh("cube", cube);
 	Resources::AddMesh("quad", quad);
 	Resources::AddMesh("sphere", sphere);
+	Resources::AddMesh("skybox", skybox);
 
 	// Materials -----------------------------------------
 	Material* crateMat = new Material(Resources::GetSRV("crate"), Resources::GetSamplerState("MIN_MAG_POINT_MIP_LINEAR"));
@@ -414,10 +434,14 @@ void Gameplay::LoadResources()
 	Material* coordinatesMat = new Material(nullptr, nullptr);
 	coordinatesMat->Initialize(Resources::GetVertexShader(coordinates->ILName()), Resources::GetPixelShader(coordinates->ILName()));
 
+	Material* skyboxMat = new Material(Resources::GetSRV("skybox"), Resources::GetSamplerState("crate"));
+	skyboxMat->Initialize(Resources::GetVertexShader("skybox"), Resources::GetPixelShader("skybox"));
+
 	Resources::AddMaterial("crate", crateMat);
 	Resources::AddMaterial("water", waterMat);
 	Resources::AddMaterial("cannonball", cannonballMat);
 	Resources::AddMaterial("coordinates", coordinatesMat);
+	Resources::AddMaterial("skybox", skyboxMat);
 }
 
 void Gameplay::SetupAudio()
@@ -494,7 +518,7 @@ void Gameplay::Update(float dt)
 	Game::vsPerFrameData->time		+= dt / 5.0f;
 	Game::vsPerFrameData->view		 = CameraManager::ActiveCamera()->GetViewMatrix();
 	Game::vsPerFrameData->projection = CameraManager::ActiveCamera()->GetProjMatrix();
-	Game::vsPerFrameData->worldPosition = cameraPosition;
+	Game::vsPerFrameData->cameraPosition = cameraPosition;
 
 	if (Game::vsPerFrameData->time > 1.0f)
 		Game::vsPerFrameData->time -= 1.0f;

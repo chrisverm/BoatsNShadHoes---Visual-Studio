@@ -14,7 +14,7 @@ struct VSPerFrameData
 	DirectX::XMFLOAT4X4 projection;
 
 	float time;
-	DirectX::XMFLOAT3 worldPosition;
+	DirectX::XMFLOAT3 cameraPosition;
 };
 
 struct VSPerModelData

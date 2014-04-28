@@ -4,7 +4,7 @@
 CannonBall::CannonBall(Mesh* mesh, Material* material)
 	: MoveableEntity(mesh, material)
 {
-	scale *= 0.4f;
+	scale *= 10.0f; // change to 0.4f please :D
 	maxAccel = 20000.0f;
 	maxVel = 20000.0f;
 	friction = 1.0f;
