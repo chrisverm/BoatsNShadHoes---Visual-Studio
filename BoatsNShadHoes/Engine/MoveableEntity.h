@@ -6,7 +6,7 @@
 class MoveableEntity : public DrawableEntity
 {
 public:
-	MoveableEntity(Mesh*, Material*);
+	MoveableEntity(Mesh*, Material*, ID3D11RasterizerState*);
 	~MoveableEntity(void);
 
 	const XMVECTOR& Velocity;

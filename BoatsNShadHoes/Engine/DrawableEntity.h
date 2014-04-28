@@ -9,7 +9,7 @@ using namespace DirectX;
 class DrawableEntity : public Entity
 {
 public:
-	DrawableEntity(Mesh* mesh, Material* material);
+	DrawableEntity(Mesh*, Material*, ID3D11RasterizerState*);
 	~DrawableEntity();
 
 	// Init, Update, Render
@@ -24,7 +24,7 @@ private:
 	D3D_PRIMITIVE_TOPOLOGY topology;
 	ID3D11Buffer* modelConstBuffer;
 	VSPerModelData* modelConstBufferData;
-
+	ID3D11RasterizerState* rasterizerState;
 };
 
 #endif

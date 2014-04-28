@@ -11,8 +11,8 @@ Uses parents constructor.
 Requires a Mesh and a Material to draw with.
 Initializes physics values (vel, angvel, accel, frict, ect).
 */
-MoveableEntity::MoveableEntity(Mesh* mesh, Material*mat)
-	: DrawableEntity(mesh,mat), Velocity(velocity), AngularVelocity(angularVelocity)
+MoveableEntity::MoveableEntity(Mesh* mesh, Material*mat, ID3D11RasterizerState* rasterizerState)
+	: DrawableEntity(mesh, mat, rasterizerState), Velocity(velocity), AngularVelocity(angularVelocity)
 {
 	velocity = XMVectorSet(0,0,0,0);
 	angularVelocity = XMVectorSet(0,0,0,0);

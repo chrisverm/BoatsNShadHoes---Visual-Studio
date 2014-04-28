@@ -39,7 +39,7 @@ bool Gameplay::Initialize()
 	b1Stats.damage		= 20;
 
 	// Entites -----------------------------------------
-	Boat* boat = new Boat(Resources::GetMesh("cube"), Resources::GetMaterial("crate"), b1Stats, true);
+	Boat* boat = new Boat(Resources::GetMesh("cube"), Resources::GetMaterial("crate"), Resources::GetRasterizerState("default"), b1Stats, true);
 	boat->Initialize(Game::vsPerModelConstBuffer, Game::vsPerModelData);
 
 	//boat->SetStats(b1Stats);
@@ -52,21 +52,21 @@ bool Gameplay::Initialize()
 	b2Stats.rateOfFire	= 1.5f;
 	b2Stats.damage		= 10;
 
-	Boat* boat2 = new Boat(Resources::GetMesh("cube"), Resources::GetMaterial("crate"), b2Stats, false);
+	Boat* boat2 = new Boat(Resources::GetMesh("cube"), Resources::GetMaterial("crate"), Resources::GetRasterizerState("wireframe"), b2Stats, false);
 	boat2->Initialize(Game::vsPerModelConstBuffer, Game::vsPerModelData);
 	boat2->SetPosition(5, 0, 5);
 	boat2->SetRotation(0, 2, 0);
 
 	//boat2->SetStats(b2Stats);
 
-	CannonBall* cannonBall = new CannonBall(Resources::GetMesh("sphere"), Resources::GetMaterial("cannonball"));
+	CannonBall* cannonBall = new CannonBall(Resources::GetMesh("sphere"), Resources::GetMaterial("cannonball"), Resources::GetRasterizerState("default"));
 	cannonBall->Initialize(Game::vsPerModelConstBuffer, Game::vsPerModelData);
 	cannonBall->position = XMVectorSet(0,-10,0,0);
 
-	CannonBall* skyBall = new CannonBall(Resources::GetMesh("skybox"), Resources::GetMaterial("skybox"));
+	CannonBall* skyBall = new CannonBall(Resources::GetMesh("skybox"), Resources::GetMaterial("skybox"), Resources::GetRasterizerState("skybox"));
 	skyBall->Initialize(Game::vsPerModelConstBuffer, Game::vsPerModelData);
 
-	Water* water = new Water(Resources::GetMesh("quad"), Resources::GetMaterial("water"));
+	Water* water = new Water(Resources::GetMesh("quad"), Resources::GetMaterial("water"), Resources::GetRasterizerState("default"));
 	water->Initialize(Game::vsPerModelConstBuffer, Game::vsPerModelData);
 
 	entities.push_back(boat);		world->AddChild(boat);
@@ -133,6 +133,64 @@ void Gameplay::LoadShadersAndInputLayout()
 	ID3D11InputLayout* inputLayout = nullptr;
 	ID3D11VertexShader* vertexShader = nullptr;
 	ID3D11PixelShader* pixelShader = nullptr;
+	ID3D11RasterizerState* rasterizerState = nullptr;
+
+	// Rasterizer States -------------------------------
+
+	// Default
+	D3D11_RASTERIZER_DESC rsDesc;
+	ZeroMemory(&rsDesc, sizeof(D3D11_RASTERIZER_DESC));
+
+	rsDesc.FillMode					= D3D11_FILL_SOLID;
+	rsDesc.CullMode					= D3D11_CULL_NONE;
+	rsDesc.FrontCounterClockwise	= false;
+	rsDesc.DepthBias				= 0.0f;
+	rsDesc.DepthBiasClamp			= 0.0f;
+	rsDesc.SlopeScaledDepthBias		= 0.0f;
+	rsDesc.ScissorEnable			= false;
+	rsDesc.MultisampleEnable		= true;
+	rsDesc.AntialiasedLineEnable	= false;
+
+	HR(device->CreateRasterizerState(
+		&rsDesc, &rasterizerState));
+
+	Resources::AddRasterizerState("default", rasterizerState);
+
+	// Wireframe (TEST)
+	ZeroMemory(&rsDesc, sizeof(D3D11_RASTERIZER_DESC));
+
+	rsDesc.FillMode					= D3D11_FILL_WIREFRAME;
+	rsDesc.CullMode					= D3D11_CULL_NONE;
+	rsDesc.FrontCounterClockwise	= false;
+	rsDesc.DepthBias				= 0.0f;
+	rsDesc.DepthBiasClamp			= 0.0f;
+	rsDesc.SlopeScaledDepthBias		= 0.0f;
+	rsDesc.ScissorEnable			= false;
+	rsDesc.MultisampleEnable		= true;
+	rsDesc.AntialiasedLineEnable	= false;
+
+	HR(device->CreateRasterizerState(
+		&rsDesc, &rasterizerState));
+
+	Resources::AddRasterizerState("wireframe", rasterizerState);
+
+	// Skybox
+	ZeroMemory(&rsDesc, sizeof(D3D11_RASTERIZER_DESC));
+
+	rsDesc.FillMode					= D3D11_FILL_SOLID;
+	rsDesc.CullMode					= D3D11_CULL_BACK;
+	rsDesc.FrontCounterClockwise	= false;
+	rsDesc.DepthBias				= 0.0f;
+	rsDesc.DepthBiasClamp			= 0.0f;
+	rsDesc.SlopeScaledDepthBias		= 0.0f;
+	rsDesc.ScissorEnable			= false;
+	rsDesc.MultisampleEnable		= true;
+	rsDesc.AntialiasedLineEnable	= false;
+
+	HR(device->CreateRasterizerState(
+		&rsDesc, &rasterizerState));
+
+	Resources::AddRasterizerState("backface", rasterizerState);
 
 	// PNU Shaders -------------------------------------
 	D3DReadFileToBlob(L"Shaders/VS_PNU.cso", &vsBlob);

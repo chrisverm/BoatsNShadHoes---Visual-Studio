@@ -6,7 +6,7 @@
 class CannonBall : public MoveableEntity
 {
 public:
-	CannonBall(Mesh*, Material*);
+	CannonBall(Mesh*, Material*, ID3D11RasterizerState*);
 	~CannonBall(void);
 
 	void Initialize(ID3D11Buffer* modelConstBuffer, VSPerModelData* modelConstBufferData);

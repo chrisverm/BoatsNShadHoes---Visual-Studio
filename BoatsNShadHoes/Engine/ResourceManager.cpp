@@ -7,6 +7,7 @@ SSMap ResourceManager::samplerStates;
 PSMap ResourceManager::pixelShaders;
 VSMap ResourceManager::vertexShaders;
 ILMap ResourceManager::inputLayouts;
+RSMap ResourceManager::rasterizerStates;
 
 bool ResourceManager::AddMesh(std::string id, Mesh* mesh)
 {
@@ -78,6 +79,16 @@ bool ResourceManager::AddInputLayout(std::string id, ID3D11InputLayout* inputLay
 	return true;
 }
 
+bool ResourceManager::AddRasterizerState(std::string id, ID3D11RasterizerState* rasterizerState)
+{
+	if (rasterizerStates[id] != nullptr)
+		return false;
+
+	rasterizerStates[id] = rasterizerState;
+
+	return true;
+}
+
 Mesh* ResourceManager::GetMesh(std::string id)
 { return meshes[id]; }
 
@@ -98,6 +109,9 @@ ID3D11VertexShader* ResourceManager::GetVertexShader(std::string id)
 
 ID3D11InputLayout* ResourceManager::GetInputLayout(std::string id)
 { return inputLayouts[id]; }
+
+ID3D11RasterizerState* ResourceManager::GetRasterizerState(std::string id)
+{ return rasterizerStates[id]; }
 
 void ResourceManager::Release()
 {
@@ -120,5 +134,8 @@ void ResourceManager::Release()
 	{ ReleaseMacro(it->second); }
 
 	for (ILMap::iterator it = inputLayouts.begin(); it != inputLayouts.end(); it++)
+	{ ReleaseMacro(it->second); }
+
+	for (RSMap::iterator it = rasterizerStates.begin(); it != rasterizerStates.end(); it++)
 	{ ReleaseMacro(it->second); }
 }
