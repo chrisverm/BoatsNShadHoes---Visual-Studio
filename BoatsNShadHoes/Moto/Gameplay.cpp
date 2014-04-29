@@ -101,6 +101,7 @@ bool Gameplay::Initialize()
 	CameraManager::CreateNewCamera(&camDesc, true);
 
 	//CameraManager::cameras[0]->AddChild(skyBall);
+	//CameraManager::ActiveCamera()->AddChild(skyBall);
 
 #ifdef SOUND_PLAY
 	// AL setup --------------------------------~^^~-----
@@ -480,9 +481,11 @@ void Gameplay::LoadResources()
 	// Sampler States ------------------------------------
 	ID3D11SamplerState* ss = nullptr;
 	D3D11_SAMPLER_DESC samplerDesc;
+	
+	// MIN_MAG_POINT_MIP_LINEAR
 	ZeroMemory(&samplerDesc, sizeof(samplerDesc));
 	samplerDesc.Filter = D3D11_FILTER_MIN_MAG_POINT_MIP_LINEAR;
-	//samplerDesc.Filter	 = D3D11_FILTER_MIN_MAG_MIP_POINT;
+	//samplerDesc.Filter	 = D3D11_FILTER_MIN_MAG_MIP_LINEAR;
 	samplerDesc.AddressU = D3D11_TEXTURE_ADDRESS_WRAP;
 	samplerDesc.AddressV = D3D11_TEXTURE_ADDRESS_WRAP;
 	samplerDesc.AddressW = D3D11_TEXTURE_ADDRESS_WRAP;
@@ -491,6 +494,18 @@ void Gameplay::LoadResources()
 		&samplerDesc,
 		&ss));
 	Resources::AddSamplerState("MIN_MAG_POINT_MIP_LINEAR", ss);
+
+	// MIN_MAP_MIP_LINEAR (Trilinear)
+	ZeroMemory(&samplerDesc, sizeof(samplerDesc));
+	samplerDesc.Filter	 = D3D11_FILTER_MIN_MAG_MIP_LINEAR;
+	samplerDesc.AddressU = D3D11_TEXTURE_ADDRESS_WRAP;
+	samplerDesc.AddressV = D3D11_TEXTURE_ADDRESS_WRAP;
+	samplerDesc.AddressW = D3D11_TEXTURE_ADDRESS_WRAP;
+
+	HR(device->CreateSamplerState(
+		&samplerDesc,
+		&ss));
+	Resources::AddSamplerState("MIN_MAG_MIP_LINEAR", ss);
 
 	// Meshes -------------------------------------------
 	Mesh* cube = Mesh::LoadFromOBJ("Resources/boat_obj.obj");
@@ -555,7 +570,7 @@ void Gameplay::LoadResources()
 	Material* coordinatesMat = new Material(nullptr, nullptr);
 	coordinatesMat->Initialize(Resources::GetVertexShader(coordinates->ILName()), Resources::GetPixelShader(coordinates->ILName()));
 
-	Material* skyboxMat = new Material(Resources::GetSRV("skybox"), Resources::GetSamplerState("MIN_MAG_POINT_MIP_LINEAR"));
+	Material* skyboxMat = new Material(Resources::GetSRV("skybox"), Resources::GetSamplerState("MIN_MAG_MIP_LINEAR"));
 	skyboxMat->Initialize(Resources::GetVertexShader("skybox"), Resources::GetPixelShader("skybox"));
 
 	Resources::AddMaterial("crate", crateMat);

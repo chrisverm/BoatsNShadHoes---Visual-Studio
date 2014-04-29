@@ -21,12 +21,18 @@ VertexShaderOutput main(VertexShaderInput input)
 	// variables
 	VertexShaderOutput output;
 	float4 vertexPosition;
+	float4 camPos;
 	matrix worldViewProj;
+	matrix worldView;
+	matrix viewProj;
+	matrix worldProj;
 	
-	worldViewProj = mul(mul(world, view), projection); // screen space for something
-	vertexPosition = mul(float4(input.position, 1.0f), world); // input position in world space
-
-	float4 camPos			= mul(float4(cameraPosition, 1.0f), worldViewProj);
+	worldViewProj	= mul(mul(world, view), projection); // screen space for an object
+	worldView		= mul(world, view);
+	viewProj		= mul(view, projection);
+	worldProj		= mul(world, projection);
+	vertexPosition	= mul(float4(input.position, 1.0f), world); // input position in world space
+	camPos			= mul(float4(cameraPosition, 1.0f), worldViewProj);
 
 	// output values
 	output.position			= vertexPosition.xyww;
@@ -34,13 +40,20 @@ VertexShaderOutput main(VertexShaderInput input)
 	//output.uv				= normalize(vertexPosition - camPos); // interpolates unit vector
 	//output.uv				= normalize(vertexPosition - cameraPosition);
 	//output.uv				= input.position - cameraPosition;
+	//output.uv				= vertexPosition - camPos;
 	//output.uv				= vertexPosition - cameraPosition;
-	output.uv				= input.position;
-	//output.uv				= vertexPosition;
+	//output.uv				= input.position - camPos;
+	//output.uv				= normalize(input.position - cameraPosition);
+	//output.uv				= normalize(input.position - camPos);
+	//output.uv				= input.position;
+	//output.uv				= normalize(mul(vertexPosition, worldViewProj));
+	output.uv				= mul(vertexPosition, worldViewProj);
 	//output.uv				= cameraPosition;
 	//output.uv				= camPos;
 	//output.uv				= normalize(mul(float4(input.position, 1.0f), worldViewProj));
 	//output.uv				= mul(float4(input.position, 1.0f), worldViewProj);
+
+	//output.uv = float3(1.0f, 0.5f, 0.3f);
 
 	return output;
 }
