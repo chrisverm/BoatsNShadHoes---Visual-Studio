@@ -15,6 +15,7 @@
 #include "Water.h"
 #include "CannonBall.h"
 #include "Camera.h"
+#include "Skybox.h"
 
 class Gameplay : public GameState
 {

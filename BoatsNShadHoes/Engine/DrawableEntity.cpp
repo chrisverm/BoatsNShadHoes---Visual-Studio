@@ -56,6 +56,8 @@ void DrawableEntity::Render(ID3D11DeviceContext* deviceContext)
 		mesh->numInds,
 		0,
 		0);
+
+	Entity::Render(deviceContext);
 }
 
 #pragma endregion

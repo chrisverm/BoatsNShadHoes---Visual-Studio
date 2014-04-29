@@ -66,7 +66,7 @@ bool Gameplay::Initialize()
 	cannonBall->Initialize(Game::vsPerModelConstBuffer, Game::vsPerModelData);
 	cannonBall->position = XMVectorSet(0,-10,0,0);
 
-	CannonBall* skyBall = new CannonBall(Resources::GetMesh("skybox"), Resources::GetMaterial("skybox"), 
+	SkyBox* skyBall = new SkyBox(Resources::GetMesh("skybox"), Resources::GetMaterial("skybox"), 
 		Resources::GetRasterizerState("skybox"), Resources::GetDepthStencilState("skybox"));
 	skyBall->Initialize(Game::vsPerModelConstBuffer, Game::vsPerModelData);
 
@@ -78,7 +78,7 @@ bool Gameplay::Initialize()
 	entities.push_back(boat2);		world->AddChild(boat2);
 	entities.push_back(water);		world->AddChild(water);
 	entities.push_back(cannonBall);	world->AddChild(cannonBall);
-	entities.push_back(skyBall);	world->AddChild(skyBall);
+	entities.push_back(skyBall);	boat->AddChild(skyBall); // Parented to the boat, AW YEAH.
 
 	// Camera Setup -----------[ o]---------------------
 	viewChanged = false;
@@ -99,9 +99,6 @@ bool Gameplay::Initialize()
 	camDesc.Forward = THIRD_PERSON;
 	camDesc.Roll = STATIC;
 	CameraManager::CreateNewCamera(&camDesc, true);
-
-	//CameraManager::cameras[0]->AddChild(skyBall);
-	//CameraManager::ActiveCamera()->AddChild(skyBall);
 
 #ifdef SOUND_PLAY
 	// AL setup --------------------------------~^^~-----
@@ -508,7 +505,7 @@ void Gameplay::LoadResources()
 	Resources::AddSamplerState("MIN_MAG_MIP_LINEAR", ss);
 
 	// Meshes -------------------------------------------
-	Mesh* cube = Mesh::LoadFromOBJ("Resources/boat_obj.obj");
+	Mesh* cube = Mesh::LoadFromOBJ("Resources/PirateShip_obj.obj");
 	cube->Initialize(device, Resources::GetInputLayout(cube->ILName()));
 
 	Mesh* quad = Mesh::LoadFromOBJ("Resources/water_obj.obj");
@@ -656,7 +653,7 @@ void Gameplay::Update(float dt)
 	Game::vsPerFrameData->projection = CameraManager::ActiveCamera()->GetProjMatrix();
 	Game::vsPerFrameData->cameraPosition = cameraPosition;
 
-	entities[4]->position = CameraManager::ActiveCamera()->position;
+	//entities[4]->position = CameraManager::ActiveCamera()->position;
 
 	if (Game::vsPerFrameData->time > 1.0f)
 		Game::vsPerFrameData->time -= 1.0f;
