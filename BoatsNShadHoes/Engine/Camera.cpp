@@ -10,7 +10,7 @@ Camera::Camera(CAMERA_DESC* cDesc)
 
 	attachedDist = cDesc->AttachedDist;
 
-	roll = cDesc->InitialRoll;
+	rotation = XMVectorSetZ(rotation, cDesc->InitialRoll);
 	rollState = cDesc->Roll;
 
 	position = cDesc->InitialPosition;
@@ -18,6 +18,9 @@ Camera::Camera(CAMERA_DESC* cDesc)
 
 	forward = cDesc->InitialForward;
 	forwardState = cDesc->Forward;
+
+	minAngleClamps = cDesc->MinAngleClamps;
+	maxAngleClamps = cDesc->MaxAngleClamps;
 
 	projMatrix = XMFLOAT4X4();
 	viewMatrix = XMFLOAT4X4();
@@ -42,6 +45,9 @@ void Camera::Move(const XMINT2* mouseDelta, float dt)
 		+ XMConvertToRadians(mouseDelta->y) * dt * 50);
 	rotation = XMVectorSetY(rotation, XMVectorGetY(rotation) 
 		+ XMConvertToRadians(mouseDelta->x) * dt * 50);
+
+	rotation = XMVectorClamp(rotation, minAngleClamps, maxAngleClamps);
+	rotation = XMVectorModAngles(rotation);
 
 	UpdateForwardFromRotation();
 

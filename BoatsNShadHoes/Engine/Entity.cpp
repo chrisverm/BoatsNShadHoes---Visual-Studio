@@ -18,8 +18,8 @@ Entity::Entity()
 	up		 = XMVectorSet(0.0f, 1.0f, 0.0f, 0.0f);
 	right	 = XMVectorSet(1.0f, 0.0f, 0.0f, 0.0f);
 
-	roll = 0;
-	maxRoll = 0;
+	minAngleClamps = XMVectorSet(-360.0f, -360.0f, -360.0f, -1.0f);
+	maxAngleClamps = XMVectorSet( 360.0f,  360.0f,  360.0f,  1.0f);
 
 	XMStoreFloat4x4(&worldMatrix, XMMatrixTranspose(XMMatrixIdentity()));
 }
@@ -52,17 +52,8 @@ Needs a reference to the parents world matrix.
 */
 void Entity::Update(float dt, const XMMATRIX& parentMat)
 {
-	// clamp maximum amount a ship can roll
-	if (roll < -maxRoll)
-		roll = -maxRoll;
-	else if (roll > maxRoll)
-		roll = maxRoll;
-
-	// modular arithmetic on roll (no % operator on floats)
-	while (roll >= 360) roll -= 360;
-	while (roll <= -360) roll += 360;
-
-	rotation = XMVectorSetZ(rotation, XMConvertToRadians(roll));
+	rotation = XMVectorClamp(rotation, minAngleClamps, maxAngleClamps);
+	rotation = XMVectorModAngles(rotation);
 
 	XMMATRIX trans = XMMatrixTranslationFromVector(position);
 	XMMATRIX rot = XMMatrixRotationRollPitchYawFromVector(rotation);

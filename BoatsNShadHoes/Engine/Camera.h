@@ -26,6 +26,8 @@ struct CAMERA_DESC
 	float InitialRoll;
 	XMVECTOR InitialPosition;
 	XMVECTOR InitialForward;
+	XMVECTOR MinAngleClamps;
+	XMVECTOR MaxAngleClamps;
 	CameraMountState Position;
 	CameraMountState Forward;
 	CameraMountState Roll;

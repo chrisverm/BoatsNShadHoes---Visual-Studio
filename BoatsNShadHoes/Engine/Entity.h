@@ -19,8 +19,6 @@ public:
 	XMVECTOR position;
 	XMVECTOR rotation;
 	XMVECTOR scale;
-	float roll;
-	float maxRoll;
 
 	// Init, Update, Render
 	virtual void Initialize(ID3D11Buffer* modelConstBuffer, VSPerModelData* modelConstBufferData);
@@ -51,6 +49,10 @@ protected:
 	XMVECTOR forward;
 	XMVECTOR up;
 	XMVECTOR right;
+
+	// Min/Max Rotation Clamps
+	XMVECTOR minAngleClamps;
+	XMVECTOR maxAngleClamps;
 
 	// Parenting
 	std::vector<Entity*> children;

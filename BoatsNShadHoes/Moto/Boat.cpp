@@ -14,8 +14,10 @@ Boat::Boat(Mesh* mesh, Material* material, ID3D11RasterizerState* rasterizerStat
 	maxVel = 3.0f;
 	maxAccel = 2.0f;
 	friction = 0.9f;
-	roll = 0.0f;
-	maxRoll = 10.0f;
+
+	rotation = XMVectorSetZ(rotation, 0.0f);
+	minAngleClamps = XMVectorSet(-360.0f, -360.0f, -10.0f, 0.0f) * XMConvertToRadians(1.0f); // deg * (pi / 180)
+	maxAngleClamps = XMVectorSet( 360.0f,  360.0f,  10.0f, 0.0f) * XMConvertToRadians(1.0f);
 }
 
 Boat::~Boat()
@@ -38,7 +40,7 @@ void Boat::Update(float dt, const XMMATRIX& parentMat)
 		position -= XMVectorSet(0.0, +0.001f, 0.0f, 0.0f);
 	}
 }
-#include <iostream>
+
 void Boat::Move(float dt)
 {
 	bool turning = false;
@@ -60,12 +62,12 @@ void Boat::Move(float dt)
 
 	if (!turning) 
 	{
-		roll -= roll * 0.975f * dt;
+		rotation = XMVectorSetZ(rotation, XMVectorGetZ(rotation) - XMVectorGetZ(rotation) * 0.975f * dt);
 
-		if (abs(roll) < 0.1f) roll = 0;
+		if (abs(XMVectorGetZ(rotation)) < 0.01f) rotation = XMVectorSetZ(rotation, 0.0f);
 	}
 
-	angularAcceleration = XMVectorSet(0.0f, -roll / 50.0f, 0.0f, 0.0f);
+	angularAcceleration = XMVectorSet(0.0f, -XMVectorGetZ(rotation), 0.0f, 0.0f);
 
 	/* This removed the ability to turn while not moving
 	angularAcceleration = XMVectorSet(0.0f, -roll, 0.0f, 0.0f);
@@ -126,12 +128,12 @@ void Boat::MoveForward()
 
 void Boat::PortHelm()
 {
-	roll += 0.01f; // should be multipled by dt
+	rotation = XMVectorSetZ(rotation, XMVectorGetZ(rotation) + 0.0001f); // should be multipled by dt?
 }
 
 void Boat::StarboardHelm()
 {
-	roll -= 0.01f; // should be multipled by dt
+	rotation = XMVectorSetZ(rotation, XMVectorGetZ(rotation) - 0.0001f); // should be multipled by dt?
 }
 
 /*
