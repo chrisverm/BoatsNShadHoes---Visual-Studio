@@ -8,12 +8,13 @@ Constructor
 Usese parents constructor.
 Requires a Mesh and a Material to draw with.
 */
-DrawableEntity::DrawableEntity(Mesh* mesh, Material* material, ID3D11RasterizerState* rasterizerState)
+DrawableEntity::DrawableEntity(Mesh* mesh, Material* material, ID3D11RasterizerState* rasterizerState, ID3D11DepthStencilState* depthStencilState)
 	: Entity()
 {
 	this->mesh = mesh;
 	this->material = material;
 	this->rasterizerState = rasterizerState;
+	this->depthStencilState = depthStencilState;
 
 	topology = D3D11_PRIMITIVE_TOPOLOGY_TRIANGLELIST;
 }
@@ -45,6 +46,7 @@ void DrawableEntity::Render(ID3D11DeviceContext* deviceContext)
 	SetConstantBuffer(deviceContext);
 		
 	deviceContext->IASetPrimitiveTopology(topology);
+	deviceContext->OMSetDepthStencilState(depthStencilState, 0);
 	deviceContext->RSSetState(rasterizerState);
 
 	mesh->SetBuffers(deviceContext);

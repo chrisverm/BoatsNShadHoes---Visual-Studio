@@ -7,7 +7,7 @@
 class Water : public DrawableEntity
 {
 public:
-	Water(Mesh*, Material*, ID3D11RasterizerState*);
+	Water(Mesh*, Material*, ID3D11RasterizerState*, ID3D11DepthStencilState*);
 	~Water(void);
 };
 

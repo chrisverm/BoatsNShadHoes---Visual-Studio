@@ -15,6 +15,7 @@ typedef std::map<std::string, ID3D11VertexShader*> VSMap;
 typedef std::map<std::string, ID3D11PixelShader*> PSMap;
 typedef std::map<std::string, ID3D11InputLayout*> ILMap;
 typedef std::map<std::string, ID3D11RasterizerState*> RSMap;
+typedef std::map<std::string, ID3D11DepthStencilState*> DSSMap;
 
 class ResourceManager
 {
@@ -28,6 +29,7 @@ public:
 	static bool AddVertexShader(std::string, ID3D11VertexShader*);
 	static bool AddInputLayout(std::string, ID3D11InputLayout*);
 	static bool AddRasterizerState(std::string, ID3D11RasterizerState*);
+	static bool AddDepthStencilState(std::string, ID3D11DepthStencilState*);
 
 	static Mesh* GetMesh(std::string);
 	static Material* GetMaterial(std::string);
@@ -37,6 +39,7 @@ public:
 	static ID3D11PixelShader* GetPixelShader(std::string);
 	static ID3D11InputLayout* GetInputLayout(std::string);
 	static ID3D11RasterizerState* GetRasterizerState(std::string);
+	static ID3D11DepthStencilState* GetDepthStencilState(std::string);
 
 	static void Release();
 
@@ -50,6 +53,7 @@ private:
 	static PSMap pixelShaders;
 	static ILMap inputLayouts;
 	static RSMap rasterizerStates;
+	static DSSMap depthStencilStates;
 };
 
 // Convienience.

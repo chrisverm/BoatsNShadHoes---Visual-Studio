@@ -1,8 +1,8 @@
 #include "CannonBall.h"
 
 
-CannonBall::CannonBall(Mesh* mesh, Material* material, ID3D11RasterizerState* rasterizerState)
-	: MoveableEntity(mesh, material, rasterizerState)
+CannonBall::CannonBall(Mesh* mesh, Material* material, ID3D11RasterizerState* rasterizerState, ID3D11DepthStencilState* depthStencilState)
+	: MoveableEntity(mesh, material, rasterizerState, depthStencilState)
 {
 	scale *= 10.0f; // change to 0.4f please :D
 	maxAccel = 20000.0f;

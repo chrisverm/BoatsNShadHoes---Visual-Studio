@@ -39,7 +39,8 @@ bool Gameplay::Initialize()
 	b1Stats.damage		= 20;
 
 	// Entites -----------------------------------------
-	Boat* boat = new Boat(Resources::GetMesh("cube"), Resources::GetMaterial("crate"), Resources::GetRasterizerState("default"), b1Stats, true);
+	Boat* boat = new Boat(Resources::GetMesh("cube"), Resources::GetMaterial("crate"), 
+		Resources::GetRasterizerState("default"), Resources::GetDepthStencilState("default"), b1Stats, true);
 	boat->Initialize(Game::vsPerModelConstBuffer, Game::vsPerModelData);
 
 	//boat->SetStats(b1Stats);
@@ -52,21 +53,25 @@ bool Gameplay::Initialize()
 	b2Stats.rateOfFire	= 1.5f;
 	b2Stats.damage		= 10;
 
-	Boat* boat2 = new Boat(Resources::GetMesh("cube"), Resources::GetMaterial("crate"), Resources::GetRasterizerState("wireframe"), b2Stats, false);
+	Boat* boat2 = new Boat(Resources::GetMesh("cube"), Resources::GetMaterial("crate"), 
+		Resources::GetRasterizerState("wireframe"), Resources::GetDepthStencilState("default"), b2Stats, false);
 	boat2->Initialize(Game::vsPerModelConstBuffer, Game::vsPerModelData);
 	boat2->SetPosition(5, 0, 5);
 	boat2->SetRotation(0, 2, 0);
 
 	//boat2->SetStats(b2Stats);
 
-	CannonBall* cannonBall = new CannonBall(Resources::GetMesh("sphere"), Resources::GetMaterial("cannonball"), Resources::GetRasterizerState("default"));
+	CannonBall* cannonBall = new CannonBall(Resources::GetMesh("sphere"), Resources::GetMaterial("cannonball"), 
+		Resources::GetRasterizerState("default"), Resources::GetDepthStencilState("default"));
 	cannonBall->Initialize(Game::vsPerModelConstBuffer, Game::vsPerModelData);
 	cannonBall->position = XMVectorSet(0,-10,0,0);
 
-	CannonBall* skyBall = new CannonBall(Resources::GetMesh("skybox"), Resources::GetMaterial("skybox"), Resources::GetRasterizerState("skybox"));
+	CannonBall* skyBall = new CannonBall(Resources::GetMesh("skybox"), Resources::GetMaterial("skybox"), 
+		Resources::GetRasterizerState("skybox"), Resources::GetDepthStencilState("skybox"));
 	skyBall->Initialize(Game::vsPerModelConstBuffer, Game::vsPerModelData);
 
-	Water* water = new Water(Resources::GetMesh("quad"), Resources::GetMaterial("water"), Resources::GetRasterizerState("default"));
+	Water* water = new Water(Resources::GetMesh("quad"), Resources::GetMaterial("water"), 
+		Resources::GetRasterizerState("default"), Resources::GetDepthStencilState("default"));
 	water->Initialize(Game::vsPerModelConstBuffer, Game::vsPerModelData);
 
 	entities.push_back(boat);		world->AddChild(boat);
@@ -92,6 +97,8 @@ bool Gameplay::Initialize()
 	camDesc.Forward = THIRD_PERSON;
 	camDesc.Roll = STATIC;
 	CameraManager::CreateNewCamera(&camDesc, true);
+
+	//CameraManager::cameras[0]->AddChild(skyBall);
 
 #ifdef SOUND_PLAY
 	// AL setup --------------------------------~^^~-----
@@ -134,6 +141,56 @@ void Gameplay::LoadShadersAndInputLayout()
 	ID3D11VertexShader* vertexShader = nullptr;
 	ID3D11PixelShader* pixelShader = nullptr;
 	ID3D11RasterizerState* rasterizerState = nullptr;
+	ID3D11DepthStencilState* depthStencilState = nullptr;
+
+	// Depth Stencil States ----------------------------
+
+	// Default
+	D3D11_DEPTH_STENCIL_DESC dssDesc;
+	ZeroMemory(&dssDesc, sizeof(D3D11_DEPTH_STENCIL_DESC));
+
+	dssDesc.DepthEnable					= true;
+	dssDesc.DepthWriteMask				= D3D11_DEPTH_WRITE_MASK_ALL;
+	dssDesc.DepthFunc					= D3D11_COMPARISON_LESS;
+	dssDesc.StencilEnable				= false;
+	dssDesc.StencilReadMask				= D3D11_DEFAULT_STENCIL_READ_MASK;
+	dssDesc.StencilWriteMask			= D3D11_DEFAULT_STENCIL_WRITE_MASK;
+	dssDesc.FrontFace.StencilFunc		= D3D11_COMPARISON_ALWAYS;
+	dssDesc.FrontFace.StencilDepthFailOp= D3D11_STENCIL_OP_KEEP;
+	dssDesc.FrontFace.StencilPassOp		= D3D11_STENCIL_OP_KEEP;
+	dssDesc.FrontFace.StencilFailOp		= D3D11_STENCIL_OP_KEEP;
+	dssDesc.BackFace.StencilFunc		= D3D11_COMPARISON_ALWAYS;
+	dssDesc.BackFace.StencilDepthFailOp	= D3D11_STENCIL_OP_KEEP;
+	dssDesc.BackFace.StencilPassOp		= D3D11_STENCIL_OP_KEEP;
+	dssDesc.BackFace.StencilFailOp		= D3D11_STENCIL_OP_KEEP;
+
+	HR(device->CreateDepthStencilState(
+		&dssDesc, &depthStencilState));
+
+	Resources::AddDepthStencilState("default", depthStencilState);
+
+	// Skybox
+	ZeroMemory(&dssDesc, sizeof(D3D11_DEPTH_STENCIL_DESC));
+
+	dssDesc.DepthEnable					= true;
+	dssDesc.DepthWriteMask				= D3D11_DEPTH_WRITE_MASK_ALL;
+	dssDesc.DepthFunc					= D3D11_COMPARISON_LESS_EQUAL;
+	dssDesc.StencilEnable				= false;
+	dssDesc.StencilReadMask				= D3D11_DEFAULT_STENCIL_READ_MASK;
+	dssDesc.StencilWriteMask			= D3D11_DEPTH_WRITE_MASK_ALL;
+	dssDesc.FrontFace.StencilFunc		= D3D11_COMPARISON_ALWAYS;
+	dssDesc.FrontFace.StencilDepthFailOp= D3D11_STENCIL_OP_KEEP;
+	dssDesc.FrontFace.StencilPassOp		= D3D11_STENCIL_OP_KEEP;
+	dssDesc.FrontFace.StencilFailOp		= D3D11_STENCIL_OP_KEEP;
+	dssDesc.BackFace.StencilFunc		= D3D11_COMPARISON_ALWAYS;
+	dssDesc.BackFace.StencilDepthFailOp	= D3D11_STENCIL_OP_KEEP;
+	dssDesc.BackFace.StencilPassOp		= D3D11_STENCIL_OP_KEEP;
+	dssDesc.BackFace.StencilFailOp		= D3D11_STENCIL_OP_KEEP;
+
+	HR(device->CreateDepthStencilState(
+		&dssDesc, &depthStencilState));
+
+	Resources::AddDepthStencilState("skybox", depthStencilState);
 
 	// Rasterizer States -------------------------------
 
@@ -142,11 +199,12 @@ void Gameplay::LoadShadersAndInputLayout()
 	ZeroMemory(&rsDesc, sizeof(D3D11_RASTERIZER_DESC));
 
 	rsDesc.FillMode					= D3D11_FILL_SOLID;
-	rsDesc.CullMode					= D3D11_CULL_NONE;
+	rsDesc.CullMode					= D3D11_CULL_NONE; // the face to "cull" - not show
 	rsDesc.FrontCounterClockwise	= false;
 	rsDesc.DepthBias				= 0.0f;
 	rsDesc.DepthBiasClamp			= 0.0f;
 	rsDesc.SlopeScaledDepthBias		= 0.0f;
+	rsDesc.DepthClipEnable			= true;
 	rsDesc.ScissorEnable			= false;
 	rsDesc.MultisampleEnable		= true;
 	rsDesc.AntialiasedLineEnable	= false;
@@ -165,8 +223,9 @@ void Gameplay::LoadShadersAndInputLayout()
 	rsDesc.DepthBias				= 0.0f;
 	rsDesc.DepthBiasClamp			= 0.0f;
 	rsDesc.SlopeScaledDepthBias		= 0.0f;
+	rsDesc.DepthClipEnable			= true;
 	rsDesc.ScissorEnable			= false;
-	rsDesc.MultisampleEnable		= true;
+	rsDesc.MultisampleEnable		= false;
 	rsDesc.AntialiasedLineEnable	= false;
 
 	HR(device->CreateRasterizerState(
@@ -178,13 +237,14 @@ void Gameplay::LoadShadersAndInputLayout()
 	ZeroMemory(&rsDesc, sizeof(D3D11_RASTERIZER_DESC));
 
 	rsDesc.FillMode					= D3D11_FILL_SOLID;
-	rsDesc.CullMode					= D3D11_CULL_FRONT; // the face to "cull" - not show
+	rsDesc.CullMode					= D3D11_CULL_NONE;
 	rsDesc.FrontCounterClockwise	= false;
-	rsDesc.DepthBias				= 1.0f;
-	rsDesc.DepthBiasClamp			= 1.0f;
+	rsDesc.DepthBias				= 0.0f;
+	rsDesc.DepthBiasClamp			= 0.0f;
 	rsDesc.SlopeScaledDepthBias		= 0.0f;
+	rsDesc.DepthClipEnable			= false;
 	rsDesc.ScissorEnable			= false;
-	rsDesc.MultisampleEnable		= true;
+	rsDesc.MultisampleEnable		= false;
 	rsDesc.AntialiasedLineEnable	= false;
 
 	HR(device->CreateRasterizerState(
@@ -420,6 +480,7 @@ void Gameplay::LoadResources()
 	D3D11_SAMPLER_DESC samplerDesc;
 	ZeroMemory(&samplerDesc, sizeof(samplerDesc));
 	samplerDesc.Filter = D3D11_FILTER_MIN_MAG_POINT_MIP_LINEAR;
+	//samplerDesc.Filter	 = D3D11_FILTER_MIN_MAG_MIP_POINT;
 	samplerDesc.AddressU = D3D11_TEXTURE_ADDRESS_WRAP;
 	samplerDesc.AddressV = D3D11_TEXTURE_ADDRESS_WRAP;
 	samplerDesc.AddressW = D3D11_TEXTURE_ADDRESS_WRAP;
@@ -492,7 +553,7 @@ void Gameplay::LoadResources()
 	Material* coordinatesMat = new Material(nullptr, nullptr);
 	coordinatesMat->Initialize(Resources::GetVertexShader(coordinates->ILName()), Resources::GetPixelShader(coordinates->ILName()));
 
-	Material* skyboxMat = new Material(Resources::GetSRV("skybox"), Resources::GetSamplerState("crate"));
+	Material* skyboxMat = new Material(Resources::GetSRV("skybox"), Resources::GetSamplerState("MIN_MAG_POINT_MIP_LINEAR"));
 	skyboxMat->Initialize(Resources::GetVertexShader("skybox"), Resources::GetPixelShader("skybox"));
 
 	Resources::AddMaterial("crate", crateMat);
@@ -578,6 +639,8 @@ void Gameplay::Update(float dt)
 	Game::vsPerFrameData->projection = CameraManager::ActiveCamera()->GetProjMatrix();
 	Game::vsPerFrameData->cameraPosition = cameraPosition;
 
+	entities[4]->position = CameraManager::ActiveCamera()->position;
+
 	if (Game::vsPerFrameData->time > 1.0f)
 		Game::vsPerFrameData->time -= 1.0f;
 
@@ -614,12 +677,11 @@ void Gameplay::Update(float dt)
 		std::cout << "Boat 1 ammo left: " << ((Boat*)(entities[0]))->Ammunition() << std::endl;
 		std::cout << "Boat 2 hp left: " << ((Boat*)(entities[1]))->Health() << std::endl;
 	}
+#if defined(SOUND_PLAY)
 	if (Input::KeyUp('G'))
 	{
 		main_bgm->start();
 	}
-
-#if defined(SOUND_PLAY)
 	// change velocity of audio
 	if (Input::KeyUp('Q'))
 	{

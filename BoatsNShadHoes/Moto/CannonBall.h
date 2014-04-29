@@ -1,4 +1,5 @@
-#pragma once
+#ifndef CANNONBALL_H
+#define CANNONBALL_H
 
 #include "MoveableEntity.h"
 #include "ResourceManager.h"
@@ -6,7 +7,7 @@
 class CannonBall : public MoveableEntity
 {
 public:
-	CannonBall(Mesh*, Material*, ID3D11RasterizerState*);
+	CannonBall(Mesh*, Material*, ID3D11RasterizerState*, ID3D11DepthStencilState*);
 	~CannonBall(void);
 
 	void Initialize(ID3D11Buffer* modelConstBuffer, VSPerModelData* modelConstBufferData);
@@ -20,3 +21,4 @@ private:
 	bool inPlay;
 
 };
+#endif

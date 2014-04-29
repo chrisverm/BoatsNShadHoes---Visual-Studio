@@ -13,4 +13,5 @@ struct VertexShaderOutput
 float4 main(VertexShaderOutput input) : SV_TARGET
 {
 	return myTexture.Sample(mySampler, normalize(input.uv)); // re-normalize the interpolated unit vector
+	//return myTexture.Sample(mySampler, input.uv);
 }

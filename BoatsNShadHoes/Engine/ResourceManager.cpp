@@ -8,6 +8,7 @@ PSMap ResourceManager::pixelShaders;
 VSMap ResourceManager::vertexShaders;
 ILMap ResourceManager::inputLayouts;
 RSMap ResourceManager::rasterizerStates;
+DSSMap ResourceManager::depthStencilStates;
 
 bool ResourceManager::AddMesh(std::string id, Mesh* mesh)
 {
@@ -89,6 +90,16 @@ bool ResourceManager::AddRasterizerState(std::string id, ID3D11RasterizerState* 
 	return true;
 }
 
+bool ResourceManager::AddDepthStencilState(std::string id, ID3D11DepthStencilState* depthStencilState)
+{
+	if (depthStencilStates[id] != nullptr)
+		return false;
+
+	depthStencilStates[id] = depthStencilState;
+
+	return true;
+}
+
 Mesh* ResourceManager::GetMesh(std::string id)
 { return meshes[id]; }
 
@@ -112,6 +123,9 @@ ID3D11InputLayout* ResourceManager::GetInputLayout(std::string id)
 
 ID3D11RasterizerState* ResourceManager::GetRasterizerState(std::string id)
 { return rasterizerStates[id]; }
+
+ID3D11DepthStencilState* ResourceManager::GetDepthStencilState(std::string id)
+{ return depthStencilStates[id]; }
 
 void ResourceManager::Release()
 {
@@ -137,5 +151,8 @@ void ResourceManager::Release()
 	{ ReleaseMacro(it->second); }
 
 	for (RSMap::iterator it = rasterizerStates.begin(); it != rasterizerStates.end(); it++)
+	{ ReleaseMacro(it->second); }
+
+	for (DSSMap::iterator it = depthStencilStates.begin(); it != depthStencilStates.end(); it++)
 	{ ReleaseMacro(it->second); }
 }

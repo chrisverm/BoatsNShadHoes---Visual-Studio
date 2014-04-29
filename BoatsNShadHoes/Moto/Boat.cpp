@@ -2,8 +2,8 @@
 #include "InputManager.h"
 
 using namespace DirectX;
-Boat::Boat(Mesh* mesh, Material* material, ID3D11RasterizerState* rasterizerState, BOAT_STATS b, bool controllable) 
-	: MoveableEntity(mesh, material, rasterizerState)
+Boat::Boat(Mesh* mesh, Material* material, ID3D11RasterizerState* rasterizerState, ID3D11DepthStencilState* depthStencilState, BOAT_STATS b, bool controllable) 
+	: MoveableEntity(mesh, material, rasterizerState, depthStencilState)
 { 
 	this->controllable = controllable;
 

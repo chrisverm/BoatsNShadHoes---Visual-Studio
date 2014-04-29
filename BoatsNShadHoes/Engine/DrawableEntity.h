@@ -9,7 +9,7 @@ using namespace DirectX;
 class DrawableEntity : public Entity
 {
 public:
-	DrawableEntity(Mesh*, Material*, ID3D11RasterizerState*);
+	DrawableEntity(Mesh*, Material*, ID3D11RasterizerState*, ID3D11DepthStencilState*);
 	~DrawableEntity();
 
 	// Init, Update, Render
@@ -25,6 +25,7 @@ private:
 	ID3D11Buffer* modelConstBuffer;
 	VSPerModelData* modelConstBufferData;
 	ID3D11RasterizerState* rasterizerState;
+	ID3D11DepthStencilState* depthStencilState;
 };
 
 #endif
