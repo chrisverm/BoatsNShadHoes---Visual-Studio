@@ -1,0 +1,6 @@
+#ifndef BOATSNSHADHOES_SKYBOX_H
+#define BOATSNSHADHOES_SKYBOX_H
+
+
+
+#endif
