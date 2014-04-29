@@ -389,7 +389,7 @@ void Gameplay::LoadResources()
 	rsDesc.FillMode					= D3D11_FILL_SOLID;
 	rsDesc.CullMode					= D3D11_CULL_NONE; // the face to "cull" - not show
 	rsDesc.FrontCounterClockwise	= false;
-	rsDesc.DepthBias				= 0.0f;
+	rsDesc.DepthBias				= 0;
 	rsDesc.DepthBiasClamp			= 0.0f;
 	rsDesc.SlopeScaledDepthBias		= 0.0f;
 	rsDesc.DepthClipEnable			= true;
@@ -408,7 +408,7 @@ void Gameplay::LoadResources()
 	rsDesc.FillMode					= D3D11_FILL_WIREFRAME;
 	rsDesc.CullMode					= D3D11_CULL_NONE;
 	rsDesc.FrontCounterClockwise	= false;
-	rsDesc.DepthBias				= 0.0f;
+	rsDesc.DepthBias				= 0;
 	rsDesc.DepthBiasClamp			= 0.0f;
 	rsDesc.SlopeScaledDepthBias		= 0.0f;
 	rsDesc.DepthClipEnable			= true;
@@ -427,7 +427,7 @@ void Gameplay::LoadResources()
 	rsDesc.FillMode					= D3D11_FILL_SOLID;
 	rsDesc.CullMode					= D3D11_CULL_NONE;
 	rsDesc.FrontCounterClockwise	= false;
-	rsDesc.DepthBias				= 0.0f;
+	rsDesc.DepthBias				= 0;
 	rsDesc.DepthBiasClamp			= 0.0f;
 	rsDesc.SlopeScaledDepthBias		= 0.0f;
 	rsDesc.DepthClipEnable			= false;

@@ -42,9 +42,9 @@ void Camera::Update(float dt, const XMMATRIX& parentMat)
 void Camera::Move(const XMINT2* mouseDelta, float dt)
 {
 	rotation = XMVectorSetX(rotation, XMVectorGetX(rotation) 
-		+ XMConvertToRadians(mouseDelta->y) * dt * 50);
+		+ XMConvertToRadians((float)mouseDelta->y) * dt * 50);
 	rotation = XMVectorSetY(rotation, XMVectorGetY(rotation) 
-		+ XMConvertToRadians(mouseDelta->x) * dt * 50);
+		+ XMConvertToRadians((float)mouseDelta->x) * dt * 50);
 
 	rotation = XMVectorClamp(rotation, minAngleClamps, maxAngleClamps);
 	rotation = XMVectorModAngles(rotation);
