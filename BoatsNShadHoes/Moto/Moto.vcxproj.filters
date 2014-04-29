@@ -111,6 +111,9 @@
     <Text Include="..\Resources\cannonball_obj.obj">
       <Filter>Resource Files\Objects</Filter>
     </Text>
+    <Text Include="..\Resources\PirateShip_obj.obj">
+      <Filter>Resource Files\Objects</Filter>
+    </Text>
   </ItemGroup>
   <ItemGroup>
     <ResourceCompile Include="Moto.rc">
