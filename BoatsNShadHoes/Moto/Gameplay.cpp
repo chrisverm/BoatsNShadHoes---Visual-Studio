@@ -143,117 +143,6 @@ void Gameplay::LoadShadersAndInputLayout()
 	ID3D11InputLayout* inputLayout = nullptr;
 	ID3D11VertexShader* vertexShader = nullptr;
 	ID3D11PixelShader* pixelShader = nullptr;
-	ID3D11RasterizerState* rasterizerState = nullptr;
-	ID3D11DepthStencilState* depthStencilState = nullptr;
-
-	// Depth Stencil States ----------------------------
-
-	// Default
-	D3D11_DEPTH_STENCIL_DESC dssDesc;
-	ZeroMemory(&dssDesc, sizeof(D3D11_DEPTH_STENCIL_DESC));
-
-	dssDesc.DepthEnable					= true;
-	dssDesc.DepthWriteMask				= D3D11_DEPTH_WRITE_MASK_ALL;
-	dssDesc.DepthFunc					= D3D11_COMPARISON_LESS;
-	dssDesc.StencilEnable				= false;
-	dssDesc.StencilReadMask				= D3D11_DEFAULT_STENCIL_READ_MASK;
-	dssDesc.StencilWriteMask			= D3D11_DEFAULT_STENCIL_WRITE_MASK;
-	dssDesc.FrontFace.StencilFunc		= D3D11_COMPARISON_ALWAYS;
-	dssDesc.FrontFace.StencilDepthFailOp= D3D11_STENCIL_OP_KEEP;
-	dssDesc.FrontFace.StencilPassOp		= D3D11_STENCIL_OP_KEEP;
-	dssDesc.FrontFace.StencilFailOp		= D3D11_STENCIL_OP_KEEP;
-	dssDesc.BackFace.StencilFunc		= D3D11_COMPARISON_ALWAYS;
-	dssDesc.BackFace.StencilDepthFailOp	= D3D11_STENCIL_OP_KEEP;
-	dssDesc.BackFace.StencilPassOp		= D3D11_STENCIL_OP_KEEP;
-	dssDesc.BackFace.StencilFailOp		= D3D11_STENCIL_OP_KEEP;
-
-	HR(device->CreateDepthStencilState(
-		&dssDesc, &depthStencilState));
-
-	Resources::AddDepthStencilState("default", depthStencilState);
-
-	// Skybox
-	ZeroMemory(&dssDesc, sizeof(D3D11_DEPTH_STENCIL_DESC));
-
-	dssDesc.DepthEnable					= true;
-	dssDesc.DepthWriteMask				= D3D11_DEPTH_WRITE_MASK_ALL;
-	dssDesc.DepthFunc					= D3D11_COMPARISON_LESS_EQUAL;
-	dssDesc.StencilEnable				= false;
-	dssDesc.StencilReadMask				= D3D11_DEFAULT_STENCIL_READ_MASK;
-	dssDesc.StencilWriteMask			= D3D11_DEPTH_WRITE_MASK_ALL;
-	dssDesc.FrontFace.StencilFunc		= D3D11_COMPARISON_ALWAYS;
-	dssDesc.FrontFace.StencilDepthFailOp= D3D11_STENCIL_OP_KEEP;
-	dssDesc.FrontFace.StencilPassOp		= D3D11_STENCIL_OP_KEEP;
-	dssDesc.FrontFace.StencilFailOp		= D3D11_STENCIL_OP_KEEP;
-	dssDesc.BackFace.StencilFunc		= D3D11_COMPARISON_ALWAYS;
-	dssDesc.BackFace.StencilDepthFailOp	= D3D11_STENCIL_OP_KEEP;
-	dssDesc.BackFace.StencilPassOp		= D3D11_STENCIL_OP_KEEP;
-	dssDesc.BackFace.StencilFailOp		= D3D11_STENCIL_OP_KEEP;
-
-	HR(device->CreateDepthStencilState(
-		&dssDesc, &depthStencilState));
-
-	Resources::AddDepthStencilState("skybox", depthStencilState);
-
-	// Rasterizer States -------------------------------
-
-	// Default
-	D3D11_RASTERIZER_DESC rsDesc;
-	ZeroMemory(&rsDesc, sizeof(D3D11_RASTERIZER_DESC));
-
-	rsDesc.FillMode					= D3D11_FILL_SOLID;
-	rsDesc.CullMode					= D3D11_CULL_NONE; // the face to "cull" - not show
-	rsDesc.FrontCounterClockwise	= false;
-	rsDesc.DepthBias				= 0.0f;
-	rsDesc.DepthBiasClamp			= 0.0f;
-	rsDesc.SlopeScaledDepthBias		= 0.0f;
-	rsDesc.DepthClipEnable			= true;
-	rsDesc.ScissorEnable			= false;
-	rsDesc.MultisampleEnable		= true;
-	rsDesc.AntialiasedLineEnable	= false;
-
-	HR(device->CreateRasterizerState(
-		&rsDesc, &rasterizerState));
-
-	Resources::AddRasterizerState("default", rasterizerState);
-
-	// Wireframe (TEST)
-	ZeroMemory(&rsDesc, sizeof(D3D11_RASTERIZER_DESC));
-
-	rsDesc.FillMode					= D3D11_FILL_WIREFRAME;
-	rsDesc.CullMode					= D3D11_CULL_NONE;
-	rsDesc.FrontCounterClockwise	= false;
-	rsDesc.DepthBias				= 0.0f;
-	rsDesc.DepthBiasClamp			= 0.0f;
-	rsDesc.SlopeScaledDepthBias		= 0.0f;
-	rsDesc.DepthClipEnable			= true;
-	rsDesc.ScissorEnable			= false;
-	rsDesc.MultisampleEnable		= false;
-	rsDesc.AntialiasedLineEnable	= false;
-
-	HR(device->CreateRasterizerState(
-		&rsDesc, &rasterizerState));
-
-	Resources::AddRasterizerState("wireframe", rasterizerState);
-
-	// Skybox
-	ZeroMemory(&rsDesc, sizeof(D3D11_RASTERIZER_DESC));
-
-	rsDesc.FillMode					= D3D11_FILL_SOLID;
-	rsDesc.CullMode					= D3D11_CULL_NONE;
-	rsDesc.FrontCounterClockwise	= false;
-	rsDesc.DepthBias				= 0.0f;
-	rsDesc.DepthBiasClamp			= 0.0f;
-	rsDesc.SlopeScaledDepthBias		= 0.0f;
-	rsDesc.DepthClipEnable			= false;
-	rsDesc.ScissorEnable			= false;
-	rsDesc.MultisampleEnable		= false;
-	rsDesc.AntialiasedLineEnable	= false;
-
-	HR(device->CreateRasterizerState(
-		&rsDesc, &rasterizerState));
-
-	Resources::AddRasterizerState("skybox", rasterizerState);
 
 	// PNU Shaders -------------------------------------
 	D3DReadFileToBlob(L"Shaders/VS_PNU.cso", &vsBlob);
@@ -440,6 +329,117 @@ void Gameplay::CreateGeometryBuffers()
 
 void Gameplay::LoadResources()
 {
+	// Depth Stencil States ----------------------------
+	ID3D11DepthStencilState* depthStencilState = nullptr;
+
+	// Default
+	D3D11_DEPTH_STENCIL_DESC dssDesc;
+	ZeroMemory(&dssDesc, sizeof(D3D11_DEPTH_STENCIL_DESC));
+
+	dssDesc.DepthEnable					= true;
+	dssDesc.DepthWriteMask				= D3D11_DEPTH_WRITE_MASK_ALL;
+	dssDesc.DepthFunc					= D3D11_COMPARISON_LESS;
+	dssDesc.StencilEnable				= false;
+	dssDesc.StencilReadMask				= D3D11_DEFAULT_STENCIL_READ_MASK;
+	dssDesc.StencilWriteMask			= D3D11_DEFAULT_STENCIL_WRITE_MASK;
+	dssDesc.FrontFace.StencilFunc		= D3D11_COMPARISON_ALWAYS;
+	dssDesc.FrontFace.StencilDepthFailOp= D3D11_STENCIL_OP_KEEP;
+	dssDesc.FrontFace.StencilPassOp		= D3D11_STENCIL_OP_KEEP;
+	dssDesc.FrontFace.StencilFailOp		= D3D11_STENCIL_OP_KEEP;
+	dssDesc.BackFace.StencilFunc		= D3D11_COMPARISON_ALWAYS;
+	dssDesc.BackFace.StencilDepthFailOp	= D3D11_STENCIL_OP_KEEP;
+	dssDesc.BackFace.StencilPassOp		= D3D11_STENCIL_OP_KEEP;
+	dssDesc.BackFace.StencilFailOp		= D3D11_STENCIL_OP_KEEP;
+
+	HR(device->CreateDepthStencilState(
+		&dssDesc, &depthStencilState));
+
+	Resources::AddDepthStencilState("default", depthStencilState);
+
+	// Skybox
+	ZeroMemory(&dssDesc, sizeof(D3D11_DEPTH_STENCIL_DESC));
+
+	dssDesc.DepthEnable					= true;
+	dssDesc.DepthWriteMask				= D3D11_DEPTH_WRITE_MASK_ALL;
+	dssDesc.DepthFunc					= D3D11_COMPARISON_LESS_EQUAL;
+	dssDesc.StencilEnable				= false;
+	dssDesc.StencilReadMask				= D3D11_DEFAULT_STENCIL_READ_MASK;
+	dssDesc.StencilWriteMask			= D3D11_DEPTH_WRITE_MASK_ALL;
+	dssDesc.FrontFace.StencilFunc		= D3D11_COMPARISON_ALWAYS;
+	dssDesc.FrontFace.StencilDepthFailOp= D3D11_STENCIL_OP_KEEP;
+	dssDesc.FrontFace.StencilPassOp		= D3D11_STENCIL_OP_KEEP;
+	dssDesc.FrontFace.StencilFailOp		= D3D11_STENCIL_OP_KEEP;
+	dssDesc.BackFace.StencilFunc		= D3D11_COMPARISON_ALWAYS;
+	dssDesc.BackFace.StencilDepthFailOp	= D3D11_STENCIL_OP_KEEP;
+	dssDesc.BackFace.StencilPassOp		= D3D11_STENCIL_OP_KEEP;
+	dssDesc.BackFace.StencilFailOp		= D3D11_STENCIL_OP_KEEP;
+
+	HR(device->CreateDepthStencilState(
+		&dssDesc, &depthStencilState));
+
+	Resources::AddDepthStencilState("skybox", depthStencilState);
+
+	// Rasterizer States -------------------------------
+	ID3D11RasterizerState* rasterizerState = nullptr;
+
+	// Default
+	D3D11_RASTERIZER_DESC rsDesc;
+	ZeroMemory(&rsDesc, sizeof(D3D11_RASTERIZER_DESC));
+
+	rsDesc.FillMode					= D3D11_FILL_SOLID;
+	rsDesc.CullMode					= D3D11_CULL_NONE; // the face to "cull" - not show
+	rsDesc.FrontCounterClockwise	= false;
+	rsDesc.DepthBias				= 0.0f;
+	rsDesc.DepthBiasClamp			= 0.0f;
+	rsDesc.SlopeScaledDepthBias		= 0.0f;
+	rsDesc.DepthClipEnable			= true;
+	rsDesc.ScissorEnable			= false;
+	rsDesc.MultisampleEnable		= true;
+	rsDesc.AntialiasedLineEnable	= false;
+
+	HR(device->CreateRasterizerState(
+		&rsDesc, &rasterizerState));
+
+	Resources::AddRasterizerState("default", rasterizerState);
+
+	// Wireframe (TEST)
+	ZeroMemory(&rsDesc, sizeof(D3D11_RASTERIZER_DESC));
+
+	rsDesc.FillMode					= D3D11_FILL_WIREFRAME;
+	rsDesc.CullMode					= D3D11_CULL_NONE;
+	rsDesc.FrontCounterClockwise	= false;
+	rsDesc.DepthBias				= 0.0f;
+	rsDesc.DepthBiasClamp			= 0.0f;
+	rsDesc.SlopeScaledDepthBias		= 0.0f;
+	rsDesc.DepthClipEnable			= true;
+	rsDesc.ScissorEnable			= false;
+	rsDesc.MultisampleEnable		= false;
+	rsDesc.AntialiasedLineEnable	= false;
+
+	HR(device->CreateRasterizerState(
+		&rsDesc, &rasterizerState));
+
+	Resources::AddRasterizerState("wireframe", rasterizerState);
+
+	// Skybox
+	ZeroMemory(&rsDesc, sizeof(D3D11_RASTERIZER_DESC));
+
+	rsDesc.FillMode					= D3D11_FILL_SOLID;
+	rsDesc.CullMode					= D3D11_CULL_NONE;
+	rsDesc.FrontCounterClockwise	= false;
+	rsDesc.DepthBias				= 0.0f;
+	rsDesc.DepthBiasClamp			= 0.0f;
+	rsDesc.SlopeScaledDepthBias		= 0.0f;
+	rsDesc.DepthClipEnable			= false;
+	rsDesc.ScissorEnable			= false;
+	rsDesc.MultisampleEnable		= false;
+	rsDesc.AntialiasedLineEnable	= false;
+
+	HR(device->CreateRasterizerState(
+		&rsDesc, &rasterizerState));
+
+	Resources::AddRasterizerState("skybox", rasterizerState);
+
 	// Shader Resource Views -----------------------------
 	ID3D11ShaderResourceView* srv = nullptr;
 
