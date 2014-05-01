@@ -44,7 +44,8 @@
     <TargetName>$(ProjectName)</TargetName>
     <ExecutablePath>$(SolutionDir)\$(ProjectName)\OpenAL\bin;$(SolutionDir)\$(ProjectName)\oggvorbis\bin;$(ExecutablePath)</ExecutablePath>
     <IncludePath>$(SolutionDir)\$(ProjectName)\OpenAL\include;$(SolutionDir)\$(ProjectName)\oggvorbis\include;$(IncludePath)</IncludePath>
-    <LibraryPath>$(SolutionDir)\$(ProjectName)\OpenAL\lib;$(SolutionDir)\$(ProjectName)\oggvorbis\lib;$(LibraryPath)</LibraryPath>
+    <LibraryPath>
+    </LibraryPath>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">
     <OutDir>$(SolutionDir)DELETE\</OutDir>
@@ -78,7 +79,8 @@ copy "$(SolutionDir)Libraries\" "$(SolutionDir)Binary"</Command>
       <ObjectFileOutput>$(SolutionDir)Binary\Shaders\%(Filename).cso</ObjectFileOutput>
     </FxCompile>
     <Lib>
-      <AdditionalDependencies>d3d11.lib;d3dcompiler.lib;OpenAL32.lib;libvorbisfile.lib;%(AdditionalDependencies)</AdditionalDependencies>
+      <AdditionalDependencies>
+      </AdditionalDependencies>
     </Lib>
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">
