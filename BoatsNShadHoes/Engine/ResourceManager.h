@@ -3,6 +3,9 @@
 
 #include <map>
 #include <d3d11.h>
+#include <d3dcompiler.h>
+#include "WICTextureLoader.h"
+#include "DDSTextureLoader.h"
 
 #include "Mesh.h"
 #include "Material.h"
@@ -20,16 +23,22 @@ typedef std::map<std::string, ID3D11DepthStencilState*> DSSMap;
 class ResourceManager
 {
 public:
+	static void Initialize(ID3D11Device* device, ID3D11DeviceContext* deviceContext);
 	
 	static bool AddMesh(std::string, Mesh*);
 	static bool AddMaterial(std::string, Material*);
-	static bool AddSRV(std::string, ID3D11ShaderResourceView*);
-	static bool AddSamplerState(std::string, ID3D11SamplerState*);
-	static bool AddPixelShader(std::string, ID3D11PixelShader*);
 	static bool AddVertexShader(std::string, ID3D11VertexShader*);
+	static bool AddPixelShader(std::string, ID3D11PixelShader*);
 	static bool AddInputLayout(std::string, ID3D11InputLayout*);
+	static bool AddShaderResourceView(std::string, ID3D11ShaderResourceView*);
+	static bool AddSamplerState(std::string, ID3D11SamplerState*);
 	static bool AddRasterizerState(std::string, ID3D11RasterizerState*);
 	static bool AddDepthStencilState(std::string, ID3D11DepthStencilState*);
+
+	static bool CreateVertexShaderAndInputLayout(std::string id, std::wstring filepath, D3D11_INPUT_ELEMENT_DESC layoutDesc[], UINT numElements);
+	static bool CreatePixelShader(std::string id, std::wstring filepath);
+	static bool CreateShaderResourceView(std::string id, std::wstring textureFilePath);
+	static bool CreateSamplerState(std::string id, D3D11_SAMPLER_DESC samplerDesc);
 
 	static Mesh* GetMesh(std::string);
 	static Material* GetMaterial(std::string);
@@ -44,10 +53,12 @@ public:
 	static void Release();
 
 private:
+	static ID3D11Device* device;
+	static ID3D11DeviceContext* deviceContext;
 
 	static MeshMap meshes;
 	static MatMap materials;
-	static SRVMap srvs;
+	static SRVMap shaderResourceViews;
 	static SSMap samplerStates;
 	static VSMap vertexShaders;
 	static PSMap pixelShaders;

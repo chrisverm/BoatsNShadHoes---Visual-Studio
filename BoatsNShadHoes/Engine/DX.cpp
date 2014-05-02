@@ -68,6 +68,8 @@ bool DX::Initialize(int iconResource)
 	if (!InitDirect3D())
 		return false;
 
+	ResourceManager::Initialize(device, deviceContext);
+
 	return true;
 }
 

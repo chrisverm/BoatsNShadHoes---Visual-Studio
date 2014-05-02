@@ -135,153 +135,30 @@ bool Gameplay::Initialize()
 
 void Gameplay::LoadShadersAndInputLayout()
 {
-	ID3DBlob* vsBlob = nullptr;
-	ID3DBlob* psBlob = nullptr;
-	ID3D11InputLayout* inputLayout = nullptr;
-	ID3D11VertexShader* vertexShader = nullptr;
-	ID3D11PixelShader* pixelShader = nullptr;
-
 	// PNU Shaders -------------------------------------
-	D3DReadFileToBlob(L"Shaders/VS_PNU.cso", &vsBlob);
-	D3DReadFileToBlob(L"Shaders/PS_PNU.cso", &psBlob);
-
-	HR(device->CreateInputLayout(
-		vertex_PNU_Desc,
-		ARRAYSIZE(vertex_PNU_Desc),
-		vsBlob->GetBufferPointer(),
-		vsBlob->GetBufferSize(),
-		&inputLayout));
-	Resources::AddInputLayout("PNU", inputLayout);
-
-	HR(device->CreateVertexShader(
-		vsBlob->GetBufferPointer(),
-		vsBlob->GetBufferSize(),
-		NULL,
-		&vertexShader));
-	Resources::AddVertexShader("PNU", vertexShader);
-
-	HR(device->CreatePixelShader(
-		psBlob->GetBufferPointer(),
-		psBlob->GetBufferSize(),
-		NULL,
-		&pixelShader));
-	Resources::AddPixelShader("PNU", pixelShader);
-
-	ReleaseMacro(vsBlob);
-	ReleaseMacro(psBlob);
+	Resources::CreateVertexShaderAndInputLayout("PNU", L"Shaders/VS_PNU.cso", 
+		vertex_PNU_Desc, ARRAYSIZE(vertex_PNU_Desc));
+	Resources::CreatePixelShader("PNU", L"Shaders/PS_PNU.cso");
 
 	// PNC Shaders -------------------------------------
-	D3DReadFileToBlob(L"Shaders/VS_PNC.cso", &vsBlob);
-	D3DReadFileToBlob(L"Shaders/PS_PNC.cso", &psBlob);
+	Resources::CreateVertexShaderAndInputLayout("PNC", L"Shaders/VS_PNC.cso", 
+		vertex_PNC_Desc, ARRAYSIZE(vertex_PNC_Desc));
+	Resources::CreatePixelShader("PNC", L"Shaders/PS_PNC.cso");
 
-	HR(device->CreateInputLayout(
-		vertex_PNC_Desc,
-		ARRAYSIZE(vertex_PNC_Desc),
-		vsBlob->GetBufferPointer(),
-		vsBlob->GetBufferSize(),
-		&inputLayout));
-	Resources::AddInputLayout("PNC", inputLayout);
-
-	HR(device->CreateVertexShader(
-		vsBlob->GetBufferPointer(),
-		vsBlob->GetBufferSize(),
-		NULL,
-		&vertexShader));
-	Resources::AddVertexShader("PNC", vertexShader);
-
-	HR(device->CreatePixelShader(
-		psBlob->GetBufferPointer(),
-		psBlob->GetBufferSize(),
-		NULL,
-		&pixelShader));
-	Resources::AddPixelShader("PNC", pixelShader);
-
-	ReleaseMacro(vsBlob);
-	ReleaseMacro(psBlob);
-
-	// PNUC Shaders ------------------------------------
-	D3DReadFileToBlob(L"Shaders/VS_PNUC.cso", &vsBlob);
-	D3DReadFileToBlob(L"Shaders/PS_PNUC.cso", &psBlob);
-
-	HR(device->CreateInputLayout(
-		vertex_PNUC_Desc,
-		ARRAYSIZE(vertex_PNUC_Desc),
-		vsBlob->GetBufferPointer(),
-		vsBlob->GetBufferSize(),
-		&inputLayout));
-	Resources::AddInputLayout("PNUC", inputLayout);
-
-	HR(device->CreateVertexShader(
-		vsBlob->GetBufferPointer(),
-		vsBlob->GetBufferSize(),
-		NULL,
-		&vertexShader));
-	Resources::AddVertexShader("PNUC", vertexShader);
-
-	HR(device->CreatePixelShader(
-		psBlob->GetBufferPointer(),
-		psBlob->GetBufferSize(),
-		NULL,
-		&pixelShader));
-	Resources::AddPixelShader("PNUC", pixelShader);
-
-	ReleaseMacro(vsBlob);
-	ReleaseMacro(psBlob);
+	// PNUC Shaders -------------------------------------
+	Resources::CreateVertexShaderAndInputLayout("PNUC", L"Shaders/VS_PNUC.cso", 
+		vertex_PNUC_Desc, ARRAYSIZE(vertex_PNUC_Desc));
+	Resources::CreatePixelShader("PNUC", L"Shaders/PS_PNUC.cso");
 
 	// Water Shaders -----------------------------------
-	D3DReadFileToBlob(L"Shaders/VS_Water.cso", &vsBlob);
-	D3DReadFileToBlob(L"Shaders/PS_Water.cso", &psBlob);
-	// "I Have no idea what the fuck."
-	HR(device->CreateInputLayout(
-		vertex_Water_Desc,
-		ARRAYSIZE(vertex_Water_Desc),
-		vsBlob->GetBufferPointer(),
-		vsBlob->GetBufferSize(),
-		&inputLayout));
-	Resources::AddInputLayout("Water", inputLayout);
-
-	HR(device->CreateVertexShader(
-		vsBlob->GetBufferPointer(),
-		vsBlob->GetBufferSize(),
-		NULL,
-		&vertexShader));
-	Resources::AddVertexShader("Water", vertexShader);
-
-	HR(device->CreatePixelShader(
-		psBlob->GetBufferPointer(),
-		psBlob->GetBufferSize(),
-		NULL,
-		&pixelShader));
-	Resources::AddPixelShader("Water", pixelShader);
-
-	ReleaseMacro(vsBlob);
-	ReleaseMacro(psBlob);
+	Resources::CreateVertexShaderAndInputLayout("Water", L"Shaders/VS_Water.cso", 
+		vertex_Water_Desc, ARRAYSIZE(vertex_Water_Desc));
+	Resources::CreatePixelShader("Water", L"Shaders/PS_Water.cso");
 
 	// Skybox Shaders -----------------------------------
-	D3DReadFileToBlob(L"Shaders/VS_Skybox.cso", &vsBlob);
-	D3DReadFileToBlob(L"Shaders/PS_Skybox.cso", &psBlob);
-
-	HR(device->CreateInputLayout(
-		vertex_Skybox_Desc,
-		ARRAYSIZE(vertex_Skybox_Desc),
-		vsBlob->GetBufferPointer(),
-		vsBlob->GetBufferSize(),
-		&inputLayout));
-	Resources::AddInputLayout("skybox", inputLayout);
-
-	HR(device->CreateVertexShader(
-		vsBlob->GetBufferPointer(),
-		vsBlob->GetBufferSize(),
-		NULL,
-		&vertexShader));
-	Resources::AddVertexShader("skybox", vertexShader);
-
-	HR(device->CreatePixelShader(
-		psBlob->GetBufferPointer(),
-		psBlob->GetBufferSize(),
-		NULL,
-		&pixelShader))
-	Resources::AddPixelShader("skybox", pixelShader);
+	Resources::CreateVertexShaderAndInputLayout("skybox", L"Shaders/VS_Skybox.cso", 
+		vertex_Skybox_Desc, ARRAYSIZE(vertex_Skybox_Desc));
+	Resources::CreatePixelShader("skybox", L"Shaders/PS_Skybox.cso");
 }
 
 void Gameplay::CreateGeometryBuffers()
@@ -438,42 +315,10 @@ void Gameplay::LoadResources()
 	Resources::AddRasterizerState("skybox", rasterizerState);
 
 	// Shader Resource Views -----------------------------
-	ID3D11ShaderResourceView* srv = nullptr;
-
-	// boat
-	HR(CreateWICTextureFromFile(
-		device, 
-		deviceContext, 
-		L"Resources/crate_texture.png", 
-		0, 
-		&srv));
-	Resources::AddSRV("crate", srv);
-
-	// water
-	HR(CreateWICTextureFromFile(
-		device,
-		deviceContext,
-		L"Resources/water_texture.jpg",
-		0,
-		&srv));
-	Resources::AddSRV("water", srv);
-
-	// cannonball
-	HR(CreateWICTextureFromFile(
-		device,
-		deviceContext,
-		L"Resources/cannonball_texture.jpg",
-		0,
-		&srv));
-	Resources::AddSRV("cannonball", srv);
-
-	// Skybox
-	HR(CreateDDSTextureFromFile(
-		device,
-		L"Resources/skybox_environment.dds",
-		0,
-		&srv));
-	Resources::AddSRV("skybox", srv);
+	Resources::CreateShaderResourceView("crate", L"Resources/crate_texture.png");
+	Resources::CreateShaderResourceView("water", L"Resources/water_texture.jpg");
+	Resources::CreateShaderResourceView("cannonball", L"Resources/cannonball_texture.jpg");
+	Resources::CreateShaderResourceView("skybox", L"Resources/skybox_environment.dds");
 
 	// Sampler States ------------------------------------
 	ID3D11SamplerState* ss = nullptr;
@@ -482,15 +327,10 @@ void Gameplay::LoadResources()
 	// MIN_MAG_POINT_MIP_LINEAR
 	ZeroMemory(&samplerDesc, sizeof(samplerDesc));
 	samplerDesc.Filter = D3D11_FILTER_MIN_MAG_POINT_MIP_LINEAR;
-	//samplerDesc.Filter	 = D3D11_FILTER_MIN_MAG_MIP_LINEAR;
 	samplerDesc.AddressU = D3D11_TEXTURE_ADDRESS_WRAP;
 	samplerDesc.AddressV = D3D11_TEXTURE_ADDRESS_WRAP;
 	samplerDesc.AddressW = D3D11_TEXTURE_ADDRESS_WRAP;
-
-	HR(device->CreateSamplerState(
-		&samplerDesc,
-		&ss));
-	Resources::AddSamplerState("MIN_MAG_POINT_MIP_LINEAR", ss);
+	Resources::CreateSamplerState("MIN_MAG_POINT_MIP_LINEAR", samplerDesc);
 
 	// MIN_MAP_MIP_LINEAR (Trilinear)
 	ZeroMemory(&samplerDesc, sizeof(samplerDesc));
@@ -498,11 +338,7 @@ void Gameplay::LoadResources()
 	samplerDesc.AddressU = D3D11_TEXTURE_ADDRESS_WRAP;
 	samplerDesc.AddressV = D3D11_TEXTURE_ADDRESS_WRAP;
 	samplerDesc.AddressW = D3D11_TEXTURE_ADDRESS_WRAP;
-
-	HR(device->CreateSamplerState(
-		&samplerDesc,
-		&ss));
-	Resources::AddSamplerState("MIN_MAG_MIP_LINEAR", ss);
+	Resources::CreateSamplerState("MIN_MAG_MIP_LINEAR", samplerDesc);
 
 	// Meshes -------------------------------------------
 	Mesh* cube = Mesh::LoadFromOBJ("Resources/PirateShip_obj.obj");
