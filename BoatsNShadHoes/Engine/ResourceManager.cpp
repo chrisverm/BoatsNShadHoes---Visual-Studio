@@ -21,8 +21,22 @@ void ResourceManager::Initialize(ID3D11Device* device, ID3D11DeviceContext* devi
 
 bool ResourceManager::AddMesh(std::string id, Mesh* mesh)
 {
+	// check if mesh with this ID already exists
 	if (meshes[id] != nullptr)
+	{
+		std::wstring wid = std::wstring(id.begin(), id.end());
+		std::wstring error = L"A mesh with the ID \"" + wid + L"\" already exists.";
+		DXTRACE_ERR_MSGBOX(error.c_str(), NULL);
 		return false;
+	}
+	// check if vertex shader param is a nullptr
+	if (mesh == nullptr)
+	{
+		std::wstring wid = std::wstring(id.begin(), id.end());
+		std::wstring error = L"The mesh passed with the ID \"" + wid + L"\" cannot be a nullptr.";
+		DXTRACE_ERR_MSGBOX(error.c_str(), NULL);
+		return false;
+	}
 
 	meshes[id] = mesh;
 
@@ -31,8 +45,22 @@ bool ResourceManager::AddMesh(std::string id, Mesh* mesh)
 
 bool ResourceManager::AddMaterial(std::string id, Material* material)
 {
+	// check if mesh with this ID already exists
 	if (materials[id] != nullptr)
+	{
+		std::wstring wid = std::wstring(id.begin(), id.end());
+		std::wstring error = L"A material with the ID \"" + wid + L"\" already exists.";
+		DXTRACE_ERR_MSGBOX(error.c_str(), NULL);
 		return false;
+	}
+	// check if vertex shader param is a nullptr
+	if (material == nullptr)
+	{
+		std::wstring wid = std::wstring(id.begin(), id.end());
+		std::wstring error = L"The material passed with the ID \"" + wid + L"\" cannot be a nullptr.";
+		DXTRACE_ERR_MSGBOX(error.c_str(), NULL);
+		return false;
+	}
 
 	materials[id] = material;
 
@@ -327,7 +355,7 @@ bool ResourceManager::CreateShaderResourceView(std::string id, std::wstring text
 bool ResourceManager::CreateSamplerState(std::string id, D3D11_SAMPLER_DESC samplerDesc)
 {
 	// check if sampler state with this ID already exists
-	if (shaderResourceViews[id] != nullptr)
+	if (samplerStates[id] != nullptr)
 	{
 		std::wstring wid = std::wstring(id.begin(), id.end());
 		std::wstring error = L"A sampler state with the ID \"" + wid + L"\" already exists.";
