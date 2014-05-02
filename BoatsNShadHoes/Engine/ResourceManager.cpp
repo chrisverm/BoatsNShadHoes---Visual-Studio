@@ -179,6 +179,49 @@ bool ResourceManager::AddDepthStencilState(std::string id, ID3D11DepthStencilSta
 	return true;
 }
 
+bool ResourceManager::CreateMesh(std::string id, std::string objFilePath, ID3D11InputLayout* inputLayout)
+{
+	// check if mesh with this ID already exists
+	if (meshes[id] != nullptr)
+	{
+		std::wstring wid = std::wstring(id.begin(), id.end());
+		std::wstring error = L"A mesh with the ID \"" + wid + L"\" already exists.";
+		DXTRACE_ERR_MSGBOX(error.c_str(), NULL);
+		return false;
+	}
+
+	Mesh* mesh = Mesh::LoadFromOBJ(objFilePath);
+
+	if (inputLayout == nullptr)
+		mesh->Initialize(device, Resources::GetInputLayout(mesh->ILName()));
+	else
+		mesh->Initialize(device, inputLayout);
+
+	AddMesh(id, mesh);
+
+	return true;
+}
+
+bool ResourceManager::CreateMaterial(std::string id, ID3D11ShaderResourceView* shaderResourceView,
+		ID3D11SamplerState* samplerState, ID3D11VertexShader* vertexShader, ID3D11PixelShader* pixelShader)
+{
+	// check if material with this ID already exists
+	if (materials[id] != nullptr)
+	{
+		std::wstring wid = std::wstring(id.begin(), id.end());
+		std::wstring error = L"A material with the ID \"" + wid + L"\" already exists.";
+		DXTRACE_ERR_MSGBOX(error.c_str(), NULL);
+		return false;
+	}
+
+	Material* material = new Material(shaderResourceView, samplerState);
+	material->Initialize(vertexShader, pixelShader);
+
+	AddMaterial(id, material);
+
+	return true;
+}
+
 bool ResourceManager::CreateVertexShaderAndInputLayout(std::string id, std::wstring filepath, 
 			D3D11_INPUT_ELEMENT_DESC layoutDesc[], UINT numElements)
 {
@@ -298,6 +341,50 @@ bool ResourceManager::CreateSamplerState(std::string id, D3D11_SAMPLER_DESC samp
 		&samplerDesc,
 		&ss));
 	AddSamplerState(id, ss);
+
+	return true;
+}
+
+bool ResourceManager::CreateRasterizerState(std::string id, D3D11_RASTERIZER_DESC rasterizerDesc)
+{
+	// check if rasterizer state with this ID already exists
+	if (rasterizerStates[id] != nullptr)
+	{
+		std::wstring wid = std::wstring(id.begin(), id.end());
+		std::wstring error = L"A rasterizer state with the ID \"" + wid + L"\" already exists.";
+		DXTRACE_ERR_MSGBOX(error.c_str(), NULL);
+		return false;
+	}
+
+	ID3D11RasterizerState* rasterizerState = nullptr;
+
+	HR(device->CreateRasterizerState(
+		&rasterizerDesc, 
+		&rasterizerState));
+
+	Resources::AddRasterizerState(id, rasterizerState);
+
+	return true;
+}
+
+bool ResourceManager::CreateDepthStencilState(std::string id, D3D11_DEPTH_STENCIL_DESC depthStencilDesc)
+{
+	// check if depth stencil state with this ID already exists
+	if (depthStencilStates[id] != nullptr)
+	{
+		std::wstring wid = std::wstring(id.begin(), id.end());
+		std::wstring error = L"A depth stencil state with the ID \"" + wid + L"\" already exists.";
+		DXTRACE_ERR_MSGBOX(error.c_str(), NULL);
+		return false;
+	}
+
+	ID3D11DepthStencilState* depthStencilState = nullptr;
+
+	HR(device->CreateDepthStencilState(
+		&depthStencilDesc, 
+		&depthStencilState));
+
+	Resources::AddDepthStencilState(id, depthStencilState);
 
 	return true;
 }

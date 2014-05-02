@@ -35,10 +35,16 @@ public:
 	static bool AddRasterizerState(std::string, ID3D11RasterizerState*);
 	static bool AddDepthStencilState(std::string, ID3D11DepthStencilState*);
 
-	static bool CreateVertexShaderAndInputLayout(std::string id, std::wstring filepath, D3D11_INPUT_ELEMENT_DESC layoutDesc[], UINT numElements);
+	static bool CreateMesh(std::string id, std::string objFilePath, ID3D11InputLayout* inputLayout = nullptr);
+	static bool CreateMaterial(std::string id, ID3D11ShaderResourceView* shaderResourceView, 
+		ID3D11SamplerState* samplerState, ID3D11VertexShader* vertexShader, ID3D11PixelShader* pixelShader);
+	static bool CreateVertexShaderAndInputLayout(std::string id, std::wstring filepath, 
+		D3D11_INPUT_ELEMENT_DESC layoutDesc[], UINT numElements);
 	static bool CreatePixelShader(std::string id, std::wstring filepath);
 	static bool CreateShaderResourceView(std::string id, std::wstring textureFilePath);
 	static bool CreateSamplerState(std::string id, D3D11_SAMPLER_DESC samplerDesc);
+	static bool CreateRasterizerState(std::string id, D3D11_RASTERIZER_DESC rasterizerDesc);
+	static bool CreateDepthStencilState(std::string id, D3D11_DEPTH_STENCIL_DESC depthStencilDesc);
 
 	static Mesh* GetMesh(std::string);
 	static Material* GetMaterial(std::string);

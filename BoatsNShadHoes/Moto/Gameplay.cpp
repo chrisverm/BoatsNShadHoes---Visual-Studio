@@ -204,12 +204,10 @@ void Gameplay::CreateGeometryBuffers()
 void Gameplay::LoadResources()
 {
 	// Depth Stencil States ----------------------------
-	ID3D11DepthStencilState* depthStencilState = nullptr;
+	D3D11_DEPTH_STENCIL_DESC dssDesc;
 
 	// Default
-	D3D11_DEPTH_STENCIL_DESC dssDesc;
 	ZeroMemory(&dssDesc, sizeof(D3D11_DEPTH_STENCIL_DESC));
-
 	dssDesc.DepthEnable					= true;
 	dssDesc.DepthWriteMask				= D3D11_DEPTH_WRITE_MASK_ALL;
 	dssDesc.DepthFunc					= D3D11_COMPARISON_LESS;
@@ -224,15 +222,10 @@ void Gameplay::LoadResources()
 	dssDesc.BackFace.StencilDepthFailOp	= D3D11_STENCIL_OP_KEEP;
 	dssDesc.BackFace.StencilPassOp		= D3D11_STENCIL_OP_KEEP;
 	dssDesc.BackFace.StencilFailOp		= D3D11_STENCIL_OP_KEEP;
-
-	HR(device->CreateDepthStencilState(
-		&dssDesc, &depthStencilState));
-
-	Resources::AddDepthStencilState("default", depthStencilState);
+	Resources::CreateDepthStencilState("default", dssDesc);
 
 	// Skybox
 	ZeroMemory(&dssDesc, sizeof(D3D11_DEPTH_STENCIL_DESC));
-
 	dssDesc.DepthEnable					= true;
 	dssDesc.DepthWriteMask				= D3D11_DEPTH_WRITE_MASK_ALL;
 	dssDesc.DepthFunc					= D3D11_COMPARISON_LESS_EQUAL;
@@ -247,19 +240,13 @@ void Gameplay::LoadResources()
 	dssDesc.BackFace.StencilDepthFailOp	= D3D11_STENCIL_OP_KEEP;
 	dssDesc.BackFace.StencilPassOp		= D3D11_STENCIL_OP_KEEP;
 	dssDesc.BackFace.StencilFailOp		= D3D11_STENCIL_OP_KEEP;
-
-	HR(device->CreateDepthStencilState(
-		&dssDesc, &depthStencilState));
-
-	Resources::AddDepthStencilState("skybox", depthStencilState);
+	Resources::CreateDepthStencilState("skybox", dssDesc);
 
 	// Rasterizer States -------------------------------
-	ID3D11RasterizerState* rasterizerState = nullptr;
+	D3D11_RASTERIZER_DESC rsDesc;
 
 	// Default
-	D3D11_RASTERIZER_DESC rsDesc;
 	ZeroMemory(&rsDesc, sizeof(D3D11_RASTERIZER_DESC));
-
 	rsDesc.FillMode					= D3D11_FILL_SOLID;
 	rsDesc.CullMode					= D3D11_CULL_NONE; // the face to "cull" - not show
 	rsDesc.FrontCounterClockwise	= false;
@@ -270,15 +257,10 @@ void Gameplay::LoadResources()
 	rsDesc.ScissorEnable			= false;
 	rsDesc.MultisampleEnable		= true;
 	rsDesc.AntialiasedLineEnable	= false;
-
-	HR(device->CreateRasterizerState(
-		&rsDesc, &rasterizerState));
-
-	Resources::AddRasterizerState("default", rasterizerState);
+	Resources::CreateRasterizerState("default", rsDesc);
 
 	// Wireframe (TEST)
 	ZeroMemory(&rsDesc, sizeof(D3D11_RASTERIZER_DESC));
-
 	rsDesc.FillMode					= D3D11_FILL_WIREFRAME;
 	rsDesc.CullMode					= D3D11_CULL_NONE;
 	rsDesc.FrontCounterClockwise	= false;
@@ -289,15 +271,10 @@ void Gameplay::LoadResources()
 	rsDesc.ScissorEnable			= false;
 	rsDesc.MultisampleEnable		= false;
 	rsDesc.AntialiasedLineEnable	= false;
-
-	HR(device->CreateRasterizerState(
-		&rsDesc, &rasterizerState));
-
-	Resources::AddRasterizerState("wireframe", rasterizerState);
+	Resources::CreateRasterizerState("wireframe", rsDesc);
 
 	// Skybox
 	ZeroMemory(&rsDesc, sizeof(D3D11_RASTERIZER_DESC));
-
 	rsDesc.FillMode					= D3D11_FILL_SOLID;
 	rsDesc.CullMode					= D3D11_CULL_NONE;
 	rsDesc.FrontCounterClockwise	= false;
@@ -308,11 +285,7 @@ void Gameplay::LoadResources()
 	rsDesc.ScissorEnable			= false;
 	rsDesc.MultisampleEnable		= false;
 	rsDesc.AntialiasedLineEnable	= false;
-
-	HR(device->CreateRasterizerState(
-		&rsDesc, &rasterizerState));
-
-	Resources::AddRasterizerState("skybox", rasterizerState);
+	Resources::CreateRasterizerState("skybox", rsDesc);
 
 	// Shader Resource Views -----------------------------
 	Resources::CreateShaderResourceView("crate", L"Resources/crate_texture.png");
@@ -341,17 +314,10 @@ void Gameplay::LoadResources()
 	Resources::CreateSamplerState("MIN_MAG_MIP_LINEAR", samplerDesc);
 
 	// Meshes -------------------------------------------
-	Mesh* cube = Mesh::LoadFromOBJ("Resources/PirateShip_obj.obj");
-	cube->Initialize(device, Resources::GetInputLayout(cube->ILName()));
-
-	Mesh* quad = Mesh::LoadFromOBJ("Resources/water_obj.obj");
-	quad->Initialize(device, Resources::GetInputLayout("Water"));
-
-	Mesh* sphere = Mesh::LoadFromOBJ("Resources/cannonball_obj.obj");
-	sphere->Initialize(device, Resources::GetInputLayout(quad->ILName()));
-
-	Mesh* skybox = Mesh::LoadFromOBJ("Resources/cannonball_obj.obj");
-	skybox->Initialize(device, ResourceManager::GetInputLayout("skybox"));
+	Resources::CreateMesh("cube", "Resources/PirateShip_obj.obj");
+	Resources::CreateMesh("quad", "Resources/water_obj.obj", Resources::GetInputLayout("Water"));
+	Resources::CreateMesh("sphere", "Resources/cannonball_obj.obj");
+	Resources::CreateMesh("skybox", "Resources/cannonball_obj.obj", Resources::GetInputLayout("skybox"));
 
 	// Begin Disgusting.
 	Vertex_PNC temp[] = 
@@ -385,32 +351,21 @@ void Gameplay::LoadResources()
 	coordinates->Initialize(device, Resources::GetInputLayout("PNC"));
 
 	Resources::AddMesh("coordinates", coordinates);
-	Resources::AddMesh("cube", cube);
-	Resources::AddMesh("quad", quad);
-	Resources::AddMesh("sphere", sphere);
-	Resources::AddMesh("skybox", skybox);
 
 	// Materials -----------------------------------------
-	Material* crateMat = new Material(Resources::GetSRV("crate"), Resources::GetSamplerState("MIN_MAG_POINT_MIP_LINEAR"));
-	crateMat->Initialize(Resources::GetVertexShader(cube->ILName()), Resources::GetPixelShader(cube->ILName()));
+	Resources::CreateMaterial("crate", Resources::GetSRV("crate"), Resources::GetSamplerState("MIN_MAG_POINT_MIP_LINEAR"),
+		Resources::GetVertexShader(Resources::GetMesh("cube")->ILName()), Resources::GetPixelShader(Resources::GetMesh("cube")->ILName()));
 
-	Material* waterMat = new Material(Resources::GetSRV("water"), Resources::GetSamplerState("MIN_MAG_POINT_MIP_LINEAR"));
-	waterMat->Initialize(Resources::GetVertexShader("Water"), Resources::GetPixelShader("Water"));
+	Resources::CreateMaterial("water", Resources::GetSRV("water"), Resources::GetSamplerState("MIN_MAG_POINT_MIP_LINEAR"),
+		Resources::GetVertexShader("Water"), Resources::GetPixelShader("Water"));
 
-	Material* cannonballMat = new Material(Resources::GetSRV("cannonball"), Resources::GetSamplerState("MIN_MAG_POINT_MIP_LINEAR"));
-	cannonballMat->Initialize(Resources::GetVertexShader(sphere->ILName()), Resources::GetPixelShader(sphere->ILName()));
+	Resources::CreateMaterial("cannonball", Resources::GetSRV("cannonball"), Resources::GetSamplerState("MIN_MAG_POINT_MIP_LINEAR"),
+		Resources::GetVertexShader(Resources::GetMesh("sphere")->ILName()), Resources::GetPixelShader(Resources::GetMesh("sphere")->ILName()));
 
-	Material* coordinatesMat = new Material(nullptr, nullptr);
-	coordinatesMat->Initialize(Resources::GetVertexShader(coordinates->ILName()), Resources::GetPixelShader(coordinates->ILName()));
+	Resources::CreateMaterial("coordinates", nullptr, nullptr,Resources::GetVertexShader(coordinates->ILName()), Resources::GetPixelShader(coordinates->ILName()));
 
-	Material* skyboxMat = new Material(Resources::GetSRV("skybox"), Resources::GetSamplerState("MIN_MAG_MIP_LINEAR"));
-	skyboxMat->Initialize(Resources::GetVertexShader("skybox"), Resources::GetPixelShader("skybox"));
-
-	Resources::AddMaterial("crate", crateMat);
-	Resources::AddMaterial("water", waterMat);
-	Resources::AddMaterial("cannonball", cannonballMat);
-	Resources::AddMaterial("coordinates", coordinatesMat);
-	Resources::AddMaterial("skybox", skyboxMat);
+	Resources::CreateMaterial("skybox", Resources::GetSRV("skybox"), Resources::GetSamplerState("MIN_MAG_MIP_LINEAR"),
+		Resources::GetVertexShader("skybox"), Resources::GetPixelShader("skybox"));
 }
 
 void Gameplay::SetupAudio()
