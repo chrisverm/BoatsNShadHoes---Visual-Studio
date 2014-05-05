@@ -146,9 +146,9 @@ void Gameplay::LoadShadersAndInputLayout()
 	Resources::CreatePixelShader("PNC", L"Shaders/PS_PNC.cso");
 
 	// PNUC Shaders -------------------------------------
-	Resources::CreateVertexShaderAndInputLayout("PNUC", L"Shaders/VS_PNUC.cso", 
+	/*Resources::CreateVertexShaderAndInputLayout("PNUC", L"Shaders/VS_PNUC.cso", 
 		vertex_PNUC_Desc, ARRAYSIZE(vertex_PNUC_Desc));
-	Resources::CreatePixelShader("PNUC", L"Shaders/PS_PNUC.cso");
+	Resources::CreatePixelShader("PNUC", L"Shaders/PS_PNUC.cso");*/
 
 	// Water Shaders -----------------------------------
 	Resources::CreateVertexShaderAndInputLayout("Water", L"Shaders/VS_Water.cso", 

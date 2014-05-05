@@ -99,7 +99,6 @@ void Boat::SetPosition(float x, float y, float z)
 
 void Boat::SetRotation(float roll, float pitch, float yaw)
 {
-	//Yaw Yaw Yaw YEET
 	XMFLOAT3 rot(roll, pitch, yaw);
 	rotation = XMLoadFloat3(&rot);
 	UpdateForwardFromRotation();

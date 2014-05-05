@@ -3,10 +3,12 @@
 
 #include "DX.h"
 #include "BufferStructs.h"
+#include "Instructions.h"
 #include "Gameplay.h"
 
 class Game : public DX
 {
+	friend class Instructions;
 	friend class Gameplay;
 public:
 	// Main game loop

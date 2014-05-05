@@ -52,9 +52,11 @@ bool Game::Initialize(HINSTANCE hInstance, int iconResource)
 	if (!DX::Initialize(iconResource))
 		return false;
 
+	Instructions* instructions = new Instructions(device, deviceContext);
 	Gameplay* gameplay = new Gameplay(device, deviceContext);
+	GameStateManager::AddState("Instructions", instructions);
 	GameStateManager::AddState("Gameplay", gameplay);
-	GameStateManager::ChangeState("Gameplay");
+	GameStateManager::ChangeState("Instructions");
 
 	return true;
 }
