@@ -13,17 +13,12 @@ public:
 	~DrawableEntity();
 
 	// Init, Update, Render
-	virtual void Initialize(ID3D11Buffer* modelConstBuffer, VSPerModelData* modelConstBufferData);
 	virtual void Render(ID3D11DeviceContext* deviceContext);
-
-	void SetConstantBuffer(ID3D11DeviceContext*);
 
 private:
 	Mesh* mesh;
 	Material* material;
 	D3D_PRIMITIVE_TOPOLOGY topology;
-	ID3D11Buffer* modelConstBuffer;
-	VSPerModelData* modelConstBufferData;
 	ID3D11RasterizerState* rasterizerState;
 	ID3D11DepthStencilState* depthStencilState;
 };

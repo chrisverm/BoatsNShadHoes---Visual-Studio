@@ -26,6 +26,7 @@ Entity::Entity()
 
 /*
 Destructor, loops through children and deletes them, (ignores cameras because they're handled in camera manager).
+Deletes bounds if one was created.
 */
 Entity::~Entity() 
 {
@@ -34,6 +35,9 @@ Entity::~Entity()
 		if (dynamic_cast<Camera*>(*it) == NULL)
 			delete (*it);
 	}
+
+	if (bounds != nullptr)
+		delete bounds;
 }
 
 #pragma endregion
@@ -44,7 +48,10 @@ Entity::~Entity()
 Initialize this entity with the constant buffer to use and the buffer data to pass through.
 */
 void Entity::Initialize(ID3D11Buffer* modelConstBuffer, VSPerModelData* modelConstBufferData)
-{ }
+{
+	this->modelConstBuffer = modelConstBuffer;
+	this->modelConstBufferData = modelConstBufferData;
+}
 
 /*
 Updates this entity to the current timestep.
@@ -60,6 +67,14 @@ void Entity::Update(float dt, const XMMATRIX& parentMat)
 	XMMATRIX sca = XMMatrixScalingFromVector(scale);
 	XMMATRIX worldMat = sca * rot * trans * parentMat;
 
+	if (bounds != nullptr)
+	{
+		XMMATRIX boundsScale = XMMatrixScaling(bounds->extents.x, 10, bounds->extents.y);
+		XMMATRIX boundsMat = boundsScale * rot * trans * parentMat;
+
+		XMStoreFloat4x4(&bounds->worldMat, XMMatrixTranspose(boundsMat));
+	}
+
 	XMStoreFloat4x4(&worldMatrix, XMMatrixTranspose(worldMat));
 
 	UpdateForwardFromRotation();
@@ -72,13 +87,64 @@ void Entity::Update(float dt, const XMMATRIX& parentMat)
 
 /*
 Render this entity ( and all of its children ).
-Entity dosnt actualy render. //TODO: Debug render?
+Entity dosnt actualy render.
 */
 void Entity::Render(ID3D11DeviceContext* deviceContext)
 {
 	for (std::vector<Entity*>::iterator it = children.begin(); it != children.end() ; it++)
 	{ (*it)->Render(deviceContext); }
 }
+
+#if defined(DEBUG) | defined(_DEBUG)
+
+#pragma endregion
+
+#pragma region DebugRender
+
+bool Entity::drawCoordinates;
+Mesh* Entity::coordinateMesh;
+Material* Entity::coordinateMaterial;
+/*
+Renders any debug elements assosiated with this entity ( and all of its children ).
+*/
+void Entity::DebugRender(ID3D11DeviceContext* deviceContext)
+{
+	if (Bounds::drawBounds)
+	{
+		if (bounds != nullptr)
+		{
+			SetConstantBuffer(deviceContext, bounds->worldMat);
+
+			deviceContext->IASetPrimitiveTopology(D3D11_PRIMITIVE_TOPOLOGY_LINESTRIP);
+
+			Bounds::mat->SetShaders(deviceContext);
+			Bounds::mesh->SetBuffers(deviceContext);
+
+			deviceContext->DrawIndexed(
+				Bounds::mesh->Indices(),0,0);
+		}
+	}
+
+	if (drawCoordinates)
+	{
+		if (modelConstBuffer != nullptr)
+		{
+			SetConstantBuffer(deviceContext, worldMatrix);
+
+			deviceContext->IASetPrimitiveTopology(D3D11_PRIMITIVE_TOPOLOGY_LINELIST);
+
+			coordinateMaterial->SetShaders(deviceContext);
+			coordinateMesh->SetBuffers(deviceContext);
+
+			deviceContext->DrawIndexed(
+				coordinateMesh->Indices(),0,0);
+		}
+	}
+
+	for (std::vector<Entity*>::iterator it = children.begin(); it != children.end() ; it++)
+	{ (*it)->DebugRender(deviceContext); }
+}
+#endif
 
 #pragma endregion
 
@@ -124,7 +190,6 @@ void Entity::SetUnitVectors()
 
 	up = XMVector3Cross(forward, right);
 	up = XMVector3Normalize(up);
-
 	//// roll - rotate on the z axis
 	//up = XMVectorSetX(up, sin( XMConvertToRadians(roll) ));
 	//up = XMVectorSetY(up, cos( XMConvertToRadians(roll) ));
@@ -178,3 +243,20 @@ Entity* Entity::RemoveChild(int index)
 }
 
 #pragma endregion
+
+
+/*
+Passes this entity's information to the constant buffer.
+*/
+void Entity::SetConstantBuffer(ID3D11DeviceContext* deviceContext, XMFLOAT4X4 mat)
+{
+	modelConstBufferData->model = mat;
+
+	deviceContext->UpdateSubresource(
+		modelConstBuffer,
+		0,
+		NULL,
+		modelConstBufferData,
+		0,
+		0);
+}

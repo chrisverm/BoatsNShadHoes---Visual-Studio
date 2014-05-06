@@ -6,7 +6,9 @@
 #include "BufferStructs.h"
 #include "Mesh.h"
 #include "Material.h"
+#include "Bounds.h"
 
+// Some people frown upon this being here.
 using namespace DirectX;
 
 class Entity
@@ -14,16 +16,30 @@ class Entity
 public:
 	Entity();
 	~Entity();
+	
+	ID3D11Buffer* modelConstBuffer;
+	VSPerModelData* modelConstBufferData;
 
 	// World
 	XMVECTOR position;
 	XMVECTOR rotation;
 	XMVECTOR scale;
 
+	// Bounds
+	Bounds* bounds;
+
 	// Init, Update, Render
 	virtual void Initialize(ID3D11Buffer* modelConstBuffer, VSPerModelData* modelConstBufferData);
 	virtual void Update(float dt, const XMMATRIX& parentMat);
 	virtual void Render(ID3D11DeviceContext* deviceContext);
+
+	//Debug Render
+#if defined(DEBUG) | defined(_DEBUG)
+	virtual void DebugRender(ID3D11DeviceContext*);
+	static bool drawCoordinates;
+	static Mesh* coordinateMesh;
+	static Material* coordinateMaterial;
+#endif
 
 	// Parenting
 	int ChildCount();
@@ -41,6 +57,8 @@ public:
 	void UpdateRotationFromForward();
 
 	void SetUnitVectors();
+
+	void SetConstantBuffer(ID3D11DeviceContext*, XMFLOAT4X4);
 
 protected:
 	XMFLOAT4X4 worldMatrix;

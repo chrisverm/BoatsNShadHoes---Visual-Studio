@@ -119,6 +119,7 @@ copy "$(SolutionDir)Libraries\" "$(SolutionDir)Binary"</Command>
   <ItemGroup>
     <ClInclude Include="AudioManager.h" />
     <ClInclude Include="AudioPlayer.h" />
+    <ClInclude Include="Bounds.h" />
     <ClInclude Include="BufferStructs.h" />
     <ClInclude Include="Camera.h" />
     <ClInclude Include="CameraManager.h" />
@@ -141,6 +142,7 @@ copy "$(SolutionDir)Libraries\" "$(SolutionDir)Binary"</Command>
   <ItemGroup>
     <ClCompile Include="AudioManager.cpp" />
     <ClCompile Include="AudioPlayer.cpp" />
+    <ClCompile Include="Bounds.cpp" />
     <ClCompile Include="Camera.cpp" />
     <ClCompile Include="CameraManager.cpp" />
     <ClCompile Include="DrawableEntity.cpp" />

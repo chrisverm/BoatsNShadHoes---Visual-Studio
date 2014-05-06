@@ -4,7 +4,6 @@ Gameplay::Gameplay(ID3D11Device* device, ID3D11DeviceContext* deviceContext)
 	: GameState(device, deviceContext)
 {
 	world = new Entity();
-	drawCoordinates = false;
 }
 
 Gameplay::~Gameplay()
@@ -21,11 +20,20 @@ Gameplay::~Gameplay()
 	delete world;
 }
 
+/*
+0 x 0 2 d 5 4 0 f 8
+*/
 bool Gameplay::Initialize()
 {
 	LoadShadersAndInputLayout();
 	CreateGeometryBuffers();
 	LoadResources();
+
+	Bounds::mesh = Resources::GetMesh("cube");
+	Bounds::mat = Resources::GetMaterial("crate");
+
+	Entity::coordinateMesh = Resources::GetMesh("coordinates");
+	Entity::coordinateMaterial = Resources::GetMaterial("coordinates");
 
 	Input::SetCursorVisibility(false);
 	Input::SetCursorLocking(true);
@@ -40,12 +48,12 @@ bool Gameplay::Initialize()
 	b1Stats.damage			= 20;
 
 	// Entites -----------------------------------------
-	Boat* boat = new Boat(Resources::GetMesh("cube"), Resources::GetMaterial("crate"), 
+	playerBoat = new Boat(Resources::GetMesh("ship"), Resources::GetMaterial("crate"), 
 		Resources::GetRasterizerState("default"), Resources::GetDepthStencilState("default"), b1Stats, true);
-	boat->Initialize(Game::vsPerModelConstBuffer, Game::vsPerModelData);
+	playerBoat->Initialize(Game::vsPerModelConstBuffer, Game::vsPerModelData);
 
 	// populate ammunition
-	for(short i = 0; i < boat->MaximumAmmunition(); i++)
+	for (short i = 0; i < playerBoat->MaximumAmmunition(); i++)
 	{
 		CannonBall* cannonBall = new CannonBall(Resources::GetMesh("sphere"), Resources::GetMaterial("cannonball"), 
 		Resources::GetRasterizerState("default"), Resources::GetDepthStencilState("default"));
@@ -54,7 +62,7 @@ bool Gameplay::Initialize()
 		cannonBall->position = XMVectorSet(0,-10,0,0);
 
 		// try to add ammunition
-		if(boat->AddAmmunition(cannonBall))
+		if(playerBoat->AddAmmunition(cannonBall))
 		{
 			std::cout << "added ammo!" << std::endl;
 			world->AddChild(cannonBall); // does not work well when attached to boat!
@@ -79,14 +87,14 @@ bool Gameplay::Initialize()
 	b2Stats.rateOfFire		= 1.5f;
 	b2Stats.damage			= 10;
 
-	Boat* boat2 = new Boat(Resources::GetMesh("cube"), Resources::GetMaterial("crate"), 
-		Resources::GetRasterizerState("wireframe"), Resources::GetDepthStencilState("default"), b2Stats, false);
-	boat2->Initialize(Game::vsPerModelConstBuffer, Game::vsPerModelData);
-	boat2->SetPosition(5, 0, 5);
-	boat2->SetRotation(0, 2, 0);
+	otherBoat = new Boat(Resources::GetMesh("ship"), Resources::GetMaterial("crate"), 
+		Resources::GetRasterizerState("default"), Resources::GetDepthStencilState("default"), b2Stats, false);
+	otherBoat->Initialize(Game::vsPerModelConstBuffer, Game::vsPerModelData);
+	otherBoat->SetPosition(5, 0, 15);
+	otherBoat->SetRotation(0, 2, 0);
 
 	// populate ammunition
-	for(short i = 0; i < boat2->MaximumAmmunition(); i++)
+	for(short i = 0; i < otherBoat->MaximumAmmunition(); i++)
 	{
 		CannonBall* cannonBall = new CannonBall(Resources::GetMesh("sphere"), Resources::GetMaterial("cannonball"), 
 		Resources::GetRasterizerState("default"), Resources::GetDepthStencilState("default"));
@@ -95,7 +103,7 @@ bool Gameplay::Initialize()
 		cannonBall->position = XMVectorSet(0,-10,0,0);
 
 		// try to add ammunition
-		if(boat2->AddAmmunition(cannonBall))
+		if(otherBoat->AddAmmunition(cannonBall))
 		{
 			std::cout << "added ammo!" << std::endl;
 			world->AddChild(cannonBall);
@@ -124,11 +132,11 @@ bool Gameplay::Initialize()
 		Resources::GetRasterizerState("default"), Resources::GetDepthStencilState("default"));
 	water->Initialize(Game::vsPerModelConstBuffer, Game::vsPerModelData);
 
-	entities.push_back(boat);		world->AddChild(boat);
-	entities.push_back(boat2);		world->AddChild(boat2);
-	entities.push_back(water);		world->AddChild(water);
+	world->AddChild(playerBoat);
+	world->AddChild(otherBoat);
+	world->AddChild(water);
 	//entities.push_back(cannonBall);	world->AddChild(cannonBall);
-	entities.push_back(skyBall);	boat->AddChild(skyBall); // Parented to the boat, AW YEAH.
+	playerBoat->AddChild(skyBall); // Parented to the boat, AW YEAH.
 
 	// Camera Setup -----------[ o]---------------------
 	viewChanged = false;
@@ -139,7 +147,7 @@ bool Gameplay::Initialize()
 	camDesc.NearPlane = 0.1f;
 	camDesc.FarPlane = 100.0f;
 	camDesc.AttachedDist = 20.0f;
-	camDesc.Parent = boat;
+	camDesc.Parent = playerBoat;
 	camDesc.InitialRoll = 0.0f;
 	camDesc.InitialPosition = XMVectorSet(0.0f, 7.0f, -15.0f, 0.0f);
 	camDesc.InitialForward = XMVectorSet(0.0f, 0.0f, 1.0f, 0.0f);
@@ -149,6 +157,7 @@ bool Gameplay::Initialize()
 	camDesc.Forward = THIRD_PERSON;
 	camDesc.Roll = STATIC;
 	CameraManager::CreateNewCamera(&camDesc, true);
+
 
 #ifdef SOUND_PLAY
 	// AL setup --------------------------------~^^~-----
@@ -364,10 +373,11 @@ void Gameplay::LoadResources()
 	Resources::CreateSamplerState("MIN_MAG_MIP_LINEAR", samplerDesc);
 
 	// Meshes -------------------------------------------
-	Resources::CreateMesh("cube", "Resources/PirateShip_obj.obj");
+	Resources::CreateMesh("ship", "Resources/PirateShip_obj.obj");
 	Resources::CreateMesh("quad", "Resources/water_obj.obj", Resources::GetInputLayout("Water"));
 	Resources::CreateMesh("sphere", "Resources/cannonball_obj.obj");
 	Resources::CreateMesh("skybox", "Resources/cannonball_obj.obj", Resources::GetInputLayout("skybox"));
+	Resources::CreateMesh("cube", "Resources/crate_obj.obj");
 
 	// Begin Disgusting.
 	Vertex_PNC temp[] = 
@@ -404,7 +414,7 @@ void Gameplay::LoadResources()
 
 	// Materials -----------------------------------------
 	Resources::CreateMaterial("crate", Resources::GetSRV("crate"), Resources::GetSamplerState("MIN_MAG_POINT_MIP_LINEAR"),
-		Resources::GetVertexShader(Resources::GetMesh("cube")->ILName()), Resources::GetPixelShader(Resources::GetMesh("cube")->ILName()));
+		Resources::GetVertexShader(Resources::GetMesh("ship")->ILName()), Resources::GetPixelShader(Resources::GetMesh("ship")->ILName()));
 
 	Resources::CreateMaterial("water", Resources::GetSRV("water"), Resources::GetSamplerState("MIN_MAG_POINT_MIP_LINEAR"),
 		Resources::GetVertexShader("Water"), Resources::GetPixelShader("Water"));
@@ -507,10 +517,6 @@ void Gameplay::Update(float dt)
 		0,
 		0);
 
-	// Toggle drawing entities coordinates in debug.
-	if (Input::KeyUp('I'))
-		drawCoordinates = !drawCoordinates;
-
 	// Toggle showing the cursor (not locked yet).
 	if (Input::KeyUp('M'))
 	{
@@ -521,7 +527,7 @@ void Gameplay::Update(float dt)
 	if (Input::KeyUp(' '))
 	{
 		// Boat 1 fires at Boat 2
-		((Boat*)(entities[0]))->Fire(((Boat*)(entities[1])));
+		playerBoat->Fire(otherBoat);
 
 		// cannonball
 		//dynamic_cast<CannonBall*>(entities[3])->Fire(entities[0]->position, 
@@ -529,9 +535,15 @@ void Gameplay::Update(float dt)
 
 		// text updates
 		std::cout << "Boat 1 fire() called!" << std::endl;
-		std::cout << "Boat 1 ammo left: " << ((Boat*)(entities[0]))->Ammunition() << std::endl;
-		std::cout << "Boat 2 hp left: " << ((Boat*)(entities[1]))->Health() << std::endl;
+		std::cout << "Boat 1 ammo left: " << playerBoat->Ammunition() << std::endl;
+		std::cout << "Boat 2 hp left: " << otherBoat->Health() << std::endl;
 	}
+	
+	world->Update(dt, XMMatrixIdentity());
+
+	if (Bounds::Intersecting(playerBoat->bounds, otherBoat->bounds))
+		printf("Boat Collision! \n");
+
 #if defined(SOUND_PLAY)
 	if (Input::KeyUp('G'))
 	{
@@ -548,7 +560,6 @@ void Gameplay::Update(float dt)
 	}
 #endif
 
-	world->Update(dt, XMMatrixIdentity());
 
 #ifdef SOUND_PLAY
 	// updating audio source based on listener position
@@ -556,6 +567,16 @@ void Gameplay::Update(float dt)
 	alGetListenerfv(AL_POSITION, listenerPos);
 	main_bgm->updateGain(listenerPos);
 	main_bgm->update();
+#endif
+
+#if defined(DEBUG) | defined(_DEBUG)
+	// Toggle drawing Bounding boxes (these are kinda approximate).
+	if (Input::KeyUp('B'))
+		Bounds::drawBounds = !Bounds::drawBounds;
+
+	// Toggle drawing entities coordinates in debug.
+	if (Input::KeyUp('I'))
+		Entity::drawCoordinates = !Entity::drawCoordinates ;
 #endif
 }
 
@@ -578,23 +599,9 @@ void Gameplay::Draw(float dt)
 	world->Render(deviceContext);
 	
 #if defined(DEBUG) | defined(_DEBUG)
-	if (drawCoordinates)
-	{
-		Resources::GetMaterial("coordinates")->SetShaders(deviceContext);
-		Mesh* coords = Resources::GetMesh("coordinates");
-		coords->SetBuffers(deviceContext);
-		deviceContext->IASetPrimitiveTopology(D3D11_PRIMITIVE_TOPOLOGY_LINELIST);
+	
+	world->DebugRender(deviceContext);
 
-		for (std::vector<DrawableEntity*>::iterator it = entities.begin(); it != entities.end(); it++)
-		{ 
-			(*it)->SetConstantBuffer(deviceContext);
-
-			deviceContext->DrawIndexed(
-				coords->Indices(),
-				0,
-				0);
-		}
-	}
 #endif
 
 	// Present the buffer

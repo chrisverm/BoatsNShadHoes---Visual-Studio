@@ -28,7 +28,8 @@ public:
 
 private:
 	Entity* world;
-	std::vector<DrawableEntity*> entities;
+	Boat* playerBoat;
+	Boat* otherBoat;
 
 	void LoadShadersAndInputLayout();
 	void CreateGeometryBuffers();
@@ -41,7 +42,6 @@ private:
 	AudioPlayer* main_bgm;
 
 	bool viewChanged;
-	bool drawCoordinates;
 
 };
 
