@@ -4,6 +4,7 @@
 #include "MoveableEntity.h"
 #include "ResourceManager.h"
 #include "InputManager.h"
+#include "CannonBall.h"
 
 /*
  * Basic stats that each boat will have
@@ -17,7 +18,7 @@ struct BOAT_STATS
 	float damage;			// base damage of cannonball fire for the ship
 	//float maxVelocity;	// maximum velocity of the boat
 	//float maxTurnRate;	// maximum turn rate of the boat
-	//short maxAmmunition;	// maximum ammunition count for the boat
+	short maxAmmunition;	// maximum ammunition count for the boat
 	//short penetrationDamage;	// amount of enemy armor that is ignored upon hit
 
 	BOAT_STATS() { health = armor = rateOfFire = 0.0f; ammunition = 0; } // 0 defaults
@@ -40,19 +41,21 @@ public:
 	void SetStats(BOAT_STATS);
 
 	short Ammunition() const;
+	short MaximumAmmunition() const;
 	float Health() const;
 	bool IsDead() const;
 
+	bool AddAmmunition(CannonBall*);
 	void MoveForward();
 	void PortHelm();
 	void StarboardHelm();
-	void Fire(Boat*); // testing purposes!
+	bool Fire(Boat*); // testing purposes!
 	void TakeDamage(float);
 
 private:
 	BOAT_STATS stats;
 	bool dead, controllable;
-
+	std::vector<CannonBall*> cannonballs;
 };
 
 #endif

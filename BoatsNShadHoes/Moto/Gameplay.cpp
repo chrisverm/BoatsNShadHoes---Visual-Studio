@@ -32,26 +32,52 @@ bool Gameplay::Initialize()
 
 	// stats for first boat
 	BOAT_STATS b1Stats;
-	b1Stats.health		= 100.0f;
-	b1Stats.armor		= 10.0f;
-	b1Stats.ammunition	= 25;
-	b1Stats.rateOfFire	= 0.7f;
-	b1Stats.damage		= 20;
+	b1Stats.health			= 100.0f;
+	b1Stats.armor			= 10.0f;
+	b1Stats.ammunition		= 0;
+	b1Stats.maxAmmunition	= 5;
+	b1Stats.rateOfFire		= 0.7f;
+	b1Stats.damage			= 20;
 
 	// Entites -----------------------------------------
 	Boat* boat = new Boat(Resources::GetMesh("cube"), Resources::GetMaterial("crate"), 
 		Resources::GetRasterizerState("default"), Resources::GetDepthStencilState("default"), b1Stats, true);
 	boat->Initialize(Game::vsPerModelConstBuffer, Game::vsPerModelData);
 
+	// populate ammunition
+	for(short i = 0; i < boat->MaximumAmmunition(); i++)
+	{
+		CannonBall* cannonBall = new CannonBall(Resources::GetMesh("sphere"), Resources::GetMaterial("cannonball"), 
+		Resources::GetRasterizerState("default"), Resources::GetDepthStencilState("default"));
+
+		cannonBall->Initialize(Game::vsPerModelConstBuffer, Game::vsPerModelData);
+		cannonBall->position = XMVectorSet(0,-10,0,0);
+
+		// try to add ammunition
+		if(boat->AddAmmunition(cannonBall))
+		{
+			std::cout << "added ammo!" << std::endl;
+			world->AddChild(cannonBall); // does not work well when attached to boat!
+		}
+
+		// delete created pointer in case we couldn't add ammo
+		else
+		{
+			std::cout << " could not add ammo!" << std::endl;
+			delete cannonBall;
+		}
+	}
+
 	//boat->SetStats(b1Stats);
 
 	// stats for second boat
 	BOAT_STATS b2Stats;
-	b2Stats.health		= 50.0f;
-	b2Stats.armor		= 15.0f;
-	b2Stats.ammunition	= 5;
-	b2Stats.rateOfFire	= 1.5f;
-	b2Stats.damage		= 10;
+	b2Stats.health			= 50.0f;
+	b2Stats.armor			= 15.0f;
+	b2Stats.ammunition		= 0;
+	b2Stats.maxAmmunition	= 3;
+	b2Stats.rateOfFire		= 1.5f;
+	b2Stats.damage			= 10;
 
 	Boat* boat2 = new Boat(Resources::GetMesh("cube"), Resources::GetMaterial("crate"), 
 		Resources::GetRasterizerState("wireframe"), Resources::GetDepthStencilState("default"), b2Stats, false);
@@ -59,12 +85,36 @@ bool Gameplay::Initialize()
 	boat2->SetPosition(5, 0, 5);
 	boat2->SetRotation(0, 2, 0);
 
+	// populate ammunition
+	for(short i = 0; i < boat2->MaximumAmmunition(); i++)
+	{
+		CannonBall* cannonBall = new CannonBall(Resources::GetMesh("sphere"), Resources::GetMaterial("cannonball"), 
+		Resources::GetRasterizerState("default"), Resources::GetDepthStencilState("default"));
+
+		cannonBall->Initialize(Game::vsPerModelConstBuffer, Game::vsPerModelData);
+		cannonBall->position = XMVectorSet(0,-10,0,0);
+
+		// try to add ammunition
+		if(boat2->AddAmmunition(cannonBall))
+		{
+			std::cout << "added ammo!" << std::endl;
+			world->AddChild(cannonBall);
+		}
+
+		// delete created pointer in case we couldn't add ammo
+		else
+		{
+			std::cout << " could not add ammo!" << std::endl;
+			delete cannonBall;
+		}
+	}
+
 	//boat2->SetStats(b2Stats);
 
-	CannonBall* cannonBall = new CannonBall(Resources::GetMesh("sphere"), Resources::GetMaterial("cannonball"), 
+	/*CannonBall* cannonBall = new CannonBall(Resources::GetMesh("sphere"), Resources::GetMaterial("cannonball"), 
 		Resources::GetRasterizerState("default"), Resources::GetDepthStencilState("default"));
 	cannonBall->Initialize(Game::vsPerModelConstBuffer, Game::vsPerModelData);
-	cannonBall->position = XMVectorSet(0,-10,0,0);
+	cannonBall->position = XMVectorSet(0,-10,0,0);*/
 
 	SkyBox* skyBall = new SkyBox(Resources::GetMesh("skybox"), Resources::GetMaterial("skybox"), 
 		Resources::GetRasterizerState("skybox"), Resources::GetDepthStencilState("skybox"));
@@ -77,7 +127,7 @@ bool Gameplay::Initialize()
 	entities.push_back(boat);		world->AddChild(boat);
 	entities.push_back(boat2);		world->AddChild(boat2);
 	entities.push_back(water);		world->AddChild(water);
-	entities.push_back(cannonBall);	world->AddChild(cannonBall);
+	//entities.push_back(cannonBall);	world->AddChild(cannonBall);
 	entities.push_back(skyBall);	boat->AddChild(skyBall); // Parented to the boat, AW YEAH.
 
 	// Camera Setup -----------[ o]---------------------
@@ -474,8 +524,8 @@ void Gameplay::Update(float dt)
 		((Boat*)(entities[0]))->Fire(((Boat*)(entities[1])));
 
 		// cannonball
-		dynamic_cast<CannonBall*>(entities[3])->Fire(entities[0]->position, 
-			(entities[0]->Right + entities[0]->Up));
+		//dynamic_cast<CannonBall*>(entities[3])->Fire(entities[0]->position, 
+			//(entities[0]->Right + entities[0]->Up));
 
 		// text updates
 		std::cout << "Boat 1 fire() called!" << std::endl;

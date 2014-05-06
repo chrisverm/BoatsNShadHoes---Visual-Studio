@@ -87,6 +87,7 @@ void Boat::SetStats(BOAT_STATS b)
 	stats.health		= b.health;
 	stats.armor			= b.armor;
 	stats.ammunition	= b.ammunition;
+	stats.maxAmmunition	= b.maxAmmunition;
 	stats.rateOfFire	= b.rateOfFire;
 	stats.damage		= b.damage;
 }
@@ -112,6 +113,13 @@ void Boat::SetRotation(float roll, float pitch, float yaw)
 short Boat::Ammunition() const { return stats.ammunition; }
 
 /*
+ * Returns the maximum ammunition of the boat
+ *
+ * @return	Maximum ammunition of the boat
+ */
+short Boat::MaximumAmmunition() const { return stats.maxAmmunition; }
+
+/*
  * Returns the current health of the boat
  *
  * @return	Current health of the boat
@@ -119,6 +127,27 @@ short Boat::Ammunition() const { return stats.ammunition; }
 float Boat::Health() const { return stats.health; }
 
 bool Boat::IsDead() const { return dead; }
+
+/*
+ * Adds ammunition to the boat.
+ * If the ammunition is at maximum capacity, the ammunition cannot be added.
+ *
+ * @return	If the ammunition was successfully added
+ */
+bool Boat::AddAmmunition(CannonBall* cball)
+{
+	if(stats.ammunition < stats.maxAmmunition)
+	{
+		// not at maximum ammunition
+		cannonballs.push_back(cball);
+		stats.ammunition += 1;
+
+		return true;
+	}
+
+	// at maximum ammunition; cannot add more
+	return false;
+}
 
 void Boat::MoveForward()
 {
@@ -142,16 +171,23 @@ void Boat::StarboardHelm()
  *
  * @return	none
  */
-void Boat::Fire(Boat* target)
+bool Boat::Fire(Boat* target)
 {
-	// can only fire if ammo is available
-	if(stats.ammunition > 0)
+	// check for inactive cannonballs
+	for(short i = 0; i < stats.ammunition; i++)
 	{
-		// TODO: spawn cannonball here
+		if(!cannonballs[i]->Active())
+		{
+			cannonballs[i]->Fire(this->position, (this->right + this->up));
+			target->TakeDamage(stats.damage);
 
-		target->TakeDamage(stats.damage);
-		stats.ammunition -= 1;
+			// successfully fired!
+			return true;
+		}
 	}
+
+	// could not fire
+	return false;
 }
 
 /*

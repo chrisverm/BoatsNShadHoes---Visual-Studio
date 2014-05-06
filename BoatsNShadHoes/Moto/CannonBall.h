@@ -13,12 +13,12 @@ public:
 	void Initialize(ID3D11Buffer* modelConstBuffer, VSPerModelData* modelConstBufferData);
 	void Update(float dt, const XMMATRIX& parentMat);
 
-	void SetVel(XMVECTOR);
+	void SetVelocity(XMVECTOR);
+	bool Active() const;
 
 	void Fire(XMVECTOR position, XMVECTOR acceleration);
 
 private:
-	bool inPlay;
-
+	bool active;
 };
 #endif
