@@ -29,11 +29,13 @@ bool Gameplay::Initialize()
 	CreateGeometryBuffers();
 	LoadResources();
 
+#if defined(DEBUG) | defined(_DEBUG)
 	Bounds::mesh = Resources::GetMesh("cube");
 	Bounds::mat = Resources::GetMaterial("crate");
 
 	Entity::coordinateMesh = Resources::GetMesh("coordinates");
 	Entity::coordinateMaterial = Resources::GetMaterial("coordinates");
+#endif
 
 	Input::SetCursorVisibility(false);
 	Input::SetCursorLocking(true);

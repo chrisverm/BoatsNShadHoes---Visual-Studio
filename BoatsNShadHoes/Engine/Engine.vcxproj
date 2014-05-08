@@ -22,7 +22,7 @@
     <CharacterSet>MultiByte</CharacterSet>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'" Label="Configuration">
-    <ConfigurationType>Application</ConfigurationType>
+    <ConfigurationType>StaticLibrary</ConfigurationType>
     <UseDebugLibraries>false</UseDebugLibraries>
     <PlatformToolset>v110</PlatformToolset>
     <WholeProgramOptimization>true</WholeProgramOptimization>
@@ -44,8 +44,7 @@
     <TargetName>$(ProjectName)</TargetName>
     <ExecutablePath>$(SolutionDir)\$(ProjectName)\OpenAL\bin;$(SolutionDir)\$(ProjectName)\oggvorbis\bin;$(ExecutablePath)</ExecutablePath>
     <IncludePath>$(SolutionDir)\$(ProjectName)\OpenAL\include;$(SolutionDir)\$(ProjectName)\oggvorbis\include;$(IncludePath)</IncludePath>
-    <LibraryPath>
-    </LibraryPath>
+    <LibraryPath>$(SolutionDir)\$(ProjectName)\OpenAL\lib;$(SolutionDir)\$(ProjectName)\oggvorbis\lib;$(LibraryPath)</LibraryPath>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">
     <OutDir>$(SolutionDir)DELETE\</OutDir>
@@ -91,6 +90,7 @@ copy "$(SolutionDir)Libraries\" "$(SolutionDir)Binary"</Command>
       <IntrinsicFunctions>true</IntrinsicFunctions>
       <SDLCheck>true</SDLCheck>
       <AdditionalIncludeDirectories>$(SolutionDir)\DirectXTK\inc;</AdditionalIncludeDirectories>
+      <PreprocessorDefinitions>_MBCS_UNICODE;UNICODE;%(PreprocessorDefinitions)</PreprocessorDefinitions>
     </ClCompile>
     <Link>
       <GenerateDebugInformation>true</GenerateDebugInformation>

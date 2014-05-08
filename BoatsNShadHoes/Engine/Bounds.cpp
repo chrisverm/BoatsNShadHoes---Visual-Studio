@@ -47,7 +47,7 @@ bool Bounds::Intersecting(Bounds* other, bool first)
 			p2[i] = XMVector3TransformCoord(verts[i], m2);
 		}
 
-		XMVECTOR plane = XMVECTOR();
+		DirectX::XMVECTOR plane = XMVECTOR();
 
 		for (int i = 0; i < 6; i++)
 		{

@@ -22,6 +22,9 @@
     <Filter Include="Resource Files\Icon">
       <UniqueIdentifier>{b7c8950b-a2fc-4770-8957-6e0ca15ee71a}</UniqueIdentifier>
     </Filter>
+    <Filter Include="Resource Files\Textures">
+      <UniqueIdentifier>{77a161e7-26ed-4084-82f1-7b2855843554}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Boat.h">
@@ -129,6 +132,9 @@
     <Text Include="..\Resources\PirateShip_obj.obj">
       <Filter>Resource Files\Objects</Filter>
     </Text>
+    <Text Include="..\Resources\cannon_obj.obj">
+      <Filter>Resource Files\Objects</Filter>
+    </Text>
   </ItemGroup>
   <ItemGroup>
     <ResourceCompile Include="Moto.rc">
@@ -138,6 +144,21 @@
   <ItemGroup>
     <Image Include="..\Resources\ship_icon.ico">
       <Filter>Resource Files\Icon</Filter>
+    </Image>
+    <Image Include="..\Resources\cannon_texture.png">
+      <Filter>Resource Files\Textures</Filter>
+    </Image>
+    <Image Include="..\Resources\cannonball_texture.jpg">
+      <Filter>Resource Files\Textures</Filter>
+    </Image>
+    <Image Include="..\Resources\crate_texture.png">
+      <Filter>Resource Files\Textures</Filter>
+    </Image>
+    <Image Include="..\Resources\screen_texture.JPG">
+      <Filter>Resource Files\Textures</Filter>
+    </Image>
+    <Image Include="..\Resources\water_texture.jpg">
+      <Filter>Resource Files\Textures</Filter>
     </Image>
   </ItemGroup>
   <ItemGroup>

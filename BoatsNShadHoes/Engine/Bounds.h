@@ -22,16 +22,16 @@ public:
 	static bool drawBounds;
 	static Mesh* mesh;
 	static Material* mat;
-
 #endif
+
 	DirectX::XMFLOAT4X4 worldMat;
 
 private:
 	bool Intersecting(Bounds*, bool = true);
-	static XMVECTOR verts[8];
+	static DirectX::XMVECTOR verts[8];
 	
-	static XMVECTOR p1[8];
-	static XMVECTOR p2[8];
+	static DirectX::XMVECTOR p1[8];
+	static DirectX::XMVECTOR p2[8];
 };
 
 #endif
