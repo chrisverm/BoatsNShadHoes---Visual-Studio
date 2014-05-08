@@ -16,6 +16,7 @@ public:
 	DirectX::XMVECTOR* position;
 	DirectX::XMFLOAT2 extents;
 
+	bool Intersecting(Bounds*);
 	static bool Intersecting(Bounds*, Bounds*);
 
 #if defined(DEBUG) | defined(_DEBUG)
@@ -27,7 +28,7 @@ public:
 	DirectX::XMFLOAT4X4 worldMat;
 
 private:
-	bool Intersecting(Bounds*, bool = true);
+	static bool Intersecting(DirectX::XMVECTOR v1[8], DirectX::XMVECTOR v2[8]);
 	static DirectX::XMVECTOR verts[8];
 	
 	static DirectX::XMVECTOR p1[8];

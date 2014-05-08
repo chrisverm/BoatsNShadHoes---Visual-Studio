@@ -203,6 +203,7 @@ copy "$(OutDir)$(TargetName)$(TargetExt)" "$(SolutionDir)Binary"</Command>
     </Text>
   </ItemGroup>
   <ItemGroup>
+    <Image Include="..\Resources\boat_texture.png" />
     <Image Include="..\Resources\cannonball_texture.jpg" />
     <Image Include="..\Resources\cannon_texture.png" />
     <Image Include="..\Resources\crate_texture.png" />
