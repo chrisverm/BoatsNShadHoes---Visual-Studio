@@ -446,30 +446,30 @@ ID3D11DepthStencilState* ResourceManager::GetDepthStencilState(std::string id)
 
 void ResourceManager::Release()
 {
-	for (MeshMap::iterator it = meshes.begin(); it != meshes.end(); it++)
-	{ delete (it->second); }
+	for (MeshMap::iterator it = meshes.begin(); it != meshes.end(); it = meshes.begin())
+	{ delete (it->second); meshes.erase(it->first); }
 
-	for (MatMap::iterator it = materials.begin(); it != materials.end(); it++)
-	{ delete (it->second); }
+	for (MatMap::iterator it = materials.begin(); it != materials.end(); it = materials.begin())
+	{ delete (it->second); materials.erase(it->first); }
 
-	for (SRVMap::iterator it = shaderResourceViews.begin(); it != shaderResourceViews.end(); it++)
-	{ ReleaseMacro(it->second); }
+	for (SRVMap::iterator it = shaderResourceViews.begin(); it != shaderResourceViews.end(); it = shaderResourceViews.begin())
+	{ ReleaseMacro(it->second); shaderResourceViews.erase(it->first); }
 
-	for (SSMap::iterator it = samplerStates.begin(); it != samplerStates.end(); it++)
-	{ ReleaseMacro(it->second); }
+	for (SSMap::iterator it = samplerStates.begin(); it != samplerStates.end(); it = samplerStates.begin())
+	{ ReleaseMacro(it->second); samplerStates.erase(it->first); }
 
-	for (VSMap::iterator it = vertexShaders.begin(); it != vertexShaders.end(); it++)
-	{ ReleaseMacro(it->second); }
+	for (VSMap::iterator it = vertexShaders.begin(); it != vertexShaders.end(); it = vertexShaders.begin())
+	{ ReleaseMacro(it->second); vertexShaders.erase(it->first); }
 
-	for (PSMap::iterator it = pixelShaders.begin(); it != pixelShaders.end(); it++)
-	{ ReleaseMacro(it->second); }
+	for (PSMap::iterator it = pixelShaders.begin(); it != pixelShaders.end(); it = pixelShaders.begin())
+	{ ReleaseMacro(it->second); pixelShaders.erase(it->first); }
 
-	for (ILMap::iterator it = inputLayouts.begin(); it != inputLayouts.end(); it++)
-	{ ReleaseMacro(it->second); }
+	for (ILMap::iterator it = inputLayouts.begin(); it != inputLayouts.end(); it = inputLayouts.begin())
+	{ ReleaseMacro(it->second); inputLayouts.erase(it->first); }
 
-	for (RSMap::iterator it = rasterizerStates.begin(); it != rasterizerStates.end(); it++)
-	{ ReleaseMacro(it->second); }
+	for (RSMap::iterator it = rasterizerStates.begin(); it != rasterizerStates.end(); it = rasterizerStates.begin())
+	{ ReleaseMacro(it->second); rasterizerStates.erase(it->first); }
 
-	for (DSSMap::iterator it = depthStencilStates.begin(); it != depthStencilStates.end(); it++)
-	{ ReleaseMacro(it->second); }
+	for (DSSMap::iterator it = depthStencilStates.begin(); it != depthStencilStates.end(); it = depthStencilStates.begin())
+	{ ReleaseMacro(it->second); depthStencilStates.erase(it->first); }
 }
