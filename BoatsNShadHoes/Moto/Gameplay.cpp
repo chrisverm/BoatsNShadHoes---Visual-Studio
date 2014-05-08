@@ -50,7 +50,7 @@ bool Gameplay::Initialize()
 	b1Stats.damage			= 20;
 
 	// Entites -----------------------------------------
-	playerBoat = new Boat(Resources::GetMesh("ship"), Resources::GetMaterial("crate"), 
+	playerBoat = new Boat(Resources::GetMesh("ship"), Resources::GetMaterial("ship"), 
 		Resources::GetRasterizerState("default"), Resources::GetDepthStencilState("default"), b1Stats, true);
 	playerBoat->Initialize(Game::vsPerModelConstBuffer, Game::vsPerModelData);
 
@@ -89,7 +89,7 @@ bool Gameplay::Initialize()
 	b2Stats.rateOfFire		= 1.5f;
 	b2Stats.damage			= 10;
 
-	otherBoat = new Boat(Resources::GetMesh("ship"), Resources::GetMaterial("crate"), 
+	otherBoat = new Boat(Resources::GetMesh("ship"), Resources::GetMaterial("ship"), 
 		Resources::GetRasterizerState("default"), Resources::GetDepthStencilState("default"), b2Stats, false);
 	otherBoat->Initialize(Game::vsPerModelConstBuffer, Game::vsPerModelData);
 	otherBoat->SetPosition(5, 0, 15);
@@ -353,6 +353,7 @@ void Gameplay::LoadResources()
 	Resources::CreateShaderResourceView("water", L"Resources/water_texture.jpg");
 	Resources::CreateShaderResourceView("cannonball", L"Resources/cannonball_texture.jpg");
 	Resources::CreateShaderResourceView("skybox", L"Resources/skybox_environment.dds");
+	Resources::CreateShaderResourceView("ship", L"Resources/boat_texture.png");
 
 	// Sampler States ------------------------------------
 	ID3D11SamplerState* ss = nullptr;
@@ -428,6 +429,9 @@ void Gameplay::LoadResources()
 
 	Resources::CreateMaterial("skybox", Resources::GetSRV("skybox"), Resources::GetSamplerState("MIN_MAG_MIP_LINEAR"),
 		Resources::GetVertexShader("skybox"), Resources::GetPixelShader("skybox"));
+
+	Resources::CreateMaterial("ship", Resources::GetSRV("ship"), Resources::GetSamplerState("MIN_MAG_POINT_MIP_LINEAR"), 
+		Resources::GetVertexShader(Resources::GetMesh("ship")->ILName()), Resources::GetPixelShader(Resources::GetMesh("ship")->ILName()));
 }
 
 void Gameplay::SetupAudio()
