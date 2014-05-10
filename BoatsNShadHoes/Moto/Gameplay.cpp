@@ -410,7 +410,7 @@ void Gameplay::LoadResources()
 	{ indices[i] = itemp[i]; }
 	// End Disgusting.
 
-	Mesh* coordinates = new Mesh(vertArray, 6, indices, 6);
+	Mesh* coordinates = new Mesh(vertArray, 6, indices, 6, D3D_PRIMITIVE_TOPOLOGY_TRIANGLELIST);
 	coordinates->Initialize(device, Resources::GetInputLayout("PNC"));
 
 	Resources::AddMesh("coordinates", coordinates);

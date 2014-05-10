@@ -15,8 +15,6 @@ DrawableEntity::DrawableEntity(Mesh* mesh, Material* material, ID3D11RasterizerS
 	this->material = material;
 	this->rasterizerState = rasterizerState;
 	this->depthStencilState = depthStencilState;
-
-	topology = D3D11_PRIMITIVE_TOPOLOGY_TRIANGLELIST;
 }
 
 /*
@@ -36,7 +34,6 @@ void DrawableEntity::Render(ID3D11DeviceContext* deviceContext)
 {
 	SetConstantBuffer(deviceContext, worldMatrix);
 		
-	deviceContext->IASetPrimitiveTopology(topology);
 	deviceContext->OMSetDepthStencilState(depthStencilState, 0);
 	deviceContext->RSSetState(rasterizerState);
 

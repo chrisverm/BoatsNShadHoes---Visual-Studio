@@ -18,7 +18,6 @@ public:
 private:
 	Mesh* mesh;
 	Material* material;
-	D3D_PRIMITIVE_TOPOLOGY topology;
 	ID3D11RasterizerState* rasterizerState;
 	ID3D11DepthStencilState* depthStencilState;
 };

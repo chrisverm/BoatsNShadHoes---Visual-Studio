@@ -21,6 +21,9 @@ void ResourceManager::Initialize(ID3D11Device* device, ID3D11DeviceContext* devi
 
 bool ResourceManager::AddMesh(std::string id, Mesh* mesh)
 {
+	// ensure id is all uppercase to prevent same string IDs with different char cases
+	id = ToUpper(id);
+
 	// check if mesh with this ID already exists
 	if (meshes[id] != nullptr)
 	{
@@ -45,6 +48,9 @@ bool ResourceManager::AddMesh(std::string id, Mesh* mesh)
 
 bool ResourceManager::AddMaterial(std::string id, Material* material)
 {
+	// ensure id is all uppercase to prevent same string IDs with different char cases
+	id = ToUpper(id);
+
 	// check if mesh with this ID already exists
 	if (materials[id] != nullptr)
 	{
@@ -69,6 +75,9 @@ bool ResourceManager::AddMaterial(std::string id, Material* material)
 
 bool ResourceManager::AddVertexShader(std::string id, ID3D11VertexShader* vertexShader)
 {
+	// ensure id is all uppercase to prevent same string IDs with different char cases
+	id = ToUpper(id);
+
 	// check if vertex shader with this ID already exists
 	if (vertexShaders[id] != nullptr)
 	{
@@ -93,6 +102,9 @@ bool ResourceManager::AddVertexShader(std::string id, ID3D11VertexShader* vertex
 
 bool ResourceManager::AddPixelShader(std::string id, ID3D11PixelShader* pixelShader)
 {
+	// ensure id is all uppercase to prevent same string IDs with different char cases
+	id = ToUpper(id);
+
 	// check if pixel shader with this ID already exists
 	if (pixelShaders[id] != nullptr)
 	{
@@ -117,6 +129,9 @@ bool ResourceManager::AddPixelShader(std::string id, ID3D11PixelShader* pixelSha
 
 bool ResourceManager::AddInputLayout(std::string id, ID3D11InputLayout* inputLayout)
 {
+	// ensure id is all uppercase to prevent same string IDs with different char cases
+	id = ToUpper(id);
+
 	// check if input layout with this ID already exists
 	if (inputLayouts[id] != nullptr)
 	{
@@ -141,6 +156,9 @@ bool ResourceManager::AddInputLayout(std::string id, ID3D11InputLayout* inputLay
 
 bool ResourceManager::AddShaderResourceView(std::string id, ID3D11ShaderResourceView* shaderResourceView)
 {
+	// ensure id is all uppercase to prevent same string IDs with different char cases
+	id = ToUpper(id);
+
 	// check if shader resource view with this ID already exists
 	if (shaderResourceViews[id] != nullptr)
 	{
@@ -165,6 +183,9 @@ bool ResourceManager::AddShaderResourceView(std::string id, ID3D11ShaderResource
 
 bool ResourceManager::AddSamplerState(std::string id, ID3D11SamplerState* samplerState)
 {
+	// ensure id is all uppercase to prevent same string IDs with different char cases
+	id = ToUpper(id);
+
 	// check if sampler state with this ID already exists
 	if (samplerStates[id] != nullptr)
 	{
@@ -189,8 +210,25 @@ bool ResourceManager::AddSamplerState(std::string id, ID3D11SamplerState* sample
 
 bool ResourceManager::AddRasterizerState(std::string id, ID3D11RasterizerState* rasterizerState)
 {
+	// ensure id is all uppercase to prevent same string IDs with different char cases
+	id = ToUpper(id);
+
+	// check if rasterizer state with this ID already exists
 	if (rasterizerStates[id] != nullptr)
+	{
+		std::wstring wid = std::wstring(id.begin(), id.end());
+		std::wstring error = L"A rasterizer state with the ID \"" + wid + L"\" already exists.";
+		DXTRACE_ERR_MSGBOX(error.c_str(), NULL);
 		return false;
+	}
+	// check if rasterizer state param is a nullptr
+	if (rasterizerState == nullptr)
+	{
+		std::wstring wid = std::wstring(id.begin(), id.end());
+		std::wstring error = L"The rasterizer state passed with the ID \"" + wid + L"\" cannot be a nullptr.";
+		DXTRACE_ERR_MSGBOX(error.c_str(), NULL);
+		return false;
+	}
 
 	rasterizerStates[id] = rasterizerState;
 
@@ -199,8 +237,25 @@ bool ResourceManager::AddRasterizerState(std::string id, ID3D11RasterizerState* 
 
 bool ResourceManager::AddDepthStencilState(std::string id, ID3D11DepthStencilState* depthStencilState)
 {
+	// ensure id is all uppercase to prevent same string IDs with different char cases
+	id = ToUpper(id);
+
+	// check if depth stencil state with this ID already exists
 	if (depthStencilStates[id] != nullptr)
+	{
+		std::wstring wid = std::wstring(id.begin(), id.end());
+		std::wstring error = L"A depth stencil state with the ID \"" + wid + L"\" already exists.";
+		DXTRACE_ERR_MSGBOX(error.c_str(), NULL);
 		return false;
+	}
+	// check if depth stencil state param is a nullptr
+	if (depthStencilState == nullptr)
+	{
+		std::wstring wid = std::wstring(id.begin(), id.end());
+		std::wstring error = L"The depth stencil state passed with the ID \"" + wid + L"\" cannot be a nullptr.";
+		DXTRACE_ERR_MSGBOX(error.c_str(), NULL);
+		return false;
+	}
 
 	depthStencilStates[id] = depthStencilState;
 
@@ -209,6 +264,9 @@ bool ResourceManager::AddDepthStencilState(std::string id, ID3D11DepthStencilSta
 
 bool ResourceManager::CreateMesh(std::string id, std::string objFilePath, ID3D11InputLayout* inputLayout)
 {
+	// ensure id is all uppercase to prevent same string IDs with different char cases
+	id = ToUpper(id);
+
 	// check if mesh with this ID already exists
 	if (meshes[id] != nullptr)
 	{
@@ -233,6 +291,9 @@ bool ResourceManager::CreateMesh(std::string id, std::string objFilePath, ID3D11
 bool ResourceManager::CreateMaterial(std::string id, ID3D11ShaderResourceView* shaderResourceView,
 		ID3D11SamplerState* samplerState, ID3D11VertexShader* vertexShader, ID3D11PixelShader* pixelShader)
 {
+	// ensure id is all uppercase to prevent same string IDs with different char cases
+	id = ToUpper(id);
+
 	// check if material with this ID already exists
 	if (materials[id] != nullptr)
 	{
@@ -253,6 +314,9 @@ bool ResourceManager::CreateMaterial(std::string id, ID3D11ShaderResourceView* s
 bool ResourceManager::CreateVertexShaderAndInputLayout(std::string id, std::wstring filepath, 
 			D3D11_INPUT_ELEMENT_DESC layoutDesc[], UINT numElements)
 {
+	// ensure id is all uppercase to prevent same string IDs with different char cases
+	id = ToUpper(id);
+
 	// check if vertex shader with this ID already exists
 	if (vertexShaders[id] != nullptr)
 	{
@@ -290,6 +354,9 @@ bool ResourceManager::CreateVertexShaderAndInputLayout(std::string id, std::wstr
 
 bool ResourceManager::CreatePixelShader(std::string id, std::wstring filepath)
 {
+	// ensure id is all uppercase to prevent same string IDs with different char cases
+	id = ToUpper(id);
+
 	// check if pixel shader with this ID already exists
 	if (pixelShaders[id] != nullptr)
 	{
@@ -318,6 +385,9 @@ bool ResourceManager::CreatePixelShader(std::string id, std::wstring filepath)
 
 bool ResourceManager::CreateShaderResourceView(std::string id, std::wstring textureFilePath)
 {
+	// ensure id is all uppercase to prevent same string IDs with different char cases
+	id = ToUpper(id);
+
 	// check if shader resource view with this ID already exists
 	if (shaderResourceViews[id] != nullptr)
 	{
@@ -354,6 +424,9 @@ bool ResourceManager::CreateShaderResourceView(std::string id, std::wstring text
 
 bool ResourceManager::CreateSamplerState(std::string id, D3D11_SAMPLER_DESC samplerDesc)
 {
+	// ensure id is all uppercase to prevent same string IDs with different char cases
+	id = ToUpper(id);
+
 	// check if sampler state with this ID already exists
 	if (samplerStates[id] != nullptr)
 	{
@@ -375,6 +448,9 @@ bool ResourceManager::CreateSamplerState(std::string id, D3D11_SAMPLER_DESC samp
 
 bool ResourceManager::CreateRasterizerState(std::string id, D3D11_RASTERIZER_DESC rasterizerDesc)
 {
+	// ensure id is all uppercase to prevent same string IDs with different char cases
+	id = ToUpper(id);
+
 	// check if rasterizer state with this ID already exists
 	if (rasterizerStates[id] != nullptr)
 	{
@@ -397,6 +473,9 @@ bool ResourceManager::CreateRasterizerState(std::string id, D3D11_RASTERIZER_DES
 
 bool ResourceManager::CreateDepthStencilState(std::string id, D3D11_DEPTH_STENCIL_DESC depthStencilDesc)
 {
+	// ensure id is all uppercase to prevent same string IDs with different char cases
+	id = ToUpper(id);
+
 	// check if depth stencil state with this ID already exists
 	if (depthStencilStates[id] != nullptr)
 	{
@@ -418,31 +497,31 @@ bool ResourceManager::CreateDepthStencilState(std::string id, D3D11_DEPTH_STENCI
 }
 
 Mesh* ResourceManager::GetMesh(std::string id)
-{ return meshes[id]; }
+{ return meshes[ToUpper(id)]; }
 
 Material* ResourceManager::GetMaterial(std::string id)
-{ return materials[id]; }
+{ return materials[ToUpper(id)]; }
 
 ID3D11ShaderResourceView* ResourceManager::GetSRV(std::string id)
-{ return shaderResourceViews[id]; }
+{ return shaderResourceViews[ToUpper(id)]; }
 
 ID3D11SamplerState* ResourceManager::GetSamplerState(std::string id)
-{ return samplerStates[id]; }
+{ return samplerStates[ToUpper(id)]; }
 
 ID3D11PixelShader* ResourceManager::GetPixelShader(std::string id)
-{ return pixelShaders[id]; }
+{ return pixelShaders[ToUpper(id)]; }
 
 ID3D11VertexShader* ResourceManager::GetVertexShader(std::string id)
-{ return vertexShaders[id]; }
+{ return vertexShaders[ToUpper(id)]; }
 
 ID3D11InputLayout* ResourceManager::GetInputLayout(std::string id)
-{ return inputLayouts[id]; }
+{ return inputLayouts[ToUpper(id)]; }
 
 ID3D11RasterizerState* ResourceManager::GetRasterizerState(std::string id)
-{ return rasterizerStates[id]; }
+{ return rasterizerStates[ToUpper(id)]; }
 
 ID3D11DepthStencilState* ResourceManager::GetDepthStencilState(std::string id)
-{ return depthStencilStates[id]; }
+{ return depthStencilStates[ToUpper(id)]; }
 
 void ResourceManager::Release()
 {

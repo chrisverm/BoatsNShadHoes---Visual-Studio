@@ -2,6 +2,7 @@
 #define GLOBALS_H
 
 #include <string>
+#include <cctype>
 #include <DirectXMath.h>
 #include "dxerr.h"
 
@@ -44,5 +45,17 @@ static std::string* Split(std::string s, char delimeter)
 
 	return splitString;
 };
+
+static std::string ToUpper(const std::string str)
+{
+	std::string result = "";
+
+	for (std::string::size_type i = 0; i < str.length(); i++)
+	{
+		result += std::toupper(str[i]);
+	}
+	
+	return result;
+}
 
 #endif

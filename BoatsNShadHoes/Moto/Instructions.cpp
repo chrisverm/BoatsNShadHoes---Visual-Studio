@@ -216,7 +216,7 @@ void Instructions::LoadResources()
 
 	//End More Disgusting
 
-	Mesh* screen = new Mesh(vertArray2, 4, indices2, 6);
+	Mesh* screen = new Mesh(vertArray2, 4, indices2, 6, D3D_PRIMITIVE_TOPOLOGY_TRIANGLELIST);
 	screen->Initialize(device, Resources::GetInputLayout("PNUC"));
 
 	Resources::AddMesh("screen", screen);

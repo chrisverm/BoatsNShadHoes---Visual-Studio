@@ -1,7 +1,9 @@
 #include "Mesh.h"
 
-Mesh::Mesh(VertexArray verts, int vSize, UINT* inds, int iSize)
+Mesh::Mesh(VertexArray verts, int vSize, UINT* inds, int iSize, D3D_PRIMITIVE_TOPOLOGY topology)
 {
+	this->topology = topology;
+
 	vertices = verts;
 	numVerts = vSize;
 	indices = inds;
@@ -70,6 +72,7 @@ void Mesh::SetBuffers(ID3D11DeviceContext* deviceContext)
 	UINT offset = 0;
 
 	deviceContext->IASetInputLayout(inputLayout);
+	deviceContext->IASetPrimitiveTopology(topology);
 	deviceContext->IASetVertexBuffers(0, 1, &vBuffer, &stride, &offset);
 	deviceContext->IASetIndexBuffer(iBuffer, DXGI_FORMAT_R32_UINT, 0);
 }
@@ -264,5 +267,5 @@ Mesh* Mesh::LoadFromOBJ(std::string objFilePath)
 	delete[] tempUVs;
 	delete[] tempColrs;
 
-	return new Mesh(verts, numIndices, indices, numIndices);
+	return new Mesh(verts, numIndices, indices, numIndices, D3D_PRIMITIVE_TOPOLOGY_TRIANGLELIST);
 }
