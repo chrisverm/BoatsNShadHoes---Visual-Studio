@@ -1,32 +1,39 @@
 #include "Gameplay.h"
 
 Gameplay::Gameplay(ID3D11Device* device, ID3D11DeviceContext* deviceContext)
-	: GameState(device, deviceContext)
-{
-	world = new Entity();
-}
+	: GameState(device, deviceContext) { }
 
-Gameplay::~Gameplay()
+Gameplay::~Gameplay() { Unload(); }
+
+void Gameplay::Unload()
 {
 #ifdef SOUND_PLAY
 	alcDestroyContext(audioDeviceContext);
 	alcCloseDevice(audioDevice);
 
-	delete main_bgm;
+	if (main_bgm != nullptr)
+	{
+		delete main_bgm;
+		main_bgm = nullptr;
+	}
 #endif
 
 	// every entity is somehow connected to this
 	// thus this will destroy all entities
-	delete world;
+	if (world != nullptr)
+	{
+		delete world;
+		world = nullptr;
+	}
+
+	GameState::Unload();
 }
 
-/*
-0 x 0 2 d 5 4 0 f 8
-*/
 bool Gameplay::Initialize()
 {
+	world = new Entity();
+
 	LoadShadersAndInputLayout();
-	CreateGeometryBuffers();
 	LoadResources();
 
 #if defined(DEBUG) | defined(_DEBUG)
@@ -222,159 +229,8 @@ void Gameplay::LoadShadersAndInputLayout()
 	Resources::CreatePixelShader("skybox", L"Shaders/PS_Skybox.cso");
 }
 
-void Gameplay::CreateGeometryBuffers()
-{
-	// Constant buffers ----------------------------------------
-	D3D11_BUFFER_DESC vsPerFrameBufferDesc;
-	vsPerFrameBufferDesc.ByteWidth = sizeof(*Game::vsPerFrameData);
-	vsPerFrameBufferDesc.Usage = D3D11_USAGE_DEFAULT;
-	vsPerFrameBufferDesc.BindFlags = D3D11_BIND_CONSTANT_BUFFER;
-	vsPerFrameBufferDesc.CPUAccessFlags = 0;
-	vsPerFrameBufferDesc.MiscFlags = 0;
-	vsPerFrameBufferDesc.StructureByteStride = 0;
-	HR(device->CreateBuffer(
-		&vsPerFrameBufferDesc,
-		NULL,
-		&Game::vsPerFrameConstBuffer));
-
-	D3D11_BUFFER_DESC vsPerModelBufferDesc;
-	vsPerModelBufferDesc.ByteWidth = sizeof(*Game::vsPerModelData);
-	vsPerModelBufferDesc.Usage = D3D11_USAGE_DEFAULT;
-	vsPerModelBufferDesc.BindFlags = D3D11_BIND_CONSTANT_BUFFER;
-	vsPerModelBufferDesc.CPUAccessFlags = 0;
-	vsPerModelBufferDesc.MiscFlags = 0;
-	vsPerModelBufferDesc.StructureByteStride = 0;
-	HR(device->CreateBuffer(
-		&vsPerModelBufferDesc,
-		NULL,
-		&Game::vsPerModelConstBuffer));
-
-	D3D11_BUFFER_DESC vsPerSceneBufferDesc;
-	vsPerSceneBufferDesc.ByteWidth = sizeof(*Game::vsPerSceneData);
-	vsPerSceneBufferDesc.Usage = D3D11_USAGE_DEFAULT;
-	vsPerSceneBufferDesc.BindFlags = D3D11_BIND_CONSTANT_BUFFER;
-	vsPerSceneBufferDesc.CPUAccessFlags = 0;
-	vsPerSceneBufferDesc.MiscFlags = 0;
-	vsPerSceneBufferDesc.StructureByteStride = 0;
-	HR(device->CreateBuffer(
-		&vsPerSceneBufferDesc,
-		NULL,
-		&Game::vsPerSceneConstBuffer));
-}
-
 void Gameplay::LoadResources()
 {
-	// Depth Stencil States ----------------------------
-	D3D11_DEPTH_STENCIL_DESC dssDesc;
-
-	// Default
-	ZeroMemory(&dssDesc, sizeof(D3D11_DEPTH_STENCIL_DESC));
-	dssDesc.DepthEnable					= true;
-	dssDesc.DepthWriteMask				= D3D11_DEPTH_WRITE_MASK_ALL;
-	dssDesc.DepthFunc					= D3D11_COMPARISON_LESS;
-	dssDesc.StencilEnable				= false;
-	dssDesc.StencilReadMask				= D3D11_DEFAULT_STENCIL_READ_MASK;
-	dssDesc.StencilWriteMask			= D3D11_DEFAULT_STENCIL_WRITE_MASK;
-	dssDesc.FrontFace.StencilFunc		= D3D11_COMPARISON_ALWAYS;
-	dssDesc.FrontFace.StencilDepthFailOp= D3D11_STENCIL_OP_KEEP;
-	dssDesc.FrontFace.StencilPassOp		= D3D11_STENCIL_OP_KEEP;
-	dssDesc.FrontFace.StencilFailOp		= D3D11_STENCIL_OP_KEEP;
-	dssDesc.BackFace.StencilFunc		= D3D11_COMPARISON_ALWAYS;
-	dssDesc.BackFace.StencilDepthFailOp	= D3D11_STENCIL_OP_KEEP;
-	dssDesc.BackFace.StencilPassOp		= D3D11_STENCIL_OP_KEEP;
-	dssDesc.BackFace.StencilFailOp		= D3D11_STENCIL_OP_KEEP;
-	Resources::CreateDepthStencilState("default", dssDesc);
-
-	// Skybox
-	ZeroMemory(&dssDesc, sizeof(D3D11_DEPTH_STENCIL_DESC));
-	dssDesc.DepthEnable					= true;
-	dssDesc.DepthWriteMask				= D3D11_DEPTH_WRITE_MASK_ALL;
-	dssDesc.DepthFunc					= D3D11_COMPARISON_LESS_EQUAL;
-	dssDesc.StencilEnable				= false;
-	dssDesc.StencilReadMask				= D3D11_DEFAULT_STENCIL_READ_MASK;
-	dssDesc.StencilWriteMask			= D3D11_DEPTH_WRITE_MASK_ALL;
-	dssDesc.FrontFace.StencilFunc		= D3D11_COMPARISON_ALWAYS;
-	dssDesc.FrontFace.StencilDepthFailOp= D3D11_STENCIL_OP_KEEP;
-	dssDesc.FrontFace.StencilPassOp		= D3D11_STENCIL_OP_KEEP;
-	dssDesc.FrontFace.StencilFailOp		= D3D11_STENCIL_OP_KEEP;
-	dssDesc.BackFace.StencilFunc		= D3D11_COMPARISON_ALWAYS;
-	dssDesc.BackFace.StencilDepthFailOp	= D3D11_STENCIL_OP_KEEP;
-	dssDesc.BackFace.StencilPassOp		= D3D11_STENCIL_OP_KEEP;
-	dssDesc.BackFace.StencilFailOp		= D3D11_STENCIL_OP_KEEP;
-	Resources::CreateDepthStencilState("skybox", dssDesc);
-
-	// Rasterizer States -------------------------------
-	D3D11_RASTERIZER_DESC rsDesc;
-
-	// Default
-	ZeroMemory(&rsDesc, sizeof(D3D11_RASTERIZER_DESC));
-	rsDesc.FillMode					= D3D11_FILL_SOLID;
-	rsDesc.CullMode					= D3D11_CULL_NONE; // the face to "cull" - not show
-	rsDesc.FrontCounterClockwise	= false;
-	rsDesc.DepthBias				= 0;
-	rsDesc.DepthBiasClamp			= 0.0f;
-	rsDesc.SlopeScaledDepthBias		= 0.0f;
-	rsDesc.DepthClipEnable			= true;
-	rsDesc.ScissorEnable			= false;
-	rsDesc.MultisampleEnable		= true;
-	rsDesc.AntialiasedLineEnable	= false;
-	Resources::CreateRasterizerState("default", rsDesc);
-
-	// Wireframe (TEST)
-	ZeroMemory(&rsDesc, sizeof(D3D11_RASTERIZER_DESC));
-	rsDesc.FillMode					= D3D11_FILL_WIREFRAME;
-	rsDesc.CullMode					= D3D11_CULL_NONE;
-	rsDesc.FrontCounterClockwise	= false;
-	rsDesc.DepthBias				= 0;
-	rsDesc.DepthBiasClamp			= 0.0f;
-	rsDesc.SlopeScaledDepthBias		= 0.0f;
-	rsDesc.DepthClipEnable			= true;
-	rsDesc.ScissorEnable			= false;
-	rsDesc.MultisampleEnable		= false;
-	rsDesc.AntialiasedLineEnable	= false;
-	Resources::CreateRasterizerState("wireframe", rsDesc);
-
-	// Skybox
-	ZeroMemory(&rsDesc, sizeof(D3D11_RASTERIZER_DESC));
-	rsDesc.FillMode					= D3D11_FILL_SOLID;
-	rsDesc.CullMode					= D3D11_CULL_NONE;
-	rsDesc.FrontCounterClockwise	= false;
-	rsDesc.DepthBias				= 0;
-	rsDesc.DepthBiasClamp			= 0.0f;
-	rsDesc.SlopeScaledDepthBias		= 0.0f;
-	rsDesc.DepthClipEnable			= false;
-	rsDesc.ScissorEnable			= false;
-	rsDesc.MultisampleEnable		= false;
-	rsDesc.AntialiasedLineEnable	= false;
-	Resources::CreateRasterizerState("skybox", rsDesc);
-
-	// Shader Resource Views -----------------------------
-	Resources::CreateShaderResourceView("crate", L"Resources/crate_texture.png");
-	Resources::CreateShaderResourceView("water", L"Resources/water_texture.jpg");
-	Resources::CreateShaderResourceView("cannonball", L"Resources/cannonball_texture.jpg");
-	Resources::CreateShaderResourceView("skybox", L"Resources/skybox_environment.dds");
-	Resources::CreateShaderResourceView("ship", L"Resources/boat_texture.png");
-
-	// Sampler States ------------------------------------
-	ID3D11SamplerState* ss = nullptr;
-	D3D11_SAMPLER_DESC samplerDesc;
-	
-	// MIN_MAG_POINT_MIP_LINEAR
-	ZeroMemory(&samplerDesc, sizeof(samplerDesc));
-	samplerDesc.Filter = D3D11_FILTER_MIN_MAG_POINT_MIP_LINEAR;
-	samplerDesc.AddressU = D3D11_TEXTURE_ADDRESS_WRAP;
-	samplerDesc.AddressV = D3D11_TEXTURE_ADDRESS_WRAP;
-	samplerDesc.AddressW = D3D11_TEXTURE_ADDRESS_WRAP;
-	Resources::CreateSamplerState("MIN_MAG_POINT_MIP_LINEAR", samplerDesc);
-
-	// MIN_MAP_MIP_LINEAR (Trilinear)
-	ZeroMemory(&samplerDesc, sizeof(samplerDesc));
-	samplerDesc.Filter	 = D3D11_FILTER_MIN_MAG_MIP_LINEAR;
-	samplerDesc.AddressU = D3D11_TEXTURE_ADDRESS_WRAP;
-	samplerDesc.AddressV = D3D11_TEXTURE_ADDRESS_WRAP;
-	samplerDesc.AddressW = D3D11_TEXTURE_ADDRESS_WRAP;
-	Resources::CreateSamplerState("MIN_MAG_MIP_LINEAR", samplerDesc);
-
 	// Meshes -------------------------------------------
 	Resources::CreateMesh("ship", "Resources/PirateShip_obj.obj");
 	//Resources::CreateMesh("quad", "Resources/water_obj.obj", Resources::GetInputLayout("Water"));
@@ -472,10 +328,33 @@ void Gameplay::LoadResources()
 	m->Initialize(device, Resources::GetInputLayout(m->ILName()));
 	Resources::AddMesh("quad", m);
 
+	// And lo, on this such line it did end.
 
-	//Resources::CreateMesh("quad", "Resources/water_obj.obj", Resources::GetInputLayout("Water"));
-	int k = 0;
-	// And lo, on the __th line it did end.
+	// Shader Resource Views -----------------------------
+	Resources::CreateShaderResourceView("crate", L"Resources/crate_texture.png");
+	Resources::CreateShaderResourceView("water", L"Resources/water_texture.jpg");
+	Resources::CreateShaderResourceView("cannonball", L"Resources/cannonball_texture.jpg");
+	Resources::CreateShaderResourceView("skybox", L"Resources/skybox_environment.dds");
+	Resources::CreateShaderResourceView("ship", L"Resources/boat_texture.png");
+
+	// Sampler States ------------------------------------
+	D3D11_SAMPLER_DESC samplerDesc;
+	
+	// MIN_MAG_POINT_MIP_LINEAR
+	ZeroMemory(&samplerDesc, sizeof(samplerDesc));
+	samplerDesc.Filter = D3D11_FILTER_MIN_MAG_POINT_MIP_LINEAR;
+	samplerDesc.AddressU = D3D11_TEXTURE_ADDRESS_WRAP;
+	samplerDesc.AddressV = D3D11_TEXTURE_ADDRESS_WRAP;
+	samplerDesc.AddressW = D3D11_TEXTURE_ADDRESS_WRAP;
+	Resources::CreateSamplerState("MIN_MAG_POINT_MIP_LINEAR", samplerDesc);
+
+	// MIN_MAP_MIP_LINEAR (Trilinear)
+	ZeroMemory(&samplerDesc, sizeof(samplerDesc));
+	samplerDesc.Filter	 = D3D11_FILTER_MIN_MAG_MIP_LINEAR;
+	samplerDesc.AddressU = D3D11_TEXTURE_ADDRESS_WRAP;
+	samplerDesc.AddressV = D3D11_TEXTURE_ADDRESS_WRAP;
+	samplerDesc.AddressW = D3D11_TEXTURE_ADDRESS_WRAP;
+	Resources::CreateSamplerState("MIN_MAG_MIP_LINEAR", samplerDesc);
 
 	// Materials -----------------------------------------
 	Resources::CreateMaterial("crate", Resources::GetSRV("crate"), Resources::GetSamplerState("MIN_MAG_POINT_MIP_LINEAR"),
@@ -487,13 +366,97 @@ void Gameplay::LoadResources()
 	Resources::CreateMaterial("cannonball", Resources::GetSRV("cannonball"), Resources::GetSamplerState("MIN_MAG_POINT_MIP_LINEAR"),
 		Resources::GetVertexShader(Resources::GetMesh("sphere")->ILName()), Resources::GetPixelShader(Resources::GetMesh("sphere")->ILName()));
 
-	Resources::CreateMaterial("coordinates", nullptr, nullptr,Resources::GetVertexShader(coordinates->ILName()), Resources::GetPixelShader(coordinates->ILName()));
+	Resources::CreateMaterial("coordinates", nullptr, nullptr, Resources::GetVertexShader(coordinates->ILName()), Resources::GetPixelShader(coordinates->ILName()));
 
 	Resources::CreateMaterial("skybox", Resources::GetSRV("skybox"), Resources::GetSamplerState("MIN_MAG_MIP_LINEAR"),
 		Resources::GetVertexShader("skybox"), Resources::GetPixelShader("skybox"));
 
 	Resources::CreateMaterial("ship", Resources::GetSRV("ship"), Resources::GetSamplerState("MIN_MAG_POINT_MIP_LINEAR"), 
 		Resources::GetVertexShader(Resources::GetMesh("ship")->ILName()), Resources::GetPixelShader(Resources::GetMesh("ship")->ILName()));
+
+	// Depth Stencil States ----------------------------
+	D3D11_DEPTH_STENCIL_DESC dssDesc;
+
+	// Default
+	ZeroMemory(&dssDesc, sizeof(D3D11_DEPTH_STENCIL_DESC));
+	dssDesc.DepthEnable					= true;
+	dssDesc.DepthWriteMask				= D3D11_DEPTH_WRITE_MASK_ALL;
+	dssDesc.DepthFunc					= D3D11_COMPARISON_LESS;
+	dssDesc.StencilEnable				= false;
+	dssDesc.StencilReadMask				= D3D11_DEFAULT_STENCIL_READ_MASK;
+	dssDesc.StencilWriteMask			= D3D11_DEFAULT_STENCIL_WRITE_MASK;
+	dssDesc.FrontFace.StencilFunc		= D3D11_COMPARISON_ALWAYS;
+	dssDesc.FrontFace.StencilDepthFailOp= D3D11_STENCIL_OP_KEEP;
+	dssDesc.FrontFace.StencilPassOp		= D3D11_STENCIL_OP_KEEP;
+	dssDesc.FrontFace.StencilFailOp		= D3D11_STENCIL_OP_KEEP;
+	dssDesc.BackFace.StencilFunc		= D3D11_COMPARISON_ALWAYS;
+	dssDesc.BackFace.StencilDepthFailOp	= D3D11_STENCIL_OP_KEEP;
+	dssDesc.BackFace.StencilPassOp		= D3D11_STENCIL_OP_KEEP;
+	dssDesc.BackFace.StencilFailOp		= D3D11_STENCIL_OP_KEEP;
+	Resources::CreateDepthStencilState("default", dssDesc);
+
+	// Skybox
+	ZeroMemory(&dssDesc, sizeof(D3D11_DEPTH_STENCIL_DESC));
+	dssDesc.DepthEnable					= true;
+	dssDesc.DepthWriteMask				= D3D11_DEPTH_WRITE_MASK_ALL;
+	dssDesc.DepthFunc					= D3D11_COMPARISON_LESS_EQUAL;
+	dssDesc.StencilEnable				= false;
+	dssDesc.StencilReadMask				= D3D11_DEFAULT_STENCIL_READ_MASK;
+	dssDesc.StencilWriteMask			= D3D11_DEPTH_WRITE_MASK_ALL;
+	dssDesc.FrontFace.StencilFunc		= D3D11_COMPARISON_ALWAYS;
+	dssDesc.FrontFace.StencilDepthFailOp= D3D11_STENCIL_OP_KEEP;
+	dssDesc.FrontFace.StencilPassOp		= D3D11_STENCIL_OP_KEEP;
+	dssDesc.FrontFace.StencilFailOp		= D3D11_STENCIL_OP_KEEP;
+	dssDesc.BackFace.StencilFunc		= D3D11_COMPARISON_ALWAYS;
+	dssDesc.BackFace.StencilDepthFailOp	= D3D11_STENCIL_OP_KEEP;
+	dssDesc.BackFace.StencilPassOp		= D3D11_STENCIL_OP_KEEP;
+	dssDesc.BackFace.StencilFailOp		= D3D11_STENCIL_OP_KEEP;
+	Resources::CreateDepthStencilState("skybox", dssDesc);
+
+	// Rasterizer States -------------------------------
+	D3D11_RASTERIZER_DESC rsDesc;
+
+	// Default
+	ZeroMemory(&rsDesc, sizeof(D3D11_RASTERIZER_DESC));
+	rsDesc.FillMode					= D3D11_FILL_SOLID;
+	rsDesc.CullMode					= D3D11_CULL_NONE; // the face to "cull" - not show
+	rsDesc.FrontCounterClockwise	= false;
+	rsDesc.DepthBias				= 0;
+	rsDesc.DepthBiasClamp			= 0.0f;
+	rsDesc.SlopeScaledDepthBias		= 0.0f;
+	rsDesc.DepthClipEnable			= true;
+	rsDesc.ScissorEnable			= false;
+	rsDesc.MultisampleEnable		= true;
+	rsDesc.AntialiasedLineEnable	= false;
+	Resources::CreateRasterizerState("default", rsDesc);
+
+	// Wireframe (TEST)
+	ZeroMemory(&rsDesc, sizeof(D3D11_RASTERIZER_DESC));
+	rsDesc.FillMode					= D3D11_FILL_WIREFRAME;
+	rsDesc.CullMode					= D3D11_CULL_NONE;
+	rsDesc.FrontCounterClockwise	= false;
+	rsDesc.DepthBias				= 0;
+	rsDesc.DepthBiasClamp			= 0.0f;
+	rsDesc.SlopeScaledDepthBias		= 0.0f;
+	rsDesc.DepthClipEnable			= true;
+	rsDesc.ScissorEnable			= false;
+	rsDesc.MultisampleEnable		= false;
+	rsDesc.AntialiasedLineEnable	= false;
+	Resources::CreateRasterizerState("wireframe", rsDesc);
+
+	// Skybox
+	ZeroMemory(&rsDesc, sizeof(D3D11_RASTERIZER_DESC));
+	rsDesc.FillMode					= D3D11_FILL_SOLID;
+	rsDesc.CullMode					= D3D11_CULL_NONE;
+	rsDesc.FrontCounterClockwise	= false;
+	rsDesc.DepthBias				= 0;
+	rsDesc.DepthBiasClamp			= 0.0f;
+	rsDesc.SlopeScaledDepthBias		= 0.0f;
+	rsDesc.DepthClipEnable			= false;
+	rsDesc.ScissorEnable			= false;
+	rsDesc.MultisampleEnable		= false;
+	rsDesc.AntialiasedLineEnable	= false;
+	Resources::CreateRasterizerState("skybox", rsDesc);
 }
 
 void Gameplay::SetupAudio()

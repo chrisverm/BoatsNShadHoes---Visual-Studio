@@ -23,6 +23,7 @@ class Instructions : public GameState
 public:
 	Instructions(ID3D11Device* device, ID3D11DeviceContext* deviceContext);
 	~Instructions();
+	void Unload();
 	bool Initialize();
 	void Update(float dt);
 	void Draw(float dt);
@@ -32,7 +33,6 @@ private:
 	std::vector<DrawableEntity*> entities;
 
 	void LoadShadersAndInputLayout();
-	void CreateGeometryBuffers();
 	void LoadResources();
 
 	bool viewChanged;

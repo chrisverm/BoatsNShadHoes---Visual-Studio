@@ -1,23 +1,29 @@
 #include "Instructions.h"
 
 Instructions::Instructions(ID3D11Device* device, ID3D11DeviceContext* deviceContext)
-	: GameState(device, deviceContext)
-{
-	world = new Entity();
-	drawCoordinates = false;
-}
+	: GameState(device, deviceContext) { }
 
-Instructions::~Instructions()
+Instructions::~Instructions() { Unload(); }
+
+void Instructions::Unload()
 {
 	// every entity is somehow connected to this
 	// thus this will destroy all entities
-	delete world;
+	if (world != nullptr)
+	{
+		delete world;
+		world = nullptr;
+	}
+
+	GameState::Unload();
 }
 
 bool Instructions::Initialize()
 {
+	world = new Entity();
+	drawCoordinates = false;
+
 	LoadShadersAndInputLayout();
-	CreateGeometryBuffers();
 	LoadResources();
 
 	Input::SetCursorVisibility(false);
@@ -88,46 +94,6 @@ void Instructions::LoadShadersAndInputLayout()
 	Resources::CreatePixelShader("PNUC", L"Shaders/PS_PNUC.cso");
 }
 
-void Instructions::CreateGeometryBuffers()
-{
-	// Constant buffers ----------------------------------------
-	D3D11_BUFFER_DESC vsPerFrameBufferDesc;
-	vsPerFrameBufferDesc.ByteWidth = sizeof(*Game::vsPerFrameData);
-	vsPerFrameBufferDesc.Usage = D3D11_USAGE_DEFAULT;
-	vsPerFrameBufferDesc.BindFlags = D3D11_BIND_CONSTANT_BUFFER;
-	vsPerFrameBufferDesc.CPUAccessFlags = 0;
-	vsPerFrameBufferDesc.MiscFlags = 0;
-	vsPerFrameBufferDesc.StructureByteStride = 0;
-	HR(device->CreateBuffer(
-		&vsPerFrameBufferDesc,
-		NULL,
-		&Game::vsPerFrameConstBuffer));
-
-	D3D11_BUFFER_DESC vsPerModelBufferDesc;
-	vsPerModelBufferDesc.ByteWidth = sizeof(*Game::vsPerModelData);
-	vsPerModelBufferDesc.Usage = D3D11_USAGE_DEFAULT;
-	vsPerModelBufferDesc.BindFlags = D3D11_BIND_CONSTANT_BUFFER;
-	vsPerModelBufferDesc.CPUAccessFlags = 0;
-	vsPerModelBufferDesc.MiscFlags = 0;
-	vsPerModelBufferDesc.StructureByteStride = 0;
-	HR(device->CreateBuffer(
-		&vsPerModelBufferDesc,
-		NULL,
-		&Game::vsPerModelConstBuffer));
-
-	D3D11_BUFFER_DESC vsPerSceneBufferDesc;
-	vsPerSceneBufferDesc.ByteWidth = sizeof(*Game::vsPerSceneData);
-	vsPerSceneBufferDesc.Usage = D3D11_USAGE_DEFAULT;
-	vsPerSceneBufferDesc.BindFlags = D3D11_BIND_CONSTANT_BUFFER;
-	vsPerSceneBufferDesc.CPUAccessFlags = 0;
-	vsPerSceneBufferDesc.MiscFlags = 0;
-	vsPerSceneBufferDesc.StructureByteStride = 0;
-	HR(device->CreateBuffer(
-		&vsPerSceneBufferDesc,
-		NULL,
-		&Game::vsPerSceneConstBuffer));
-}
-
 void Instructions::LoadResources()
 {
 	// Depth Stencil States ----------------------------
@@ -171,7 +137,6 @@ void Instructions::LoadResources()
 	Resources::CreateShaderResourceView("screen", L"Resources/screen_texture.jpg");
 
 	// Sampler States ------------------------------------
-	ID3D11SamplerState* ss = nullptr;
 	D3D11_SAMPLER_DESC samplerDesc;
 	
 	// MIN_MAG_POINT_MIP_LINEAR
@@ -257,12 +222,12 @@ void Instructions::Update(float dt)
 		Input::ToggleCursorLocking();
 	}
 
+	world->Update(dt, XMMatrixIdentity());
+
 	if (Input::KeyUp(' '))
 	{
 		GameStateManager::ChangeState("Gameplay");
 	}
-
-	world->Update(dt, XMMatrixIdentity());
 }
 
 void Instructions::Draw(float dt)

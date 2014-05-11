@@ -4,6 +4,7 @@
 #include <d3d11.h>
 #include <d3dcompiler.h>
 #include "ResourceManager.h"
+#include "CameraManager.h"
 
 class GameState
 {
@@ -16,7 +17,11 @@ public:
 	virtual ~GameState() { }
 	virtual void Unload()
 	{
-		ResourceManager::Release();
+		deviceContext->PSSetShaderResources(0, 0, nullptr);
+		deviceContext->PSSetSamplers(0, 0, nullptr);
+
+		//CameraManager::Release();
+		//ResourceManager::Release();
 	}
 	virtual bool Initialize() = 0;
 	virtual void Update(float dt) = 0;

@@ -89,4 +89,7 @@ void CameraManager::Release()
 		delete[] cameras;
 		cameras = nullptr;
 	}
+
+	numCameras = 0;
+	activeIndex = -1;
 }

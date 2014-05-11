@@ -19,6 +19,7 @@ public:
 	static void Reset();
 
 	static bool Initialize(HINSTANCE hInstance, int iconResource);
+	static void CreateGeometryBuffers();
 	static void OnResize();
 	static void Update(float dt);
 	static void Draw(float dt);

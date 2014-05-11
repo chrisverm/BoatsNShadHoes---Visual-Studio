@@ -9,7 +9,12 @@ bool GameStateManager::ChangeState(std::string id, bool immediate)
 		return false;
 
 	if (currentState != nullptr)
+	{
 		currentState->Unload();
+
+		ResourceManager::Release();
+		CameraManager::Release();
+	}
 
 	if (states[id]->Initialize())
 	{
@@ -37,9 +42,10 @@ GameState* GameStateManager::GetState(std::string id)
 
 void GameStateManager::Release()
 {
-	for (StateMap::iterator it = states.begin(); it != states.end(); it++)
+	for (StateMap::iterator it = states.begin(); it != states.end(); it = states.begin())
 	{
 		delete it->second;
+		states.erase(it->first);
 	}
 
 	ResourceManager::Release();

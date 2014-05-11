@@ -38,7 +38,7 @@ ID3D11Buffer* Game::vsPerFrameConstBuffer = nullptr;
 ID3D11Buffer* Game::vsPerSceneConstBuffer = nullptr;
 VSPerModelData* Game::vsPerModelData = new VSPerModelData();
 VSPerFrameData* Game::vsPerFrameData = new VSPerFrameData();
-VSPerSceneData* Game::vsPerSceneData =new VSPerSceneData();
+VSPerSceneData* Game::vsPerSceneData = new VSPerSceneData();
 bool Game::projChanged = false;
 
 bool Game::Initialize(HINSTANCE hInstance, int iconResource)
@@ -52,6 +52,8 @@ bool Game::Initialize(HINSTANCE hInstance, int iconResource)
 	if (!DX::Initialize(iconResource))
 		return false;
 
+	CreateGeometryBuffers();
+
 	Instructions* instructions = new Instructions(device, deviceContext);
 	Gameplay* gameplay = new Gameplay(device, deviceContext);
 	GameStateManager::AddState("Instructions", instructions);
@@ -59,6 +61,46 @@ bool Game::Initialize(HINSTANCE hInstance, int iconResource)
 	GameStateManager::ChangeState("Instructions");
 
 	return true;
+}
+
+void Game::CreateGeometryBuffers()
+{
+	// Constant buffers ----------------------------------------
+	D3D11_BUFFER_DESC vsPerFrameBufferDesc;
+	vsPerFrameBufferDesc.ByteWidth = sizeof(*vsPerFrameData);
+	vsPerFrameBufferDesc.Usage = D3D11_USAGE_DEFAULT;
+	vsPerFrameBufferDesc.BindFlags = D3D11_BIND_CONSTANT_BUFFER;
+	vsPerFrameBufferDesc.CPUAccessFlags = 0;
+	vsPerFrameBufferDesc.MiscFlags = 0;
+	vsPerFrameBufferDesc.StructureByteStride = 0;
+	HR(device->CreateBuffer(
+		&vsPerFrameBufferDesc,
+		NULL,
+		&vsPerFrameConstBuffer));
+
+	D3D11_BUFFER_DESC vsPerModelBufferDesc;
+	vsPerModelBufferDesc.ByteWidth = sizeof(*vsPerModelData);
+	vsPerModelBufferDesc.Usage = D3D11_USAGE_DEFAULT;
+	vsPerModelBufferDesc.BindFlags = D3D11_BIND_CONSTANT_BUFFER;
+	vsPerModelBufferDesc.CPUAccessFlags = 0;
+	vsPerModelBufferDesc.MiscFlags = 0;
+	vsPerModelBufferDesc.StructureByteStride = 0;
+	HR(device->CreateBuffer(
+		&vsPerModelBufferDesc,
+		NULL,
+		&vsPerModelConstBuffer));
+
+	D3D11_BUFFER_DESC vsPerSceneBufferDesc;
+	vsPerSceneBufferDesc.ByteWidth = sizeof(*vsPerSceneData);
+	vsPerSceneBufferDesc.Usage = D3D11_USAGE_DEFAULT;
+	vsPerSceneBufferDesc.BindFlags = D3D11_BIND_CONSTANT_BUFFER;
+	vsPerSceneBufferDesc.CPUAccessFlags = 0;
+	vsPerSceneBufferDesc.MiscFlags = 0;
+	vsPerSceneBufferDesc.StructureByteStride = 0;
+	HR(device->CreateBuffer(
+		&vsPerSceneBufferDesc,
+		NULL,
+		&vsPerSceneConstBuffer));
 }
 
 void Game::Release(bool local)
