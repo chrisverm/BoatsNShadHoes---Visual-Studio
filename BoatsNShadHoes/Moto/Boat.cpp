@@ -15,6 +15,8 @@ Boat::Boat(Mesh* mesh, Material* material, ID3D11RasterizerState* rasterizerStat
 	maxAccel = 2.0f;
 	friction = 0.9f;
 
+	position = XMVectorSetY(position, -0.5f);
+
 	rotation = XMVectorSetZ(rotation, 0.0f);
 	minAngleClamps = XMVectorSet(-360.0f, -360.0f, -10.0f, 0.0f) * XMConvertToRadians(1.0f); // deg * (pi / 180)
 	maxAngleClamps = XMVectorSet( 360.0f,  360.0f,  10.0f, 0.0f) * XMConvertToRadians(1.0f);

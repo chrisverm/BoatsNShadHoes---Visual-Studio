@@ -377,7 +377,7 @@ void Gameplay::LoadResources()
 
 	// Meshes -------------------------------------------
 	Resources::CreateMesh("ship", "Resources/PirateShip_obj.obj");
-	Resources::CreateMesh("quad", "Resources/water_obj.obj", Resources::GetInputLayout("Water"));
+	//Resources::CreateMesh("quad", "Resources/water_obj.obj", Resources::GetInputLayout("Water"));
 	Resources::CreateMesh("sphere", "Resources/cannonball_obj.obj");
 	Resources::CreateMesh("skybox", "Resources/cannonball_obj.obj", Resources::GetInputLayout("skybox"));
 	Resources::CreateMesh("cube", "Resources/crate_obj.obj");
@@ -414,6 +414,68 @@ void Gameplay::LoadResources()
 	coordinates->Initialize(device, Resources::GetInputLayout("PNC"));
 
 	Resources::AddMesh("coordinates", coordinates);
+
+	// And lo, on the 418th line there was more disgusting.
+	const int DIM = 10;
+	Vertex_PNU* waterTemp = new Vertex_PNU[(DIM - 1) * (DIM - 1) * 6];
+	int index = 0;
+	XMFLOAT3 offset = XMFLOAT3(DIM / 2.0f, 0, DIM / 2.0f);
+	float div = 1.0f;
+	for (int row = 0; row < DIM - 1; row++)
+	{
+		for (int col = 0; col < DIM - 1; col++)
+		{
+			/* first triangle */
+			waterTemp[index].Position	= XMFLOAT3(((float)row / div - DIM / 2.0f), 0.00f, ((float)col / div - DIM / 2.0f));
+			waterTemp[index].Normal		= XMFLOAT3(0.0f, 1.0f, 0.0f);
+			waterTemp[index].UV			= XMFLOAT2(0.0f, 0.0f);
+			index++;
+
+			waterTemp[index].Position	= XMFLOAT3(((float)row / div - DIM / 2.0f) + 1, 0.00f, ((float)col / div - DIM / 2.0f));
+			waterTemp[index].Normal		= XMFLOAT3(0.0f, 1.0f, 0.0f);
+			waterTemp[index].UV			= XMFLOAT2(1.0f, 0.0f);
+			index++;
+
+			waterTemp[index].Position	= XMFLOAT3(((float)row / div - DIM / 2.0f) + 1, 0.00f, ((float)col / div - DIM / 2.0f) + 1);
+			waterTemp[index].Normal		= XMFLOAT3(0.0f, 1.0f, 0.0f);
+			waterTemp[index].UV			= XMFLOAT2(1.0f, 1.0f);
+			index++;
+
+			/* second triangle */
+			waterTemp[index].Position	= XMFLOAT3(((float)row / div - DIM / 2.0f), 0.00f, ((float)col / div - DIM / 2.0f));
+			waterTemp[index].Normal		= XMFLOAT3(0.0f, 1.0f, 0.0f);
+			waterTemp[index].UV			= XMFLOAT2(0.0f, 0.0f);
+			index++;
+
+			waterTemp[index].Position	= XMFLOAT3(((float)row / div - DIM / 2.0f) + 1, 0.00f, ((float)col / div - DIM / 2.0f) + 1);
+			waterTemp[index].Normal		= XMFLOAT3(0.0f, 1.0f, 0.0f);
+			waterTemp[index].UV			= XMFLOAT2(1.0f, 1.0f);
+			index++;
+
+			waterTemp[index].Position	= XMFLOAT3(((float)row / div - DIM / 2.0f), 0.00f, ((float)col / div - DIM / 2.0f) + 1);
+			waterTemp[index].Normal		= XMFLOAT3(0.0f, 1.0f, 0.0f);
+			waterTemp[index].UV			= XMFLOAT2(0.0f, 1.0f);
+			index++;
+		}
+	}
+	UINT* indices2 = new UINT[(DIM - 1) * (DIM - 1) * 6];
+	for (int i = 0; i < (DIM - 1) * (DIM - 1) * 6; i++)
+	{ indices2[i] = i; }
+
+	VertexArray va;
+	va.data = waterTemp;
+	va.IndividualBytes = sizeof(Vertex_PNU);
+	va.TotalArrayBytes = sizeof(Vertex_PNU) * ((DIM - 1) * (DIM - 1) * 6);
+	va.InputLayoutName = "PNU";
+
+	Mesh* m = new Mesh(va, (DIM - 1) * (DIM - 1) * 6, indices2, (DIM - 1) * (DIM - 1) * 6, D3D_PRIMITIVE_TOPOLOGY_TRIANGLELIST);
+	m->Initialize(device, Resources::GetInputLayout(m->ILName()));
+	Resources::AddMesh("quad", m);
+
+
+	//Resources::CreateMesh("quad", "Resources/water_obj.obj", Resources::GetInputLayout("Water"));
+	int k = 0;
+	// And lo, on the __th line it did end.
 
 	// Materials -----------------------------------------
 	Resources::CreateMaterial("crate", Resources::GetSRV("crate"), Resources::GetSamplerState("MIN_MAG_POINT_MIP_LINEAR"),
@@ -510,10 +572,8 @@ void Gameplay::Update(float dt)
 	Game::vsPerFrameData->projection = CameraManager::ActiveCamera()->GetProjMatrix();
 	Game::vsPerFrameData->cameraPosition = cameraPosition;
 
-	//entities[4]->position = CameraManager::ActiveCamera()->position;
-
-	if (Game::vsPerFrameData->time > 1.0f)
-		Game::vsPerFrameData->time -= 1.0f;
+	if (Game::vsPerFrameData->time > 6.2831f)
+		Game::vsPerFrameData->time -= 6.2831f;
 
 	deviceContext->UpdateSubresource(
 		Game::vsPerFrameConstBuffer,
