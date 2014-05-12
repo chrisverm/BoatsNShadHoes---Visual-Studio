@@ -271,7 +271,7 @@ void Gameplay::LoadResources()
 
 	Resources::AddMesh("coordinates", coordinates);
 
-	// And lo, on the 418th line there was more disgusting.
+	// And lo, on this such line there was more disgusting.
 	const int DIM = 10;
 	Vertex_PNU* waterTemp = new Vertex_PNU[(DIM - 1) * (DIM - 1) * 6];
 	int index = 0;

@@ -4,7 +4,7 @@
 CannonBall::CannonBall(Mesh* mesh, Material* material, ID3D11RasterizerState* rasterizerState, ID3D11DepthStencilState* depthStencilState)
 	: MoveableEntity(mesh, material, rasterizerState, depthStencilState)
 {
-	scale *= 0.4f; // changed to 0.4f, YOU'RE WELCOME!!!
+	scale *= 0.2f; // changed to 0.2f, YOU'RE WELCOME!!!
 	maxAccel = 20000.0f;
 	maxVel = 20000.0f;
 	friction = 1.0f;

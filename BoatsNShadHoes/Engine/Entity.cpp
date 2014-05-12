@@ -114,11 +114,11 @@ void Entity::DebugRender(ID3D11DeviceContext* deviceContext)
 		if (bounds != nullptr)
 		{
 			SetConstantBuffer(deviceContext, bounds->worldMat);
-
-			deviceContext->IASetPrimitiveTopology(D3D11_PRIMITIVE_TOPOLOGY_LINESTRIP);
-
+			
 			Bounds::mat->SetShaders(deviceContext);
 			Bounds::mesh->SetBuffers(deviceContext);
+
+			deviceContext->IASetPrimitiveTopology(D3D11_PRIMITIVE_TOPOLOGY_LINESTRIP);
 
 			deviceContext->DrawIndexed(
 				Bounds::mesh->Indices(),0,0);
@@ -131,10 +131,10 @@ void Entity::DebugRender(ID3D11DeviceContext* deviceContext)
 		{
 			SetConstantBuffer(deviceContext, worldMatrix);
 
-			deviceContext->IASetPrimitiveTopology(D3D11_PRIMITIVE_TOPOLOGY_LINELIST);
-
 			coordinateMaterial->SetShaders(deviceContext);
 			coordinateMesh->SetBuffers(deviceContext);
+
+			deviceContext->IASetPrimitiveTopology(D3D11_PRIMITIVE_TOPOLOGY_LINELIST);
 
 			deviceContext->DrawIndexed(
 				coordinateMesh->Indices(),0,0);
