@@ -34,7 +34,7 @@ float3 WaveOffset(float3 inputPosition)
 	float start = (origin.x % 3.0f) * (3.1415f * 2);
 
 	float timeAngle = (start + time) * 3.1415f;
-	float amplitude = 0.5f;
+	float amplitude = 1.25f;
 	float frequency = 2.0f;
 
 	float4 newPos = float4(cos(timeAngle * 2.0f) * 0.01f,

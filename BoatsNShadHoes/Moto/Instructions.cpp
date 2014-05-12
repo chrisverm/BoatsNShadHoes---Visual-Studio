@@ -3,9 +3,7 @@
 Instructions::Instructions(ID3D11Device* device, ID3D11DeviceContext* deviceContext)
 	: GameState(device, deviceContext) { }
 
-Instructions::~Instructions() { Unload(); }
-
-void Instructions::Unload()
+Instructions::~Instructions()
 {
 	// every entity is somehow connected to this
 	// thus this will destroy all entities
@@ -14,8 +12,6 @@ void Instructions::Unload()
 		delete world;
 		world = nullptr;
 	}
-
-	GameState::Unload();
 }
 
 bool Instructions::Initialize()

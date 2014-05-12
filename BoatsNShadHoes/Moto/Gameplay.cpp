@@ -3,9 +3,7 @@
 Gameplay::Gameplay(ID3D11Device* device, ID3D11DeviceContext* deviceContext)
 	: GameState(device, deviceContext) { }
 
-Gameplay::~Gameplay() { Unload(); }
-
-void Gameplay::Unload()
+Gameplay::~Gameplay()
 {
 #ifdef SOUND_PLAY
 	alcDestroyContext(audioDeviceContext);
@@ -25,8 +23,6 @@ void Gameplay::Unload()
 		delete world;
 		world = nullptr;
 	}
-
-	GameState::Unload();
 }
 
 bool Gameplay::Initialize()

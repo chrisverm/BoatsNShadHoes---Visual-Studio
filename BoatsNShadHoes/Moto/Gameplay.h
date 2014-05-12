@@ -22,7 +22,6 @@ class Gameplay : public GameState
 public:
 	Gameplay(ID3D11Device* device, ID3D11DeviceContext* deviceContext);
 	~Gameplay();
-	void Unload();
 	bool Initialize();
 	void Update(float dt);
 	void Draw(float dt);

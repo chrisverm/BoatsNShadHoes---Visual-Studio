@@ -15,17 +15,11 @@ public:
 		this->deviceContext = deviceContext;
 	}
 	virtual ~GameState() { }
-	virtual void Unload()
-	{
-		deviceContext->PSSetShaderResources(0, 0, nullptr);
-		deviceContext->PSSetSamplers(0, 0, nullptr);
-
-		//CameraManager::Release();
-		//ResourceManager::Release();
-	}
 	virtual bool Initialize() = 0;
 	virtual void Update(float dt) = 0;
 	virtual void Draw(float dt) = 0;
+
+	void Unload() { this->~GameState(); }
 
 protected:
 	ID3D11Device* device;

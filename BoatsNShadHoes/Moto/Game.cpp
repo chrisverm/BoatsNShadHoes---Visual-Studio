@@ -52,7 +52,7 @@ bool Game::Initialize(HINSTANCE hInstance, int iconResource)
 	if (!DX::Initialize(iconResource))
 		return false;
 
-	CreateGeometryBuffers();
+	CreateConstantBuffers();
 
 	Instructions* instructions = new Instructions(device, deviceContext);
 	Gameplay* gameplay = new Gameplay(device, deviceContext);
@@ -63,7 +63,7 @@ bool Game::Initialize(HINSTANCE hInstance, int iconResource)
 	return true;
 }
 
-void Game::CreateGeometryBuffers()
+void Game::CreateConstantBuffers()
 {
 	// Constant buffers ----------------------------------------
 	D3D11_BUFFER_DESC vsPerFrameBufferDesc;
