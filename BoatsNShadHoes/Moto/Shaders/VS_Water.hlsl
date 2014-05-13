@@ -25,22 +25,24 @@ struct VertexToPixel
 
 float DegsToRads(float degrees)
 {
-	return degrees * (3.1415f / 180);
+	return degrees * (3.1415f / 180.0f);
 }
 
 float3 WaveOffset(float3 inputPosition)
 {
 	float3 origin = mul(inputPosition, world).xyz;
-	float start = (origin.x % 3.0f) * (3.1415f * 2);
+	float start = (origin.x / 150.0f) * (360);
 
-	float timeAngle = (start + time) * 3.1415f;
-	float amplitude = 1.25f;
-	float frequency = 2.0f;
+	float angle = (start + time * 200.0f) * 3.1415f;
+	float amplitude = 2.0f;
+	float frequency = 0.25f;
+	float xShift = 0.025f;
 
-	float4 newPos = float4(cos(timeAngle * 2.0f) * 0.01f,
-						   amplitude * sin(frequency * timeAngle),
-						   0.0f,
-						   0.0f);
+	angle *= frequency;
+
+	float4 newPos = float4(0, 0, 0, 0);
+	newPos.x = cos(DegsToRads(angle)) * xShift;
+	newPos.y = sin(DegsToRads(angle)) * amplitude;
 
 	return newPos;
 }
@@ -60,7 +62,7 @@ VertexToPixel main( VertexShaderInput input )
 	output.worldPos = mul(float4(input.position, 1.0f), world).xyz;
 
 	output.uv	  = input.uv;
-	output.uv.x -= time / 10.0f;
+	output.uv.x -= time / 8.0f;
 
 	output.normal = mul(input.normal, (float3x3)world);
 	output.normal = normalize(output.normal);

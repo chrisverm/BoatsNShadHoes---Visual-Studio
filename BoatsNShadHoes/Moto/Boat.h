@@ -6,6 +6,8 @@
 #include "InputManager.h"
 #include "CannonBall.h"
 
+class Game;
+
 /*
  * Basic stats that each boat will have
  */

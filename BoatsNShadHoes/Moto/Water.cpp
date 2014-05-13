@@ -6,7 +6,7 @@ Water::Water(Mesh* mesh, Material* material, ID3D11RasterizerState* rasterizerSt
 	: DrawableEntity(mesh, material, rasterizerState, depthStencilState)
 {
 	position = XMVectorSetY(position, -1);
-	scale = XMVectorSet(50,1,50,0);
+	scale = XMVectorSet(150,1,150,0);
 }
 
 Water::~Water(void)

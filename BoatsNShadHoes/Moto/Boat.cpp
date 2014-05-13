@@ -1,5 +1,6 @@
 #include "Boat.h"
 #include "InputManager.h"
+#include "Game.h"
 
 using namespace DirectX;
 Boat::Boat(Mesh* mesh, Material* material, ID3D11RasterizerState* rasterizerState, ID3D11DepthStencilState* depthStencilState, BOAT_STATS b, bool controllable) 
@@ -42,6 +43,20 @@ void Boat::Update(float dt, const XMMATRIX& parentMat)
 	{
 		// apply downward position change to sunken boat
 		position -= XMVectorSet(0.0, +0.001f, 0.0f, 0.0f);
+	}
+	else //if (controllable)
+	{
+		float start = (XMVectorGetX(position) / 150.0f) * 360;
+		float degsToRads = 3.1415f / 180.0f;
+
+		float angle = (start + Game::vsPerFrameData->time * 200) * 3.1415f;
+		float amplitude = 2.0f;
+		float frequency = 0.25f;
+
+		angle *= frequency;
+
+		float waveY = sin(angle * degsToRads) * amplitude;
+		position = XMVectorSetY(position, waveY - 0.5f);
 	}
 }
 
