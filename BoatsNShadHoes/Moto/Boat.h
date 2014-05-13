@@ -58,6 +58,8 @@ private:
 	BOAT_STATS stats;
 	bool dead, controllable;
 	std::vector<CannonBall*> cannonballs;
+
+	float GetYFromXZ(XMVECTOR pos);
 };
 
 #endif

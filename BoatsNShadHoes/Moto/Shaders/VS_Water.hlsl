@@ -31,7 +31,7 @@ float DegsToRads(float degrees)
 float3 WaveOffset(float3 inputPosition)
 {
 	float3 origin = mul(inputPosition, world).xyz;
-	float start = (origin.x / 150.0f) * (360);
+	float start = (origin.x / 150.0f) * 360;
 
 	float angle = (start + time * 200.0f) * 3.1415f;
 	float amplitude = 2.0f;
