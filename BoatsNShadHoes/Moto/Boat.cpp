@@ -1,5 +1,6 @@
 #include "Boat.h"
 #include "InputManager.h"
+#include "Game.h"
 
 using namespace DirectX;
 Boat::Boat(Mesh* mesh, Material* material, ID3D11RasterizerState* rasterizerState, ID3D11DepthStencilState* depthStencilState, BOAT_STATS b, bool controllable) 
@@ -43,6 +44,20 @@ void Boat::Update(float dt, const XMMATRIX& parentMat)
 		// apply downward position change to sunken boat
 		position -= XMVectorSet(0.0, +0.001f, 0.0f, 0.0f);
 	}
+	else //if (controllable)
+	{
+		// set boat's Y position on the water
+		float waveY  = GetYFromXZ(position);
+		position = XMVectorSetY(position, waveY - 0.5f);
+
+		// set boat's angle to appear on the water
+		float frontY = GetYFromXZ(position + forward * 3);
+		float backY  = GetYFromXZ(position - forward * 3);
+
+		XMVECTOR frontForward = XMVectorSetY(forward, frontY);
+		XMVECTOR backForward  = XMVectorSetY(-forward, backY);
+		XMVECTOR newForward = frontForward - backForward;
+	}
 }
 
 void Boat::Move(float dt)
@@ -77,6 +92,20 @@ void Boat::Move(float dt)
 	angularAcceleration = XMVectorSet(0.0f, -roll, 0.0f, 0.0f);
 	angularAcceleration = XMVector3Normalize(angularAcceleration);
 	angularAcceleration *= XMVector3Length(velocity) / 25.0f;*/
+}
+
+float Boat::GetYFromXZ(XMVECTOR pos)
+{
+	float start = (XMVectorGetX(pos) / 150.0f) * 360;
+	float degsToRads = 3.1415f / 180.0f;
+
+	float angle = (start + Game::vsPerFrameData->time * 200) * 3.1415f;
+	float amplitude = 2.0f;
+	float frequency = 0.25f;
+
+	angle *= frequency;
+
+	return sin(angle * degsToRads) * amplitude;
 }
 
 /*

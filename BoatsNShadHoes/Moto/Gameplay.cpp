@@ -268,59 +268,59 @@ void Gameplay::LoadResources()
 	Resources::AddMesh("coordinates", coordinates);
 
 	// And lo, on this such line there was more disgusting.
-	const int DIM = 10;
-	Vertex_PNU* waterTemp = new Vertex_PNU[(DIM - 1) * (DIM - 1) * 6];
+	const int DIM = 40;
+	Vertex_PNU* waterTemp = new Vertex_PNU[DIM * DIM * 6];
 	int index = 0;
 	XMFLOAT3 offset = XMFLOAT3(DIM / 2.0f, 0, DIM / 2.0f);
-	float div = 1.0f;
-	for (int row = 0; row < DIM - 1; row++)
+	float div = DIM; // prevents width/depth from being greater than 1
+	for (float row = 0; row < DIM; row++)
 	{
-		for (int col = 0; col < DIM - 1; col++)
+		for (float col = 0; col < DIM; col++)
 		{
 			/* first triangle */
-			waterTemp[index].Position	= XMFLOAT3(((float)row / div - DIM / 2.0f), 0.00f, ((float)col / div - DIM / 2.0f));
+			waterTemp[index].Position	= XMFLOAT3((col - offset.x) / div, 0.0f, (row - offset.z) / div);
 			waterTemp[index].Normal		= XMFLOAT3(0.0f, 1.0f, 0.0f);
 			waterTemp[index].UV			= XMFLOAT2(0.0f, 0.0f);
 			index++;
 
-			waterTemp[index].Position	= XMFLOAT3(((float)row / div - DIM / 2.0f) + 1, 0.00f, ((float)col / div - DIM / 2.0f));
+			waterTemp[index].Position	= XMFLOAT3((col - offset.x + 1) / div, 0.0f, (row - offset.z) / div);
 			waterTemp[index].Normal		= XMFLOAT3(0.0f, 1.0f, 0.0f);
 			waterTemp[index].UV			= XMFLOAT2(1.0f, 0.0f);
 			index++;
 
-			waterTemp[index].Position	= XMFLOAT3(((float)row / div - DIM / 2.0f) + 1, 0.00f, ((float)col / div - DIM / 2.0f) + 1);
+			waterTemp[index].Position	= XMFLOAT3((col - offset.x + 1) / div, 0.0f, (row - offset.z + 1) / div);
 			waterTemp[index].Normal		= XMFLOAT3(0.0f, 1.0f, 0.0f);
 			waterTemp[index].UV			= XMFLOAT2(1.0f, 1.0f);
 			index++;
 
 			/* second triangle */
-			waterTemp[index].Position	= XMFLOAT3(((float)row / div - DIM / 2.0f), 0.00f, ((float)col / div - DIM / 2.0f));
+			waterTemp[index].Position	= XMFLOAT3((col - offset.x) / div, 0.0f, (row - offset.z) / div);
 			waterTemp[index].Normal		= XMFLOAT3(0.0f, 1.0f, 0.0f);
 			waterTemp[index].UV			= XMFLOAT2(0.0f, 0.0f);
 			index++;
 
-			waterTemp[index].Position	= XMFLOAT3(((float)row / div - DIM / 2.0f) + 1, 0.00f, ((float)col / div - DIM / 2.0f) + 1);
+			waterTemp[index].Position	= XMFLOAT3((col - offset.x + 1) / div, 0.0f, (row - offset.z + 1) / div);
 			waterTemp[index].Normal		= XMFLOAT3(0.0f, 1.0f, 0.0f);
 			waterTemp[index].UV			= XMFLOAT2(1.0f, 1.0f);
 			index++;
 
-			waterTemp[index].Position	= XMFLOAT3(((float)row / div - DIM / 2.0f), 0.00f, ((float)col / div - DIM / 2.0f) + 1);
+			waterTemp[index].Position	= XMFLOAT3((col - offset.x) / div, 0.0f, (row - offset.z + 1) / div);
 			waterTemp[index].Normal		= XMFLOAT3(0.0f, 1.0f, 0.0f);
 			waterTemp[index].UV			= XMFLOAT2(0.0f, 1.0f);
 			index++;
 		}
 	}
-	UINT* indices2 = new UINT[(DIM - 1) * (DIM - 1) * 6];
-	for (int i = 0; i < (DIM - 1) * (DIM - 1) * 6; i++)
+	UINT* indices2 = new UINT[DIM * DIM * 6];
+	for (int i = 0; i < DIM * DIM * 6; i++)
 	{ indices2[i] = i; }
 
 	VertexArray va;
 	va.data = waterTemp;
 	va.IndividualBytes = sizeof(Vertex_PNU);
-	va.TotalArrayBytes = sizeof(Vertex_PNU) * ((DIM - 1) * (DIM - 1) * 6);
+	va.TotalArrayBytes = sizeof(Vertex_PNU) * (DIM * DIM * 6);
 	va.InputLayoutName = "PNU";
 
-	Mesh* m = new Mesh(va, (DIM - 1) * (DIM - 1) * 6, indices2, (DIM - 1) * (DIM - 1) * 6, D3D_PRIMITIVE_TOPOLOGY_TRIANGLELIST);
+	Mesh* m = new Mesh(va, DIM * DIM * 6, indices2, DIM * DIM * 6, D3D_PRIMITIVE_TOPOLOGY_TRIANGLELIST);
 	m->Initialize(device, Resources::GetInputLayout(m->ILName()));
 	Resources::AddMesh("quad", m);
 
@@ -531,8 +531,8 @@ void Gameplay::Update(float dt)
 	Game::vsPerFrameData->projection = CameraManager::ActiveCamera()->GetProjMatrix();
 	Game::vsPerFrameData->cameraPosition = cameraPosition;
 
-	if (Game::vsPerFrameData->time > 6.2831f)
-		Game::vsPerFrameData->time -= 6.2831f;
+	if (Game::vsPerFrameData->time >= D3D11_FLOAT32_MAX)
+		Game::vsPerFrameData->time -= D3D11_FLOAT32_MAX;
 
 	deviceContext->UpdateSubresource(
 		Game::vsPerFrameConstBuffer,

@@ -10,6 +10,7 @@ class Game : public DX
 {
 	friend class Instructions;
 	friend class Gameplay;
+	friend class Boat;
 public:
 	// Main game loop
 	static int Run();

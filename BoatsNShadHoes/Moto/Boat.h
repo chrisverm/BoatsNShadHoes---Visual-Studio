@@ -6,6 +6,8 @@
 #include "InputManager.h"
 #include "CannonBall.h"
 
+class Game;
+
 /*
  * Basic stats that each boat will have
  */
@@ -56,6 +58,8 @@ private:
 	BOAT_STATS stats;
 	bool dead, controllable;
 	std::vector<CannonBall*> cannonballs;
+
+	float GetYFromXZ(XMVECTOR pos);
 };
 
 #endif
