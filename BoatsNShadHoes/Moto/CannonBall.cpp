@@ -1,5 +1,5 @@
 #include "CannonBall.h"
-
+#include "Game.h"
 
 CannonBall::CannonBall(Mesh* mesh, Material* material, ID3D11RasterizerState* rasterizerState, ID3D11DepthStencilState* depthStencilState)
 	: MoveableEntity(mesh, material, rasterizerState, depthStencilState)
@@ -9,6 +9,8 @@ CannonBall::CannonBall(Mesh* mesh, Material* material, ID3D11RasterizerState* ra
 	maxVel = 20000.0f;
 	friction = 1.0f;
 	active = false;
+	
+	bounds = new Bounds(&position, XMFLOAT2(1,1));
 }
 
 CannonBall::~CannonBall(void)
@@ -27,12 +29,6 @@ void CannonBall::SetVelocity(XMVECTOR value)
  */
 bool CannonBall::Active() const { return active; }
 
-void CannonBall::Initialize(ID3D11Buffer* modelConstBuffer, VSPerModelData* modelConstBufferData)
-{
-	MoveableEntity::Initialize(modelConstBuffer, modelConstBufferData);
-}
-
-#include <iostream>
 void CannonBall::Update(float dt, const XMMATRIX& parentMat)
 {
 	//active = (XMVectorGetY(position) >= -2.5f); // is cannonball is below the waterline
@@ -42,16 +38,35 @@ void CannonBall::Update(float dt, const XMMATRIX& parentMat)
 
 	acceleration += XMVectorSet(0.0f, -9.81f, 0.0f, 0.0f);
 
-	if(XMVectorGetY(position) <= -2.5f)
-		active = false;
-
 	MoveableEntity::Update(dt, parentMat);
+
+	if (XMVectorGetY(position) <= GetYFromXZ(position, Game::vsPerFrameData->time) - 2)
+	{ active = false; printf("Play splash! \n"); }
+
+	if (bounds->Intersecting(target->GetBoundsPtr()))
+	{ target->Hit(damage); active = false; }
 }
 
-void CannonBall::Fire(XMVECTOR position, XMVECTOR direction)
+void CannonBall::Fire(XMVECTOR position, XMVECTOR direction, Hittable* target, float damage)
 {
+	this->damage = damage;
+	this->target = target;
 	this->position = position;
 	this->velocity = direction * 10;
 
 	active = true;
+}
+
+float CannonBall::GetYFromXZ(XMVECTOR pos, float time)
+{
+	float start = (XMVectorGetX(pos) / 150.0f) * 360;
+	float degsToRads = 3.1415f / 180.0f;
+
+	float angle = (start + time * 200) * 3.1415f;
+	float amplitude = 2.0f;
+	float frequency = 0.25f;
+
+	angle *= frequency;
+
+	return sin(angle * degsToRads) * amplitude;
 }

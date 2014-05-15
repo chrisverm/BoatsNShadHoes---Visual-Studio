@@ -214,8 +214,11 @@ bool Boat::Fire(Boat* target)
 	{
 		if(!cannonballs[i]->Active())
 		{
-			cannonballs[i]->Fire(this->position, (this->right + this->up));
-			target->TakeDamage(stats.damage);
+			cannonballs[i]->Fire(this->position + this->up * 2, (this->right + this->up), target, stats.damage);
+			//target->TakeDamage(stats.damage);
+			
+			std::cout << Ammunition() << std::endl;
+			printf("Play Cannon Fire\n");
 
 			// successfully fired!
 			return true;
@@ -241,3 +244,14 @@ void Boat::TakeDamage(float amnt)
 	if(stats.health <= 0)
 		dead = true;
 }
+
+
+void Boat::Hit(float damage)
+{
+	TakeDamage(damage);
+	std::cout << "Other boat's hp left: " << Health() << std::endl;
+	printf("Play cannonball hit!\n");
+}
+
+Bounds* Boat::GetBoundsPtr()
+{ return bounds; }

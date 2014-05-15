@@ -2,6 +2,7 @@
 #define BOAT_H
 
 #include "MoveableEntity.h"
+#include "Hittable.h"
 #include "ResourceManager.h"
 #include "InputManager.h"
 #include "CannonBall.h"
@@ -27,7 +28,7 @@ struct BOAT_STATS
 	~BOAT_STATS() {}
 };
 
-class Boat : public MoveableEntity
+class Boat : public MoveableEntity, public Hittable
 {
 public:
 	Boat(Mesh*, Material*, ID3D11RasterizerState*, ID3D11DepthStencilState*, BOAT_STATS, bool controllable);
@@ -35,6 +36,9 @@ public:
 
 	void Initialize(ID3D11Buffer* modelConstBuffer, VSPerModelData* modelConstBufferData);
 	void Update(float dt, const XMMATRIX& parentMat);
+
+	void Hit(float);
+	Bounds* GetBoundsPtr();
 
 	void Move(float dt);
 

@@ -554,14 +554,8 @@ void Gameplay::Update(float dt)
 		// Boat 1 fires at Boat 2
 		playerBoat->Fire(otherBoat);
 
-		// cannonball
-		//dynamic_cast<CannonBall*>(entities[3])->Fire(entities[0]->position, 
-			//(entities[0]->Right + entities[0]->Up));
-
 		// text updates
 		std::cout << "Boat 1 fire() called!" << std::endl;
-		std::cout << "Boat 1 ammo left: " << playerBoat->Ammunition() << std::endl;
-		std::cout << "Boat 2 hp left: " << otherBoat->Health() << std::endl;
 	}
 	
 	world->Update(dt, XMMatrixIdentity());

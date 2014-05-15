@@ -11,6 +11,7 @@ class Game : public DX
 	friend class Instructions;
 	friend class Gameplay;
 	friend class Boat;
+	friend class CannonBall;
 public:
 	// Main game loop
 	static int Run();
