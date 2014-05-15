@@ -2,7 +2,7 @@
 #include "InputManager.h"
 #include "Game.h"
 
-using namespace DirectX;
+//using namespace DirectX;
 Boat::Boat(Mesh* mesh, Material* material, ID3D11RasterizerState* rasterizerState, ID3D11DepthStencilState* depthStencilState, BOAT_STATS b, bool controllable) 
 	: MoveableEntity(mesh, material, rasterizerState, depthStencilState)
 { 
@@ -37,8 +37,6 @@ void Boat::Update(float dt, const XMMATRIX& parentMat)
 {
 	if (controllable) Move(dt);
 
-	MoveableEntity::Update(dt, parentMat);
-
 	if (IsDead())
 	{
 		// apply downward position change to sunken boat
@@ -57,7 +55,12 @@ void Boat::Update(float dt, const XMMATRIX& parentMat)
 		XMVECTOR frontForward = XMVectorSetY(forward, frontY);
 		XMVECTOR backForward  = XMVectorSetY(-forward, backY);
 		XMVECTOR newForward = frontForward - backForward;
+
+		float angle = sin(XMVectorGetY(newForward) * (3.1415f / 180) / XMVectorGetX(XMVector3Length(newForward)));
+		rotation = XMVectorSetX(rotation, -angle * 15);
 	}
+
+	MoveableEntity::Update(dt, parentMat);
 }
 
 void Boat::Move(float dt)
