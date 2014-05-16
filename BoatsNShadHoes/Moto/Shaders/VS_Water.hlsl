@@ -28,6 +28,11 @@ float DegsToRads(float degrees)
 	return degrees * (3.1415f / 180.0f);
 }
 
+float Mod(float num, float mod)
+{
+	return num - mod * floor(num / mod);
+}
+
 float3 WaveOffset(float3 inputPosition)
 {
 	float3 origin = mul(inputPosition, world).xyz;
@@ -40,11 +45,40 @@ float3 WaveOffset(float3 inputPosition)
 
 	angle *= frequency;
 
-	float4 newPos = float4(0, 0, 0, 0);
-	newPos.x = cos(DegsToRads(angle)) * xShift;
-	newPos.y = sin(DegsToRads(angle)) * amplitude;
+	float waveX = cos(DegsToRads(angle)) * xShift;
+	float waveY = sin(DegsToRads(angle)) * amplitude;
 
-	return newPos;
+	return float3(waveX, waveY, inputPosition.z);
+}
+
+float3 WaveNormal(float3 inputPosition, float3 waveOffset)
+{
+	float3 origin = mul(inputPosition, world).xyz;
+	float start = (origin.x / 150.0f) * 360;
+
+	float angle = (start + time * 200.0f) * 3.1415f;
+	float amplitude = 2.0f;
+	float frequency = 0.25f;
+	float xShift = 0.025f;
+
+	angle *= frequency;
+
+	angle = Mod(angle, 360);
+
+	float diff = 1.0f;
+
+	float2 frontPos = float2(origin.x, origin.y);
+	frontPos.x = +20;
+	frontPos.y += sin(DegsToRads(angle + diff)) * amplitude;
+
+	float2 backPos = float2(origin.x, origin.y);
+	backPos.x = -20;
+	backPos.y += sin(DegsToRads(angle - diff)) * amplitude;
+
+	float2 norm = frontPos - backPos;
+	float3 retNorm = float3(-norm.y, norm.x, 0);
+
+	return float3(-norm.y, norm.x, 0);
 }
 
 // The entry point for our vertex shader
@@ -56,15 +90,17 @@ VertexToPixel main( VertexShaderInput input )
 	VertexToPixel output;
 
 	// Calculate output position
-	input.position += WaveOffset(input.position);
+	float4 position = float4(input.position + WaveOffset(input.position), 1.0f);
 
-	output.position = mul(float4(input.position, 1.0f), worldViewProj);
-	output.worldPos = mul(float4(input.position, 1.0f), world).xyz;
+	output.position = mul(position, worldViewProj);
+	output.worldPos = mul(position, world).xyz;
 
 	output.uv	  = input.uv;
 	output.uv.x -= time / 8.0f;
 
-	output.normal = mul(input.normal, (float3x3)world);
+	float3 normal = WaveNormal(input.position, position);
+
+	output.normal = mul(normal, (float3x3)world);
 	output.normal = normalize(output.normal);
 
 	output.pntLights = pntLights;
