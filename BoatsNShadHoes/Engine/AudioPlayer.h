@@ -46,6 +46,7 @@ public:
 	void changePitch(float);
 	void updatePosition();
 	void changeVelocity(float, float=0.0f, float=0.0f);
+	void setPosition(float, float, float);
 
 	// Control playing
 	void pause();
@@ -53,6 +54,7 @@ public:
 	void rewind();
 	void start();
 	void stop();
+	bool playing();
 };
 
 #endif

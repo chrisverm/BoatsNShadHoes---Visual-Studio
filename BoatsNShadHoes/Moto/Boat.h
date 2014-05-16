@@ -57,6 +57,9 @@ public:
 	void StarboardHelm();
 	bool Fire(Boat*); // testing purposes!
 	void TakeDamage(float);
+	
+	static std::vector<AudioPlayer*> hitSounds;
+	static std::vector<AudioPlayer*> fireSounds;
 
 private:
 	BOAT_STATS stats;
@@ -64,6 +67,9 @@ private:
 	std::vector<CannonBall*> cannonballs;
 
 	float GetYFromXZ(XMVECTOR pos);
+
+	void PlayCannonFire();
+	void PlayHitSound();
 };
 
 #endif

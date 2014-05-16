@@ -185,3 +185,13 @@ void AudioPlayer::stop()
 	alSourceStop(source);
 	alGetSourcei(source, AL_SOURCE_STATE, &state);
 }
+
+bool AudioPlayer::playing()
+{
+	return this->state == AL_PLAYING;
+}
+
+void AudioPlayer::setPosition(float x, float y, float z)
+{
+
+}

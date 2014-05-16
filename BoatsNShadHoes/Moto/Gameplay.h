@@ -1,6 +1,8 @@
 #ifndef GAMEPLAY_H
 #define GAMEPLAY_H
 
+#define SOUND_PLAY
+
 #include <vector>
 #include "WICTextureLoader.h"
 #include "DDSTextureLoader.h"
@@ -39,6 +41,7 @@ private:
 	ALCdevice* audioDevice;
 	ALCcontext* audioDeviceContext;
 	AudioPlayer* main_bgm;
+	std::map<std::string, AudioPlayer*> sounds;
 
 	bool viewChanged;
 

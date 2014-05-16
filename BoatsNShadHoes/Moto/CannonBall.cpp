@@ -1,6 +1,8 @@
 #include "CannonBall.h"
 #include "Game.h"
 
+std::vector<AudioPlayer*> CannonBall::splashes;
+
 CannonBall::CannonBall(Mesh* mesh, Material* material, ID3D11RasterizerState* rasterizerState, ID3D11DepthStencilState* depthStencilState)
 	: MoveableEntity(mesh, material, rasterizerState, depthStencilState)
 {
@@ -41,7 +43,13 @@ void CannonBall::Update(float dt, const XMMATRIX& parentMat)
 	MoveableEntity::Update(dt, parentMat);
 
 	if (XMVectorGetY(position) <= GetYFromXZ(position, Game::vsPerFrameData->time) - 2)
-	{ active = false; printf("Play splash! \n"); }
+	{
+		active = false; 
+		printf("Play splash! \n");
+#if defined SOUND_PLAY
+		PlaySplash();
+#endif
+	}
 
 	if (bounds->Intersecting(target->GetBoundsPtr()))
 	{ target->Hit(damage); active = false; }
@@ -69,4 +77,23 @@ float CannonBall::GetYFromXZ(XMVECTOR pos, float time)
 	angle *= frequency;
 
 	return sin(angle * degsToRads) * amplitude;
+}
+
+void CannonBall::PlaySplash()
+{
+	bool found = false;
+	while (!found)
+	{ 
+		int index = rand() % splashes.size();
+		if (!splashes[index]->playing())
+		{
+			found = true;
+
+			XMFLOAT3 blah;
+			XMStoreFloat3(&blah, position);
+
+			splashes[index]->play();
+			splashes[index]->setPosition(blah.x, blah.y, blah.z);
+		}
+	}
 }

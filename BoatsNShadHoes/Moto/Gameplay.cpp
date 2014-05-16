@@ -14,6 +14,9 @@ Gameplay::~Gameplay()
 		delete main_bgm;
 		main_bgm = nullptr;
 	}
+
+	for (std::map<std::string, AudioPlayer*>::iterator it = sounds.begin(); it != sounds.end(); it = sounds.begin())
+	{ delete it->second; sounds.erase(it->first); }
 #endif
 
 	// every entity is somehow connected to this
@@ -163,17 +166,42 @@ bool Gameplay::Initialize()
 	camDesc.Roll = STATIC;
 	CameraManager::CreateNewCamera(&camDesc, true);
 
+	
 
 #ifdef SOUND_PLAY
 	// AL setup --------------------------------~^^~-----
-	setupAudio();
+	SetupAudio();
 
 	// Audio ---------------------d[-_-]b-----------------
-	main_bgm = new AudioPlayer("Resources/Zedd-Clarity_BGM.ogg");
+	//main_bgm = new AudioPlayer("Resources/Zedd-Clarity_BGM.ogg");
 
-	main_bgm->init();
+	Boat::hitSounds.push_back(sounds["Hit1"] = new AudioPlayer("Resources/Hit1.wav"));
+	Boat::hitSounds.push_back(sounds["Hit2"] = new AudioPlayer("Resources/Hit2.wav"));
+	Boat::hitSounds.push_back(sounds["Hit3"] = new AudioPlayer("Resources/Hit3.wav"));
+	Boat::hitSounds.push_back(sounds["Hit4"] = new AudioPlayer("Resources/Hit4.wav"));
+	Boat::hitSounds.push_back(sounds["Hit5"] = new AudioPlayer("Resources/Hit5.wav"));
+	Boat::hitSounds.push_back(sounds["Hit6"] = new AudioPlayer("Resources/Hit6.wav"));
+	Boat::hitSounds.push_back(sounds["Hit7"] = new AudioPlayer("Resources/Hit7.wav"));
+	Boat::hitSounds.push_back(sounds["Hit8"] = new AudioPlayer("Resources/Hit8.wav"));
+	Boat::hitSounds.push_back(sounds["Hit9"] = new AudioPlayer("Resources/Hit9.wav"));
+	
+	Boat::fireSounds.push_back(sounds["Fire1"] = new AudioPlayer("Resources/CannonFire1.wav"));
+	Boat::fireSounds.push_back(sounds["Fire2"] = new AudioPlayer("Resources/CannonFire2.wav"));
+	Boat::fireSounds.push_back(sounds["Fire3"] = new AudioPlayer("Resources/CannonFire3.wav"));
+
+	CannonBall::splashes.push_back(sounds["Splash1"] = new AudioPlayer("Resources/Splash1.wav"));
+	CannonBall::splashes.push_back(sounds["Splash2"] = new AudioPlayer("Resources/Splash2.wav"));
+	CannonBall::splashes.push_back(sounds["Splash3"] = new AudioPlayer("Resources/Splash1.wav"));
+	CannonBall::splashes.push_back(sounds["Splash4"] = new AudioPlayer("Resources/Splash2.wav"));
+	CannonBall::splashes.push_back(sounds["Splash5"] = new AudioPlayer("Resources/Splash1.wav"));
+	CannonBall::splashes.push_back(sounds["Splash6"] = new AudioPlayer("Resources/Splash1.wav"));
+
+	for (std::map<std::string, AudioPlayer*>::iterator it = sounds.begin(); it != sounds.end(); it++)
+	{ it->second->init(); }
+
+	//main_bgm->init();
 	//main_bgm->generateBufferData();
-	main_bgm->setLooping(AL_TRUE);
+	//main_bgm->setLooping(AL_TRUE);
 #endif
 
 	// Lighting Setup ----------------------------------
@@ -566,16 +594,16 @@ void Gameplay::Update(float dt)
 #if defined(SOUND_PLAY)
 	if (Input::KeyUp('G'))
 	{
-		main_bgm->start();
+		//main_bgm->start();
 	}
 	// change velocity of audio
 	if (Input::KeyUp('Q'))
 	{
-		main_bgm->changeVelocity(-0.0001f);
+		//main_bgm->changeVelocity(-0.0001f);
 	}
 	if (Input::KeyUp('W'))
 	{
-		main_bgm->changeVelocity(+0.0001f);
+		//main_bgm->changeVelocity(+0.0001f);
 	}
 #endif
 
@@ -583,9 +611,14 @@ void Gameplay::Update(float dt)
 #ifdef SOUND_PLAY
 	// updating audio source based on listener position
 	float listenerPos[3];
+	listenerPos[0] = cameraPosition.x;
+	listenerPos[1] = cameraPosition.y;
+	listenerPos[2] = cameraPosition.z;
 	alGetListenerfv(AL_POSITION, listenerPos);
-	main_bgm->updateGain(listenerPos);
-	main_bgm->update();
+	for (std::map<std::string, AudioPlayer*>::iterator it = sounds.begin(); it != sounds.end(); it++)
+	{ it->second->updateGain(listenerPos);  }
+	//main_bgm->updateGain(listenerPos);
+	//main_bgm->update();
 #endif
 
 #if defined(DEBUG) | defined(_DEBUG)

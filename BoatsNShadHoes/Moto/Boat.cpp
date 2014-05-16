@@ -2,6 +2,8 @@
 #include "InputManager.h"
 #include "Game.h"
 
+std::vector<AudioPlayer*> Boat::hitSounds;
+std::vector<AudioPlayer*> Boat::fireSounds;
 //using namespace DirectX;
 Boat::Boat(Mesh* mesh, Material* material, ID3D11RasterizerState* rasterizerState, ID3D11DepthStencilState* depthStencilState, BOAT_STATS b, bool controllable) 
 	: MoveableEntity(mesh, material, rasterizerState, depthStencilState)
@@ -217,9 +219,11 @@ bool Boat::Fire(Boat* target)
 			cannonballs[i]->Fire(this->position + this->up * 2, (this->right + this->up), target, stats.damage);
 			//target->TakeDamage(stats.damage);
 			
-			std::cout << Ammunition() << std::endl;
+			std::cout << "Ammunition remaining : " << Ammunition() << std::endl;
 			printf("Play Cannon Fire\n");
-
+#if defined SOUND_PLAY
+			PlayCannonFire();
+#endif
 			// successfully fired!
 			return true;
 		}
@@ -251,7 +255,50 @@ void Boat::Hit(float damage)
 	TakeDamage(damage);
 	std::cout << "Other boat's hp left: " << Health() << std::endl;
 	printf("Play cannonball hit!\n");
+#if defined SOUND_PLAY
+	PlayHitSound();
+#endif
 }
+
 
 Bounds* Boat::GetBoundsPtr()
 { return bounds; }
+
+void Boat::PlayCannonFire()
+{
+	bool found = false;
+	while (!found)
+	{ 
+		int index = rand() % fireSounds.size();
+		if (!fireSounds[index]->playing())
+		{
+			found = true;
+
+			XMFLOAT3 blah;
+			XMStoreFloat3(&blah, position);
+
+			fireSounds[index]->play();
+			fireSounds[index]->setPosition(blah.x, blah.y, blah.z);
+		}
+	}
+}
+
+void Boat::PlayHitSound()
+{
+	bool found = false;
+	while (!found)
+	{ 
+		int index = rand() % hitSounds.size();
+
+		if (!hitSounds[index]->playing())
+		{
+			found = true;
+
+			XMFLOAT3 blah;
+			XMStoreFloat3(&blah, position);
+
+			hitSounds[index]->play();
+			hitSounds[index]->setPosition(blah.x, blah.y, blah.z);
+		}
+	}
+}

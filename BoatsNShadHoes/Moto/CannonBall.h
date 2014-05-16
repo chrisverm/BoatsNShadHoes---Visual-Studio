@@ -4,6 +4,7 @@
 #include "MoveableEntity.h"
 #include "Hittable.h"
 #include "ResourceManager.h"
+#include "AudioPlayer.h"
 
 class Game;
 
@@ -20,6 +21,8 @@ public:
 
 	void Fire(XMVECTOR position, XMVECTOR acceleration, Hittable* target, float damage);
 
+	static std::vector<AudioPlayer*> splashes;
+
 private:
 	bool active;
 	float damage;
@@ -27,5 +30,7 @@ private:
 	Hittable* target;
 
 	float GetYFromXZ(XMVECTOR pos, float time);
+	void PlaySplash();
+
 };
 #endif
