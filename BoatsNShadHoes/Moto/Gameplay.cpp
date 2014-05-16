@@ -8,15 +8,15 @@ Gameplay::~Gameplay()
 #ifdef SOUND_PLAY
 	alcDestroyContext(audioDeviceContext);
 	alcCloseDevice(audioDevice);
-
-	if (main_bgm != nullptr)
-	{
-		delete main_bgm;
-		main_bgm = nullptr;
+	
+	for (std::map<std::string, AudioPlayer*>::iterator it = sounds.begin(); it != sounds.end(); it++)
+	{ 
+		if (it->second != nullptr)
+		{
+			delete it->second; 
+		}
 	}
-
-	for (std::map<std::string, AudioPlayer*>::iterator it = sounds.begin(); it != sounds.end(); it = sounds.begin())
-	{ delete it->second; sounds.erase(it->first); }
+	sounds.clear();
 #endif
 
 	// every entity is somehow connected to this
@@ -173,8 +173,6 @@ bool Gameplay::Initialize()
 	SetupAudio();
 
 	// Audio ---------------------d[-_-]b-----------------
-	//main_bgm = new AudioPlayer("Resources/Zedd-Clarity_BGM.ogg");
-
 	Boat::hitSounds.push_back(sounds["Hit1"] = new AudioPlayer("Resources/Hit1.wav"));
 	Boat::hitSounds.push_back(sounds["Hit2"] = new AudioPlayer("Resources/Hit2.wav"));
 	Boat::hitSounds.push_back(sounds["Hit3"] = new AudioPlayer("Resources/Hit3.wav"));
@@ -196,12 +194,13 @@ bool Gameplay::Initialize()
 	CannonBall::splashes.push_back(sounds["Splash5"] = new AudioPlayer("Resources/Splash1.wav"));
 	CannonBall::splashes.push_back(sounds["Splash6"] = new AudioPlayer("Resources/Splash1.wav"));
 
+	main_bgm = sounds["Ambience"] = new AudioPlayer("Resources/Ambience.ogg");
+
 	for (std::map<std::string, AudioPlayer*>::iterator it = sounds.begin(); it != sounds.end(); it++)
 	{ it->second->init(); }
-
-	//main_bgm->init();
-	//main_bgm->generateBufferData();
-	//main_bgm->setLooping(AL_TRUE);
+	
+	main_bgm->setLooping(AL_TRUE);
+	main_bgm->play();
 #endif
 
 	// Lighting Setup ----------------------------------
@@ -591,23 +590,6 @@ void Gameplay::Update(float dt)
 	if (Bounds::Intersecting(playerBoat->bounds, otherBoat->bounds))
 		printf("Boat Collision! \n");
 
-#if defined(SOUND_PLAY)
-	if (Input::KeyUp('G'))
-	{
-		//main_bgm->start();
-	}
-	// change velocity of audio
-	if (Input::KeyUp('Q'))
-	{
-		//main_bgm->changeVelocity(-0.0001f);
-	}
-	if (Input::KeyUp('W'))
-	{
-		//main_bgm->changeVelocity(+0.0001f);
-	}
-#endif
-
-
 #ifdef SOUND_PLAY
 	// updating audio source based on listener position
 	float listenerPos[3];
@@ -617,8 +599,6 @@ void Gameplay::Update(float dt)
 	alGetListenerfv(AL_POSITION, listenerPos);
 	for (std::map<std::string, AudioPlayer*>::iterator it = sounds.begin(); it != sounds.end(); it++)
 	{ it->second->updateGain(listenerPos); it->second->update(); }
-	//main_bgm->updateGain(listenerPos);
-	//main_bgm->update();
 #endif
 
 #if defined(DEBUG) | defined(_DEBUG)
