@@ -68,11 +68,11 @@ float3 WaveNormal(float3 inputPosition, float3 waveOffset)
 	float diff = 1.0f;
 
 	float2 frontPos = float2(origin.x, origin.y);
-	frontPos.x = +20;
+	frontPos.x = +40;
 	frontPos.y += sin(DegsToRads(angle + diff)) * amplitude;
 
 	float2 backPos = float2(origin.x, origin.y);
-	backPos.x = -20;
+	backPos.x = -40;
 	backPos.y += sin(DegsToRads(angle - diff)) * amplitude;
 
 	float2 norm = frontPos - backPos;
