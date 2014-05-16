@@ -296,7 +296,7 @@ void Gameplay::LoadResources()
 
 	// And lo, on this such line there was more disgusting.
 	const int DIM = 40;
-	Vertex_PNU* waterTemp = new Vertex_PNU[DIM * DIM * 6];
+	Vertex_Water* waterTemp = new Vertex_Water[DIM * DIM * 6];
 	int index = 0;
 	XMFLOAT3 offset = XMFLOAT3(DIM / 2.0f, 0, DIM / 2.0f);
 	float div = DIM; // prevents width/depth from being greater than 1
@@ -305,36 +305,14 @@ void Gameplay::LoadResources()
 		for (float col = 0; col < DIM; col++)
 		{
 			/* first triangle */
-			waterTemp[index].Position	= XMFLOAT3((col - offset.x) / div, 0.0f, (row - offset.z) / div);
-			waterTemp[index].Normal		= XMFLOAT3(0.0f, 1.0f, 0.0f);
-			waterTemp[index].UV			= XMFLOAT2(0.0f, 0.0f);
-			index++;
-
-			waterTemp[index].Position	= XMFLOAT3((col - offset.x + 1) / div, 0.0f, (row - offset.z) / div);
-			waterTemp[index].Normal		= XMFLOAT3(0.0f, 1.0f, 0.0f);
-			waterTemp[index].UV			= XMFLOAT2(1.0f, 0.0f);
-			index++;
-
-			waterTemp[index].Position	= XMFLOAT3((col - offset.x + 1) / div, 0.0f, (row - offset.z + 1) / div);
-			waterTemp[index].Normal		= XMFLOAT3(0.0f, 1.0f, 0.0f);
-			waterTemp[index].UV			= XMFLOAT2(1.0f, 1.0f);
-			index++;
+			waterTemp[index++].Position	= XMFLOAT3((col - offset.x) / div, 0.0f, (row - offset.z) / div);
+			waterTemp[index++].Position	= XMFLOAT3((col - offset.x + 1) / div, 0.0f, (row - offset.z) / div);
+			waterTemp[index++].Position	= XMFLOAT3((col - offset.x + 1) / div, 0.0f, (row - offset.z + 1) / div);
 
 			/* second triangle */
-			waterTemp[index].Position	= XMFLOAT3((col - offset.x) / div, 0.0f, (row - offset.z) / div);
-			waterTemp[index].Normal		= XMFLOAT3(0.0f, 1.0f, 0.0f);
-			waterTemp[index].UV			= XMFLOAT2(0.0f, 0.0f);
-			index++;
-
-			waterTemp[index].Position	= XMFLOAT3((col - offset.x + 1) / div, 0.0f, (row - offset.z + 1) / div);
-			waterTemp[index].Normal		= XMFLOAT3(0.0f, 1.0f, 0.0f);
-			waterTemp[index].UV			= XMFLOAT2(1.0f, 1.0f);
-			index++;
-
-			waterTemp[index].Position	= XMFLOAT3((col - offset.x) / div, 0.0f, (row - offset.z + 1) / div);
-			waterTemp[index].Normal		= XMFLOAT3(0.0f, 1.0f, 0.0f);
-			waterTemp[index].UV			= XMFLOAT2(0.0f, 1.0f);
-			index++;
+			waterTemp[index++].Position	= XMFLOAT3((col - offset.x) / div, 0.0f, (row - offset.z) / div);
+			waterTemp[index++].Position	= XMFLOAT3((col - offset.x + 1) / div, 0.0f, (row - offset.z + 1) / div);
+			waterTemp[index++].Position	= XMFLOAT3((col - offset.x) / div, 0.0f, (row - offset.z + 1) / div);
 		}
 	}
 	UINT* indices2 = new UINT[DIM * DIM * 6];
@@ -343,9 +321,9 @@ void Gameplay::LoadResources()
 
 	VertexArray va;
 	va.data = waterTemp;
-	va.IndividualBytes = sizeof(Vertex_PNU);
-	va.TotalArrayBytes = sizeof(Vertex_PNU) * (DIM * DIM * 6);
-	va.InputLayoutName = "PNU";
+	va.IndividualBytes = sizeof(Vertex_Water);
+	va.TotalArrayBytes = sizeof(Vertex_Water) * (DIM * DIM * 6);
+	va.InputLayoutName = "Water";
 
 	Mesh* m = new Mesh(va, DIM * DIM * 6, indices2, DIM * DIM * 6, D3D_PRIMITIVE_TOPOLOGY_TRIANGLELIST);
 	m->Initialize(device, Resources::GetInputLayout(m->ILName()));

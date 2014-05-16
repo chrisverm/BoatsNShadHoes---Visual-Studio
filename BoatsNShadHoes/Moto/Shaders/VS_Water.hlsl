@@ -5,9 +5,6 @@
 struct VertexShaderInput
 {
 	float3 position	: POSITION0;
-	float3 normal	: NORMAL0;
-	float2 uv		: TEXCOORD0;
-	float3 offset	: POSITION1;
 };
 
 // Defines the output data of our vertex shader
@@ -68,11 +65,11 @@ float3 WaveNormal(float3 inputPosition, float3 waveOffset)
 	float diff = 1.0f;
 
 	float2 frontPos = float2(origin.x, origin.y);
-	frontPos.x = +40;
+	frontPos.x = +30;
 	frontPos.y += sin(DegsToRads(angle + diff)) * amplitude;
 
 	float2 backPos = float2(origin.x, origin.y);
-	backPos.x = -40;
+	backPos.x = -30;
 	backPos.y += sin(DegsToRads(angle - diff)) * amplitude;
 
 	float2 norm = frontPos - backPos;
@@ -95,11 +92,13 @@ VertexToPixel main( VertexShaderInput input )
 	output.position = mul(position, worldViewProj);
 	output.worldPos = mul(position, world).xyz;
 
-	output.uv	  = input.uv;
+	float2 uv = float2(0, 0);
+	uv.x = (input.position.x * 150.0f) / 8.0f;
+	uv.y = (input.position.z * 150.0f) / 8.0f;
+	output.uv	  = uv;
 	output.uv.x -= time / 8.0f;
 
 	float3 normal = WaveNormal(input.position, position);
-
 	output.normal = mul(normal, (float3x3)world);
 	output.normal = normalize(output.normal);
 
