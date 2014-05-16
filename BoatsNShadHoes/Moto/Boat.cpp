@@ -249,7 +249,6 @@ void Boat::TakeDamage(float amnt)
 		dead = true;
 }
 
-
 void Boat::Hit(float damage)
 {
 	TakeDamage(damage);
@@ -266,39 +265,38 @@ Bounds* Boat::GetBoundsPtr()
 
 void Boat::PlayCannonFire()
 {
-	bool found = false;
-	while (!found)
-	{ 
-		int index = rand() % fireSounds.size();
-		if (!fireSounds[index]->playing())
-		{
-			found = true;
+	std::vector<AudioPlayer*> available;
 
-			XMFLOAT3 blah;
-			XMStoreFloat3(&blah, position);
+	for (std::vector<AudioPlayer*>::iterator it = fireSounds.begin(); it != fireSounds.end(); it++)
+	{ if (!(*it)->playing()) available.push_back((*it)); }
 
-			fireSounds[index]->play();
-			fireSounds[index]->setPosition(blah.x, blah.y, blah.z);
-		}
-	}
+	if (available.size() == 0)
+		return;
+
+	int index = rand() % available.size();
+
+	XMFLOAT3 blah;
+	XMStoreFloat3(&blah, position);
+
+	available[index]->play();
+	available[index]->setPosition(blah.x, blah.y, blah.z);
 }
 
 void Boat::PlayHitSound()
 {
-	bool found = false;
-	while (!found)
-	{ 
-		int index = rand() % hitSounds.size();
+	std::vector<AudioPlayer*> available;
 
-		if (!hitSounds[index]->playing())
-		{
-			found = true;
+	for (std::vector<AudioPlayer*>::iterator it = hitSounds.begin(); it != hitSounds.end(); it++)
+	{ if (!(*it)->playing()) available.push_back((*it)); }
 
-			XMFLOAT3 blah;
-			XMStoreFloat3(&blah, position);
+	if (available.size() == 0)
+		return;
 
-			hitSounds[index]->play();
-			hitSounds[index]->setPosition(blah.x, blah.y, blah.z);
-		}
-	}
+	int index = rand() % available.size();
+
+	XMFLOAT3 blah;
+	XMStoreFloat3(&blah, position);
+
+	available[index]->play();
+	available[index]->setPosition(blah.x, blah.y, blah.z);
 }

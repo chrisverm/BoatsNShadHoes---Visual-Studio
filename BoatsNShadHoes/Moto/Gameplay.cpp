@@ -616,7 +616,7 @@ void Gameplay::Update(float dt)
 	listenerPos[2] = cameraPosition.z;
 	alGetListenerfv(AL_POSITION, listenerPos);
 	for (std::map<std::string, AudioPlayer*>::iterator it = sounds.begin(); it != sounds.end(); it++)
-	{ it->second->updateGain(listenerPos);  }
+	{ it->second->updateGain(listenerPos); it->second->update(); }
 	//main_bgm->updateGain(listenerPos);
 	//main_bgm->update();
 #endif
