@@ -9,8 +9,8 @@ Material* Bounds::mat;
 
 using namespace DirectX;
 
-XMVECTOR Bounds::verts[8] = { XMVectorSet( 0.5, 0.5, 0.5,1), XMVectorSet( 0.5, 0.5, -0.5,1), XMVectorSet( -0.5, 0.5, -0.5,1), XMVectorSet( -0.5, 0.5, 0.5, 1),
-						XMVectorSet( 0.5, -0.5, 0.5, 1), XMVectorSet( 0.5, -0.5, -0.5, 1), XMVectorSet( -0.5, -0.5, -0.5, 1), XMVectorSet( -0.5, -0.5, 0.5, 1) };
+XMVECTOR Bounds::verts[8] = { XMVectorSet( 0.5f,  0.5f, 0.5f, 0), XMVectorSet( 0.5f,  0.5f, -0.5f, 0), XMVectorSet( -0.5f,  0.5f, -0.5f, 0), XMVectorSet( -0.5f,  0.5f, 0.5f, 0),
+							  XMVectorSet( 0.5f, -0.5f, 0.5f, 0), XMVectorSet( 0.5f, -0.5f, -0.5f, 0), XMVectorSet( -0.5f, -0.5f, -0.5f, 1), XMVectorSet( -0.5f, -0.5f, 0.5f, 0) };
 XMVECTOR Bounds::p1[8];
 XMVECTOR Bounds::p2[8];
 
@@ -19,7 +19,7 @@ Constructor.
 Requires a pointer to the position of the entity / "Center of the mesh" for this bounding box.
 Requires an xmfloat2 defining its X and Z extents
 */
-Bounds::Bounds(XMVECTOR* positionPtr, XMFLOAT2 boxExtents)
+Bounds::Bounds(XMVECTOR* positionPtr, XMFLOAT3 boxExtents)
 {
 	position = positionPtr;
 	extents = boxExtents;
@@ -42,7 +42,7 @@ bool Bounds::Intersecting(Bounds* b1, Bounds* b2)
 	XMVECTOR diff = pos - otherPos;
 	
 	float length = XMVectorGetX(XMVector3LengthSq(diff));
-	float maxExtent = b1->extents.x + b1->extents.y + b2->extents.x + b2->extents.y;
+	float maxExtent = b1->extents.x + b1->extents.z + b2->extents.x + b2->extents.z;
 
 	// dont check if we're too far away.
 	if (length < maxExtent * maxExtent)
@@ -73,7 +73,7 @@ Private, checks whether or not the given array of 8 vertices, which should defin
 */
 bool Bounds::Intersecting(XMVECTOR v1[8], DirectX::XMVECTOR v2[8])
 {
-	DirectX::XMVECTOR plane = XMVECTOR();
+	XMVECTOR plane = XMVECTOR();
 	std::vector<int> indices;
 	std::vector<int> remove;
 
@@ -90,8 +90,8 @@ bool Bounds::Intersecting(XMVECTOR v1[8], DirectX::XMVECTOR v2[8])
 			case 1: plane = XMPlaneFromPointNormal(v1[0], XMVector3Normalize( XMVectorSubtract(v1[3], v1[0]) ) ); break;
 			case 2: plane = XMPlaneFromPointNormal(v1[2], XMVector3Normalize( XMVectorSubtract(v1[1], v1[2]) ) ); break;
 			case 3: plane = XMPlaneFromPointNormal(v1[2], XMVector3Normalize( XMVectorSubtract(v1[3], v1[2]) ) ); break;
-			case 4: plane = XMPlaneFromPointNormal(v1[0], XMVector3Normalize( XMVectorSubtract(v1[5], v1[0]) ) ); break;
-			case 5: plane = XMPlaneFromPointNormal(v1[5], XMVector3Normalize( XMVectorSubtract(v1[0], v1[5]) ) ); break;
+			case 4: plane = XMPlaneFromPointNormal(v1[0], XMVector3Normalize( XMVectorSubtract(v1[4], v1[0]) ) ); break;
+			case 5: plane = XMPlaneFromPointNormal(v1[4], XMVector3Normalize( XMVectorSubtract(v1[0], v1[4]) ) ); break;
 		default:
 			printf("weird shit went down in bonunds \n");
 			break;

@@ -15,6 +15,10 @@ public:
 	~CannonBall(void);
 
 	void Update(float dt, const XMMATRIX& parentMat);
+	void Render(ID3D11DeviceContext* deviceContext);
+#if defined(DEBUG) | defined(_DEBUG)
+	void DebugRender(ID3D11DeviceContext* deviceContext);
+#endif
 
 	void SetVelocity(XMVECTOR);
 	bool Active() const;

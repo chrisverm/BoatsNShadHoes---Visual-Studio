@@ -1,7 +1,8 @@
 #ifndef GAMEPLAY_H
 #define GAMEPLAY_H
 
-#define SOUND_PLAY
+// Uncomment to have audio!
+//#define SOUND_PLAY
 
 #include <vector>
 #include "WICTextureLoader.h"

@@ -12,7 +12,7 @@ CannonBall::CannonBall(Mesh* mesh, Material* material, ID3D11RasterizerState* ra
 	friction = 1.0f;
 	active = false;
 	
-	bounds = new Bounds(&position, XMFLOAT2(1,1));
+	bounds = new Bounds(&position, XMFLOAT3(0.5f, 0.5f, 0.5f));
 }
 
 CannonBall::~CannonBall(void)
@@ -97,3 +97,15 @@ void CannonBall::PlaySplash()
 	available[index]->play();
 	available[index]->setPosition(blah.x, blah.y, blah.z);
 }
+
+void CannonBall::Render(ID3D11DeviceContext* deviceContext)
+{
+	if (active) MoveableEntity::Render(deviceContext);
+}
+
+#if defined(DEBUG) | defined(_DEBUG)
+void CannonBall::DebugRender(ID3D11DeviceContext* deviceContext)
+{
+	if (active) MoveableEntity::DebugRender(deviceContext);
+}
+#endif

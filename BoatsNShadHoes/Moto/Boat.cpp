@@ -24,7 +24,7 @@ Boat::Boat(Mesh* mesh, Material* material, ID3D11RasterizerState* rasterizerStat
 	minAngleClamps = XMVectorSet(-360.0f, -360.0f, -10.0f, 0.0f) * XMConvertToRadians(1.0f); // deg * (pi / 180)
 	maxAngleClamps = XMVectorSet( 360.0f,  360.0f,  10.0f, 0.0f) * XMConvertToRadians(1.0f);
 
-	bounds = new Bounds(&position, XMFLOAT2(5,17));
+	bounds = new Bounds(&position, XMFLOAT3(5,5,15));
 }
 
 Boat::~Boat()

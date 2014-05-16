@@ -69,7 +69,7 @@ void Entity::Update(float dt, const XMMATRIX& parentMat)
 
 	if (bounds != nullptr)
 	{
-		XMMATRIX boundsScale = XMMatrixScaling(bounds->extents.x, 10, bounds->extents.y);
+		XMMATRIX boundsScale = XMMatrixScaling(bounds->extents.x, bounds->extents.y, bounds->extents.z);
 		XMMATRIX boundsMat = boundsScale * rot * trans * parentMat;
 
 		XMStoreFloat4x4(&bounds->worldMat, XMMatrixTranspose(boundsMat));
