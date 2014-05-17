@@ -59,14 +59,36 @@ bool Gameplay::Initialize()
 	b1Stats.health			= 100.0f;
 	b1Stats.armor			= 10.0f;
 	b1Stats.ammunition		= 0;
-	b1Stats.maxAmmunition	= 5;
+	b1Stats.maxAmmunition	= 10;
 	b1Stats.rateOfFire		= 0.7f;
 	b1Stats.damage			= 20;
 
 	playerBoat = new PlayerBoat(Resources::GetMesh("ship"), Resources::GetMaterial("ship"), 
 		Resources::GetRasterizerState("default"), Resources::GetDepthStencilState("default"), b1Stats);
 	playerBoat->Initialize(Game::vsPerModelConstBuffer, Game::vsPerModelData);
+	
+#pragma region Disgusting cannon making
+	Cannon* cannon = new Cannon(Resources::GetMesh("cannon"), Resources::GetMaterial("cannon"),
+		Resources::GetRasterizerState("default"), Resources::GetDepthStencilState("default"));
+	playerBoat->AddCannon(cannon , true);
+	cannon->Initialize(Game::vsPerModelConstBuffer, Game::vsPerModelData);
 
+	cannon = new Cannon(Resources::GetMesh("cannon"), Resources::GetMaterial("cannon"),
+		Resources::GetRasterizerState("default"), Resources::GetDepthStencilState("default"));
+	playerBoat->AddCannon(cannon , true);
+	cannon->Initialize(Game::vsPerModelConstBuffer, Game::vsPerModelData);
+
+	cannon = new Cannon(Resources::GetMesh("cannon"), Resources::GetMaterial("cannon"),
+		Resources::GetRasterizerState("default"), Resources::GetDepthStencilState("default"));
+	playerBoat->AddCannon(cannon , false);
+	cannon->Initialize(Game::vsPerModelConstBuffer, Game::vsPerModelData);
+
+	cannon = new Cannon(Resources::GetMesh("cannon"), Resources::GetMaterial("cannon"),
+		Resources::GetRasterizerState("default"), Resources::GetDepthStencilState("default"));
+	playerBoat->AddCannon(cannon , false);
+	cannon->Initialize(Game::vsPerModelConstBuffer, Game::vsPerModelData);
+#pragma endregion
+	
 	// populate ammunition
 	for (short i = 0; i < playerBoat->MaximumAmmunition(); i++)
 	{
@@ -262,6 +284,7 @@ void Gameplay::LoadResources()
 	Resources::CreateMesh("sphere", "Resources/cannonball_obj.obj");
 	Resources::CreateMesh("skybox", "Resources/cannonball_obj.obj", Resources::GetInputLayout("skybox"));
 	Resources::CreateMesh("cube", "Resources/crate_obj.obj");
+	Resources::CreateMesh("cannon", "Resources/cannon_obj.obj");
 
 	// Begin Disgusting.
 	Vertex_PNC temp[] = 
@@ -339,6 +362,7 @@ void Gameplay::LoadResources()
 	Resources::CreateShaderResourceView("cannonball", L"Resources/cannonball_texture.jpg");
 	Resources::CreateShaderResourceView("skybox", L"Resources/skybox_environment.dds");
 	Resources::CreateShaderResourceView("ship", L"Resources/boat_texture.png");
+	Resources::CreateShaderResourceView("cannon", L"Resources/cannon_texture.png");
 
 	// Sampler States ------------------------------------
 	D3D11_SAMPLER_DESC samplerDesc;
@@ -376,6 +400,9 @@ void Gameplay::LoadResources()
 
 	Resources::CreateMaterial("ship", Resources::GetSRV("ship"), Resources::GetSamplerState("MIN_MAG_POINT_MIP_LINEAR"), 
 		Resources::GetVertexShader(Resources::GetMesh("ship")->ILName()), Resources::GetPixelShader(Resources::GetMesh("ship")->ILName()));
+
+	Resources::CreateMaterial("cannon", Resources::GetSRV("cannon"), Resources::GetSamplerState("MIN_MAG_POINT_MIP_LINEAR"), 
+		Resources::GetVertexShader(Resources::GetMesh("cannon")->ILName()), Resources::GetPixelShader(Resources::GetMesh("cannon")->ILName()));
 
 	// Depth Stencil States ----------------------------
 	D3D11_DEPTH_STENCIL_DESC dssDesc;
@@ -498,13 +525,28 @@ void Gameplay::Update(float dt)
 		Input::ToggleCursorLocking();
 	}
 
-	if (Input::KeyUp(' '))
+	if (Input::KeyUp('J'))
 	{
 		// Boat 1 fires at Boat 2
-		playerBoat->Fire(otherBoat);
+		playerBoat->FireLeftCannons(otherBoat);
 
 		// text updates
-		std::cout << "Boat 1 fire() called!" << std::endl;
+		std::cout << "Boat 1 left fire() called!" << std::endl;
+	}
+	if (Input::KeyUp('K'))
+	{
+		// Boat 1 fires at Boat 2
+		playerBoat->FireRightCannons(otherBoat);
+
+		// text updates
+		std::cout << "Boat 1 right fire() called!" << std::endl;
+	}
+	if (Input::KeyUp(' '))
+	{
+		playerBoat->FireRightCannons(otherBoat);
+		playerBoat->FireLeftCannons(otherBoat);
+		// text updates
+		std::cout << "Boat 1 left and right fire() called!" << std::endl;
 	}
 
 	if (Bounds::Intersecting(playerBoat->bounds, otherBoat->bounds))

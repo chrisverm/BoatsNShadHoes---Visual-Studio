@@ -1,5 +1,5 @@
-#ifndef CANNONBALL_H
-#define CANNONBALL_H
+#ifndef BOATSNSHADHOES_CANNONBALL_H
+#define BOATSNSHADHOES_CANNONBALL_H
 
 #include "MoveableEntity.h"
 #include "Hittable.h"

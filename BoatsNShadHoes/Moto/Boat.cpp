@@ -174,19 +174,39 @@ bool Boat::AddAmmunition(CannonBall* cball)
 	return false;
 }
 
+void Boat::FireLeftCannons(Hittable* target)
+{
+	for (std::vector<Cannon*>::iterator it = leftCannons.begin(); it != leftCannons.end(); it++)
+	{
+		if (!Fire(target, *it))
+			return; // Firing on one cannon failed, dont bother with the others.
+	}
+}
+
+void Boat::FireRightCannons(Hittable* target)
+{
+	for (std::vector<Cannon*>::iterator it = rightCannons.begin(); it != rightCannons.end(); it++)
+	{
+		if (!Fire(target, *it))
+			return; // Firing on one cannon failed, dont bother with the others.
+	}
+}
+
 /*
 Fires a cannonball if there are any left.
 Passes the target to the cannonball for collision detection.
 Returns false if no cannonball could be fired (out of ammo).
 */
-bool Boat::Fire(Boat* target)
+bool Boat::Fire(Hittable* target, Cannon* cannon)
 {
 	// check for inactive cannonballs
 	for(short i = 0; i < stats.ammunition; i++)
 	{
 		if(!cannonballs[i]->Active())
 		{
-			cannonballs[i]->Fire(this->position + this->up * 2, (this->right + this->up), target, stats.damage);
+
+			cannon->Fire(cannonballs[i], target, velocity, stats.damage);
+			//cannonballs[i]->Fire(this->position + this->up * 2, (this->right + this->up), target, stats.damage);
 
 #if defined(DEBUG) | defined(_DEBUG)
 			std::cout << "Ammunition remaining : " << Ammunition() << std::endl;
@@ -214,6 +234,33 @@ void Boat::TakeDamage(float amnt)
 
 	if(stats.health <= 0)
 		dead = true;
+}
+
+/*
+Adds a Cannon to the specified side.
+*/
+void Boat::AddCannon(Cannon* cannon, bool rightSide)
+{
+	int side;
+	int number;
+	if (rightSide)
+	{
+		side = 1;
+		number = rightCannons.size();
+		rightCannons.push_back(cannon);
+	}
+	else
+	{
+		side = -1;
+		number = leftCannons.size();
+		leftCannons.push_back(cannon);
+	}
+
+	// Position
+	cannon->rotation = XMVectorSet(0,(3.14f/2.0f) * side, 0, 0);
+	cannon->position = position + up*2.8f + right*side * 1.5f + forward * number *2;
+	
+	this->AddChild(cannon);
 }
 
 #pragma endregion

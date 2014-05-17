@@ -6,6 +6,7 @@
 #include "ResourceManager.h"
 #include "InputManager.h"
 #include "CannonBall.h"
+#include "Cannon.h"
 
 class Game;
 
@@ -51,7 +52,10 @@ public:
 
 	// Actions
 	bool AddAmmunition(CannonBall*);
-	bool Fire(Boat*);
+	void AddCannon(Cannon*, bool);
+	void FireLeftCannons(Hittable*);
+	void FireRightCannons(Hittable*);
+	bool Fire(Hittable*, Cannon*);
 	void TakeDamage(float);
 	
 	// Hittable implementation
@@ -65,7 +69,10 @@ public:
 private:
 	BOAT_STATS stats;
 	bool dead;
+
 	std::vector<CannonBall*> cannonballs;
+	std::vector<Cannon*> leftCannons;
+	std::vector<Cannon*> rightCannons;
 
 	// Positioning helper.
 	float GetYFromXZ(XMVECTOR pos);

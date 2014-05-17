@@ -15,7 +15,6 @@ public:
 	// Init, Update, Render
 	virtual void Update(float dt, const XMMATRIX& parentMat);
 
-protected:
 	// Physics stuff.
 	float maxVel, maxAccel, friction;
 	XMVECTOR velocity;
