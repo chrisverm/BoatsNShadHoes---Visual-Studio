@@ -1,13 +1,21 @@
 How to "Play"
 
-W = move forward.
-A = turn to the left.
-D = turn to the right.
-Space = fire
+Main Screen ---------------------
+Space = go to game screen
+M     = unlock/lock mouse
+
+Game Screen ---------------------
+W     = move forward.
+A     = turn to the left.
+D     = turn to the right.
+J     = fire left-side cannons
+K     = fire right-side cannons
+M     = unlock/lock mouse
+Space = fire all cannons
 
 Also, you can press 'i' to turn on a debug feature that draws the local basis vectors for every entity.
 
-Be sure to check the console window for updates in the game that may not be visible.
+Be sure to check the console window for updates in the game that may not be visible or clear.
 
 /* TROUBLESHOOTING */
 
