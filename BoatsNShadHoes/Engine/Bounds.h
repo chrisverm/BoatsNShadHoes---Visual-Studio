@@ -11,10 +11,10 @@
 class Bounds
 {
 public:
-	Bounds(DirectX::XMVECTOR*, DirectX::XMFLOAT2);
+	Bounds(DirectX::XMVECTOR*, DirectX::XMFLOAT3);
 
 	DirectX::XMVECTOR* position;
-	DirectX::XMFLOAT2 extents;
+	DirectX::XMFLOAT3 extents;
 
 	bool Intersecting(Bounds*);
 	static bool Intersecting(Bounds*, Bounds*);

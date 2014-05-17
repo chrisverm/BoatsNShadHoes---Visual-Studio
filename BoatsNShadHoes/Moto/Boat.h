@@ -31,43 +31,46 @@ struct BOAT_STATS
 class Boat : public MoveableEntity, public Hittable
 {
 public:
-	Boat(Mesh*, Material*, ID3D11RasterizerState*, ID3D11DepthStencilState*, BOAT_STATS, bool controllable);
-	~Boat();
+	Boat(Mesh*, Material*, ID3D11RasterizerState*, ID3D11DepthStencilState*, BOAT_STATS);
 
-	void Initialize(ID3D11Buffer* modelConstBuffer, VSPerModelData* modelConstBufferData);
+	// Update / Init
 	void Update(float dt, const XMMATRIX& parentMat);
-
-	void Hit(float);
-	Bounds* GetBoundsPtr();
-
-	void Move(float dt);
-
-	void SetPosition(float x, float y, float z);
-	void SetRotation(float r, float p, float y);
 	void SetStats(BOAT_STATS);
 
+	// Movement
+	void virtual Move(float dt);
+	void MoveForward();
+	void PortHelm();
+	void StarboardHelm();
+
+	// Stats
 	short Ammunition() const;
 	short MaximumAmmunition() const;
 	float Health() const;
 	bool IsDead() const;
 
+	// Actions
 	bool AddAmmunition(CannonBall*);
-	void MoveForward();
-	void PortHelm();
-	void StarboardHelm();
-	bool Fire(Boat*); // testing purposes!
+	bool Fire(Boat*);
 	void TakeDamage(float);
 	
+	// Hittable implementation
+	void Hit(float);
+	Bounds* GetBoundsPtr();
+
+	// Shared hit/fire sounds to use.
 	static std::vector<AudioPlayer*> hitSounds;
 	static std::vector<AudioPlayer*> fireSounds;
 
 private:
 	BOAT_STATS stats;
-	bool dead, controllable;
+	bool dead;
 	std::vector<CannonBall*> cannonballs;
 
+	// Positioning helper.
 	float GetYFromXZ(XMVECTOR pos);
 
+	// Sounds
 	void PlayCannonFire();
 	void PlayHitSound();
 };

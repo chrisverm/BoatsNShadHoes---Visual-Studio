@@ -12,14 +12,19 @@ class CannonBall : public MoveableEntity
 {
 public:
 	CannonBall(Mesh*, Material*, ID3D11RasterizerState*, ID3D11DepthStencilState*);
-	~CannonBall(void);
 
+	// Update/Render
 	void Update(float dt, const XMMATRIX& parentMat);
+	void Render(ID3D11DeviceContext* deviceContext);
+#if defined(DEBUG) | defined(_DEBUG)
+	void DebugRender(ID3D11DeviceContext* deviceContext);
+#endif
 
-	void SetVelocity(XMVECTOR);
-	bool Active() const;
-
+	// Fire
 	void Fire(XMVECTOR position, XMVECTOR acceleration, Hittable* target, float damage);
+	
+	// Getter
+	bool Active() const;
 
 	static std::vector<AudioPlayer*> splashes;
 
@@ -29,7 +34,10 @@ private:
 
 	Hittable* target;
 
+	// Helper
 	float GetYFromXZ(XMVECTOR pos, float time);
+
+	// Sound
 	void PlaySplash();
 
 };
