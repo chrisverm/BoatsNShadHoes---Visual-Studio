@@ -14,7 +14,8 @@
 #include "Entity.h"
 #include "AudioPlayer.h"
 #include "AudioManager.h"
-#include "Boat.h"
+#include "PlayerBoat.h"
+#include "AIBoat.h"
 #include "Water.h"
 #include "CannonBall.h"
 #include "Camera.h"
@@ -31,8 +32,8 @@ public:
 
 private:
 	Entity* world;
-	Boat* playerBoat;
-	Boat* otherBoat;
+	PlayerBoat* playerBoat;
+	AIBoat* otherBoat;
 
 	void LoadShadersAndInputLayout();
 	void LoadResources();
@@ -45,7 +46,7 @@ private:
 	std::map<std::string, AudioPlayer*> sounds;
 
 	bool viewChanged;
-
+	bool boatsColliding; // this should be removed later.
 };
 
 #endif

@@ -1,5 +1,7 @@
 #include "Gameplay.h"
 
+#pragma region Constructor/Destructor
+
 Gameplay::Gameplay(ID3D11Device* device, ID3D11DeviceContext* deviceContext)
 	: GameState(device, deviceContext) { }
 
@@ -12,9 +14,7 @@ Gameplay::~Gameplay()
 	for (std::map<std::string, AudioPlayer*>::iterator it = sounds.begin(); it != sounds.end(); it++)
 	{ 
 		if (it->second != nullptr)
-		{
-			delete it->second; 
-		}
+		{ delete it->second; }
 	}
 	sounds.clear();
 #endif
@@ -28,12 +28,19 @@ Gameplay::~Gameplay()
 	}
 }
 
+#pragma endregion
+
+#pragma region Initialize
+
 bool Gameplay::Initialize()
 {
-	world = new Entity();
-
 	LoadShadersAndInputLayout();
 	LoadResources();
+
+	Input::SetCursorVisibility(false);
+	Input::SetCursorLocking(true);
+
+	world = new Entity();
 
 #if defined(DEBUG) | defined(_DEBUG)
 	Bounds::mesh = Resources::GetMesh("cube");
@@ -43,8 +50,9 @@ bool Gameplay::Initialize()
 	Entity::coordinateMaterial = Resources::GetMaterial("coordinates");
 #endif
 
-	Input::SetCursorVisibility(false);
-	Input::SetCursorLocking(true);
+
+#pragma region Entites
+	// Entites -----------------------------------------
 
 	// stats for first boat
 	BOAT_STATS b1Stats;
@@ -55,36 +63,22 @@ bool Gameplay::Initialize()
 	b1Stats.rateOfFire		= 0.7f;
 	b1Stats.damage			= 20;
 
-	// Entites -----------------------------------------
-	playerBoat = new Boat(Resources::GetMesh("ship"), Resources::GetMaterial("ship"), 
-		Resources::GetRasterizerState("default"), Resources::GetDepthStencilState("default"), b1Stats, true);
+	playerBoat = new PlayerBoat(Resources::GetMesh("ship"), Resources::GetMaterial("ship"), 
+		Resources::GetRasterizerState("default"), Resources::GetDepthStencilState("default"), b1Stats);
 	playerBoat->Initialize(Game::vsPerModelConstBuffer, Game::vsPerModelData);
 
 	// populate ammunition
 	for (short i = 0; i < playerBoat->MaximumAmmunition(); i++)
 	{
 		CannonBall* cannonBall = new CannonBall(Resources::GetMesh("sphere"), Resources::GetMaterial("cannonball"), 
-		Resources::GetRasterizerState("default"), Resources::GetDepthStencilState("default"));
+			Resources::GetRasterizerState("default"), Resources::GetDepthStencilState("default"));
 
 		cannonBall->Initialize(Game::vsPerModelConstBuffer, Game::vsPerModelData);
-		cannonBall->position = XMVectorSet(0,-10,0,0);
 
-		// try to add ammunition
+		// try to add ammunition, don't parent to boat.
 		if(playerBoat->AddAmmunition(cannonBall))
-		{
-			std::cout << "added ammo!" << std::endl;
-			world->AddChild(cannonBall); // does not work well when attached to boat!
-		}
-
-		// delete created pointer in case we couldn't add ammo
-		else
-		{
-			std::cout << " could not add ammo!" << std::endl;
-			delete cannonBall;
-		}
+		{ world->AddChild(cannonBall); }
 	}
-
-	//boat->SetStats(b1Stats);
 
 	// stats for second boat
 	BOAT_STATS b2Stats;
@@ -95,42 +89,24 @@ bool Gameplay::Initialize()
 	b2Stats.rateOfFire		= 1.5f;
 	b2Stats.damage			= 10;
 
-	otherBoat = new Boat(Resources::GetMesh("ship"), Resources::GetMaterial("ship"), 
-		Resources::GetRasterizerState("default"), Resources::GetDepthStencilState("default"), b2Stats, false);
+	otherBoat = new AIBoat(Resources::GetMesh("ship"), Resources::GetMaterial("ship"), 
+		Resources::GetRasterizerState("default"), Resources::GetDepthStencilState("default"), b2Stats);
 	otherBoat->Initialize(Game::vsPerModelConstBuffer, Game::vsPerModelData);
-	otherBoat->SetPosition(5, 0, 15);
-	otherBoat->SetRotation(0, 2, 0);
+	otherBoat->position = XMVectorSet(5, 0, 15,0);
+	otherBoat->rotation = XMVectorSet(0, 2, 0, 0);
 
 	// populate ammunition
 	for(short i = 0; i < otherBoat->MaximumAmmunition(); i++)
 	{
 		CannonBall* cannonBall = new CannonBall(Resources::GetMesh("sphere"), Resources::GetMaterial("cannonball"), 
-		Resources::GetRasterizerState("default"), Resources::GetDepthStencilState("default"));
+			Resources::GetRasterizerState("default"), Resources::GetDepthStencilState("default"));
 
 		cannonBall->Initialize(Game::vsPerModelConstBuffer, Game::vsPerModelData);
-		cannonBall->position = XMVectorSet(0,-10,0,0);
 
-		// try to add ammunition
+		// try to add ammunition, don't parent to boat.
 		if(otherBoat->AddAmmunition(cannonBall))
-		{
-			std::cout << "added ammo!" << std::endl;
-			world->AddChild(cannonBall);
-		}
-
-		// delete created pointer in case we couldn't add ammo
-		else
-		{
-			std::cout << " could not add ammo!" << std::endl;
-			delete cannonBall;
-		}
+		{ world->AddChild(cannonBall); }
 	}
-
-	//boat2->SetStats(b2Stats);
-
-	/*CannonBall* cannonBall = new CannonBall(Resources::GetMesh("sphere"), Resources::GetMaterial("cannonball"), 
-		Resources::GetRasterizerState("default"), Resources::GetDepthStencilState("default"));
-	cannonBall->Initialize(Game::vsPerModelConstBuffer, Game::vsPerModelData);
-	cannonBall->position = XMVectorSet(0,-10,0,0);*/
 
 	SkyBox* skyBall = new SkyBox(Resources::GetMesh("skybox"), Resources::GetMaterial("skybox"), 
 		Resources::GetRasterizerState("skybox"), Resources::GetDepthStencilState("skybox"));
@@ -143,10 +119,13 @@ bool Gameplay::Initialize()
 	world->AddChild(playerBoat);
 	world->AddChild(otherBoat);
 	world->AddChild(water);
-	//entities.push_back(cannonBall);	world->AddChild(cannonBall);
 	playerBoat->AddChild(skyBall); // Parented to the boat, AW YEAH.
 
+#pragma endregion
+
+#pragma region Camera
 	// Camera Setup -----------[ o]---------------------
+
 	viewChanged = false;
 	CameraManager::Initialize(deviceContext, 1, &DX::windowWidth, &DX::windowHeight, &viewChanged, &Game::projChanged);
 	
@@ -166,8 +145,9 @@ bool Gameplay::Initialize()
 	camDesc.Roll = STATIC;
 	CameraManager::CreateNewCamera(&camDesc, true);
 
+#pragma endregion
 	
-
+#pragma region Audio
 #ifdef SOUND_PLAY
 	// AL setup --------------------------------~^^~-----
 	SetupAudio();
@@ -202,8 +182,11 @@ bool Gameplay::Initialize()
 	main_bgm->setLooping(AL_TRUE);
 	main_bgm->play();
 #endif
+#pragma endregion
 
+#pragma region Lighting
 	// Lighting Setup ----------------------------------
+
 	PointLight pntLight1;
 	pntLight1.Range = 2.0f;
 	pntLight1.Position = XMFLOAT3(0.0f, 0.5f, -1.0f);
@@ -220,9 +203,28 @@ bool Gameplay::Initialize()
 		0);
 
 	Game::vsPerFrameData->time = 0;
+#pragma endregion
 
 	return true;
 }
+
+void Gameplay::SetupAudio()
+{
+	// grab audio device
+	audioDevice = alcOpenDevice(NULL);
+	assert(audioDevice != NULL);
+
+	// create context for device
+	audioDeviceContext = alcCreateContext(audioDevice, NULL);
+	assert(audioDeviceContext != NULL);
+
+	// assign context to 'current'
+	alcMakeContextCurrent(audioDeviceContext);
+}
+
+#pragma endregion
+
+#pragma region Loading
 
 void Gameplay::LoadShadersAndInputLayout()
 {
@@ -460,73 +462,15 @@ void Gameplay::LoadResources()
 	Resources::CreateRasterizerState("skybox", rsDesc);
 }
 
-void Gameplay::SetupAudio()
-{
-		// grab audio device
-	audioDevice = alcOpenDevice(NULL);
-#if defined(DEBUG) | defined(_DEBUG)
-	assert(audioDevice != NULL);
-#endif
+#pragma endregion
 
-	// create context for device
-	audioDeviceContext = alcCreateContext(audioDevice, NULL);
-#if defined(DEBUG) | defined(_DEBUG)
-	assert(audioDeviceContext != NULL);
-#endif
-
-	// assign context to 'current'
-	alcMakeContextCurrent(audioDeviceContext);
-
-	//float listenerOrientation[] = {										// UNCOMMENT THIS
-	//	XMVectorGetX(CameraManager::ActiveCamera()->forward),
-	//	XMVectorGetY(CameraManager::ActiveCamera()->forward),
-	//	XMVectorGetZ(CameraManager::ActiveCamera()->forward),
-	//	XMVectorGetX(CameraManager::ActiveCamera()->up),
-	//	XMVectorGetY(CameraManager::ActiveCamera()->up),
-	//	XMVectorGetZ(CameraManager::ActiveCamera()->up)
-	//};
-	//
-	//// listener setup! :D
-	//alListener3f(AL_POSITION, XMVectorGetX(CameraManager::ActiveCamera()->position), 
-	//						  XMVectorGetY(CameraManager::ActiveCamera()->position), 
-	//						  XMVectorGetZ(CameraManager::ActiveCamera()->position));
-	//alListener3f(AL_VELOCITY, 0.0f, 0.0f, 0.0f);
-	//alListenerfv(AL_ORIENTATION, listenerOrientation);
-
-#if defined(DEBUG) | defined(_DEBUG)
-	std::cout << "listener position:" << "[" << XMVectorGetX(CameraManager::ActiveCamera()->position) 
-									  << ", " << XMVectorGetY(CameraManager::ActiveCamera()->position) 
-									  << ", " << XMVectorGetZ(CameraManager::ActiveCamera()->position) << "]" << std::endl;
-#endif
-
-	// ^ using assert to replace the following:
-	/*audioDevice = alcOpenDevice(NULL);
-
-#ifdef defined(DEBUG)
-	if(audioDevice == NULL)
-		std::cout << "cannot open sound card!" << std::endl;
-#endif
-
-	// device accessed successfully
-	else
-	{
-		// create context for device
-		audioDeviceContext = alcCreateContext(audioDevice, NULL);
-
-#ifdef defined(DEBUG)
-		if(audioDeviceContext == NULL)
-			std::cout << "cannot create context for our device!" << std::endl;
-#endif
-
-		// context created successfully
-		else
-			alcMakeContextCurrent(audioDeviceContext); // assign our created context to 'current'
-	}*/
-}
+#pragma region Update/Render
 
 void Gameplay::Update(float dt)
 {
 	CameraManager::Update();
+	
+	world->Update(dt, XMMatrixIdentity());
 
 	XMFLOAT3 cameraPosition;
 	XMStoreFloat3(&cameraPosition, CameraManager::ActiveCamera()->position);
@@ -562,11 +506,23 @@ void Gameplay::Update(float dt)
 		// text updates
 		std::cout << "Boat 1 fire() called!" << std::endl;
 	}
-	
-	world->Update(dt, XMMatrixIdentity());
 
 	if (Bounds::Intersecting(playerBoat->bounds, otherBoat->bounds))
-		printf("Boat Collision! \n");
+	{
+		if (!boatsColliding)
+		{
+			boatsColliding = true;
+			printf("Boat Collision! \n");
+		}
+	}
+	else
+	{
+		if (boatsColliding)
+		{
+			boatsColliding = false;
+			printf("Boats no longer colliding \n");
+		}
+	}
 
 #ifdef SOUND_PLAY
 	// updating audio source based on listener position
@@ -592,6 +548,7 @@ void Gameplay::Update(float dt)
 
 void Gameplay::Draw(float dt)
 {
+	// CORNFLOWER BLUE!! :D
 	const float color[4] = { 0.4f, 0.6f, 0.75f, 0.0f };
 
 	// Clear the buffer
@@ -617,3 +574,5 @@ void Gameplay::Draw(float dt)
 	// Present the buffer
 	HR(Game::swapChain->Present(0, 0));
 }
+
+#pragma endregion

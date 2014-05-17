@@ -95,15 +95,14 @@ void Entity::Render(ID3D11DeviceContext* deviceContext)
 	{ (*it)->Render(deviceContext); }
 }
 
-#if defined(DEBUG) | defined(_DEBUG)
-
-#pragma endregion
-
 #pragma region DebugRender
+
+#if defined(DEBUG) | defined(_DEBUG)
 
 bool Entity::drawCoordinates;
 Mesh* Entity::coordinateMesh;
 Material* Entity::coordinateMaterial;
+
 /*
 Renders any debug elements assosiated with this entity ( and all of its children ).
 */
@@ -145,6 +144,8 @@ void Entity::DebugRender(ID3D11DeviceContext* deviceContext)
 	{ (*it)->DebugRender(deviceContext); }
 }
 #endif
+
+#pragma endregion
 
 #pragma endregion
 

@@ -108,23 +108,27 @@ copy "$(OutDir)$(TargetName)$(TargetExt)" "$(SolutionDir)Binary"</Command>
     </ProjectReference>
   </ItemGroup>
   <ItemGroup>
+    <ClInclude Include="AIBoat.h" />
     <ClInclude Include="Boat.h" />
     <ClInclude Include="CannonBall.h" />
     <ClInclude Include="Game.h" />
     <ClInclude Include="Gameplay.h" />
     <ClInclude Include="Hittable.h" />
     <ClInclude Include="Instructions.h" />
+    <ClInclude Include="PlayerBoat.h" />
     <ClInclude Include="resource.h" />
     <ClInclude Include="Screen.h" />
     <ClInclude Include="Skybox.h" />
     <ClInclude Include="Water.h" />
   </ItemGroup>
   <ItemGroup>
+    <ClCompile Include="AIBoat.cpp" />
     <ClCompile Include="Boat.cpp" />
     <ClCompile Include="CannonBall.cpp" />
     <ClCompile Include="Game.cpp" />
     <ClCompile Include="Gameplay.cpp" />
     <ClCompile Include="Instructions.cpp" />
+    <ClCompile Include="PlayerBoat.cpp" />
     <ClCompile Include="Screen.cpp" />
     <ClCompile Include="Skybox.cpp" />
     <ClCompile Include="Water.cpp" />

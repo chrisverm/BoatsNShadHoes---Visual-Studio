@@ -93,7 +93,7 @@ bool Bounds::Intersecting(XMVECTOR v1[8], DirectX::XMVECTOR v2[8])
 			case 4: plane = XMPlaneFromPointNormal(v1[0], XMVector3Normalize( XMVectorSubtract(v1[4], v1[0]) ) ); break;
 			case 5: plane = XMPlaneFromPointNormal(v1[4], XMVector3Normalize( XMVectorSubtract(v1[0], v1[4]) ) ); break;
 		default:
-			printf("weird shit went down in bonunds \n");
+			printf("weird shit went down in bounds \n");
 			break;
 		}
 						
