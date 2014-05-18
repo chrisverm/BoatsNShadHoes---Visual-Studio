@@ -8,37 +8,48 @@ PlayerBoat::PlayerBoat(Mesh* mesh, Material* mat, ID3D11RasterizerState* rastSta
 { }
 
 /*
+Handles input from the player to move the boat / fire cannons.
+*/
+void PlayerBoat::HandleInput()
+{
+	if (Input::KeyDown('W')) 
+		MoveForward(); 
+	else
+		Stop();
+
+	if (Input::KeyDown('A')) // left
+		PortHelm(); 
+	else if (Input::KeyDown('D')) // right
+		StarboardHelm(); 
+	else 
+		StallSteering();
+
+	// Toggle Selected sides (We should probably have some sort of graphic (color overlay?) on selected cannons).
+	if (Input::KeyUp('Q')) 
+		leftSelected = !leftSelected; 
+	if (Input::KeyUp('E')) 
+		rightSelected = !rightSelected; 
+
+	if (Input::KeyUp(' '))
+	{
+		if (leftSelected)
+			FireLeftCannons(target);
+		if (rightSelected)
+			FireRightCannons(target);
+	}
+}
+
+/*
 Turns and moves based on keyboard input (WAD).
 */
 void PlayerBoat::Move(float dt)
 {
-	bool turning = false;
+	HandleInput();
 
-	if (Input::KeyDown('W'))
-	{
-		MoveForward();
-	}
-	if (Input::KeyDown('A'))
-	{
-		turning = true;
-		PortHelm();
-	}
-	if (Input::KeyDown('D'))
-	{
-		turning = true;
-		StarboardHelm();
-	}
+	// (actually turns the boat(on its y) based on how far its rolled to one side(on its z)).
+	angularAcceleration = XMVectorSetY(angularAcceleration, -XMVectorGetZ(rotation));
 
-	if (!turning) 
-	{
-		rotation = XMVectorSetZ(rotation, XMVectorGetZ(rotation) - XMVectorGetZ(rotation) * 0.975f * dt);
-
-		if (abs(XMVectorGetZ(rotation)) < 0.01f) rotation = XMVectorSetZ(rotation, 0.0f);
-	}
-
-	angularAcceleration = XMVectorSet(0.0f, -XMVectorGetZ(rotation), 0.0f, 0.0f);
-
-	/* This removed the ability to turn while not moving
+	/* This removed the ability to turn while not moving, but it might not any longer with some new changes.
 	angularAcceleration = XMVectorSet(0.0f, -roll, 0.0f, 0.0f);
 	angularAcceleration = XMVector3Normalize(angularAcceleration);
 	angularAcceleration *= XMVector3Length(velocity) / 25.0f;*/

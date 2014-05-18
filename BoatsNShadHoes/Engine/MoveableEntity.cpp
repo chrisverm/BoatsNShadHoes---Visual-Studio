@@ -56,8 +56,9 @@ void MoveableEntity::Update(float dt, const XMMATRIX& parentMat)
 	position += velocity * dt;
 	rotation += angularVelocity * dt;
 
-	acceleration = XMVectorZero();
-	angularAcceleration = XMVectorZero();
+	// I have no idea why these were here....
+	//acceleration = XMVectorZero();
+	//angularAcceleration = XMVectorZero();
 
 	DrawableEntity::Update(dt, parentMat);
 }

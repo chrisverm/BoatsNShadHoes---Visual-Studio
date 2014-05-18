@@ -64,21 +64,21 @@ Gets whether or not the 'key' was just released (up).
 'key' - Unsigned char representing the key on the keyboard
 */
 bool InputManager::KeyUp(unsigned char key)
-{ return key == keyUp; }
+{ return toupper(key) == keyUp; }
 
 /*
 Gets whether or not the 'key' was just pressed.
 'key' - Unsigned char representing the key on the keyboard
 */
 bool InputManager::KeyJustPressed(unsigned char key)
-{ return key == keyJustPressed; }
+{ return toupper(key) == keyJustPressed; }
 
 /*
 Gets whether or not the 'key' is down OR just pressed.
 'key' - Unsigned char representing the key on the keyboard
 */
 bool InputManager::KeyDown(unsigned char key)
-{ return keysDown[key]; }
+{ return keysDown[toupper(key)]; }
 
 /*
 Gets whether or not the 'MouseButton' was just released (up).

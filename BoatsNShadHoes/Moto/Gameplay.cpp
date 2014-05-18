@@ -68,6 +68,7 @@ bool Gameplay::Initialize()
 	playerBoat->Initialize(Game::vsPerModelConstBuffer, Game::vsPerModelData);
 	
 #pragma region Disgusting cannon making
+	// I wouldnt do more than 4 on each side...
 	Cannon* cannon = new Cannon(Resources::GetMesh("cannon"), Resources::GetMaterial("cannon"),
 		Resources::GetRasterizerState("default"), Resources::GetDepthStencilState("default"));
 	playerBoat->AddCannon(cannon , true);
@@ -142,6 +143,7 @@ bool Gameplay::Initialize()
 	world->AddChild(otherBoat);
 	world->AddChild(water);
 	playerBoat->AddChild(skyBall); // Parented to the boat, AW YEAH.
+	playerBoat->target = otherBoat;
 
 #pragma endregion
 
@@ -523,30 +525,6 @@ void Gameplay::Update(float dt)
 	{
 		Input::ToggleCursorVisibility();
 		Input::ToggleCursorLocking();
-	}
-
-	if (Input::KeyUp('J'))
-	{
-		// Boat 1 fires at Boat 2
-		playerBoat->FireLeftCannons(otherBoat);
-
-		// text updates
-		std::cout << "Boat 1 left fire() called!" << std::endl;
-	}
-	if (Input::KeyUp('K'))
-	{
-		// Boat 1 fires at Boat 2
-		playerBoat->FireRightCannons(otherBoat);
-
-		// text updates
-		std::cout << "Boat 1 right fire() called!" << std::endl;
-	}
-	if (Input::KeyUp(' '))
-	{
-		playerBoat->FireRightCannons(otherBoat);
-		playerBoat->FireLeftCannons(otherBoat);
-		// text updates
-		std::cout << "Boat 1 left and right fire() called!" << std::endl;
 	}
 
 	if (Bounds::Intersecting(playerBoat->bounds, otherBoat->bounds))

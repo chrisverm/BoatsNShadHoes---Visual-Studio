@@ -22,6 +22,7 @@ Boat::Boat(Mesh* mesh, Material* material, ID3D11RasterizerState* rasterizerStat
 	maxAccel = 2.0f;
 	friction = 0.9f;
 
+	angularVelocityClamps = XMVectorSet(0,1,0.05f,0);
 	position = XMVectorSetY(position, -0.5f);
 
 	rotation = XMVectorSetZ(rotation, 0.0f);
@@ -43,6 +44,8 @@ Sinks if dead, otherwise positions itself on the water before updating Moveable.
 void Boat::Update(float dt, const XMMATRIX& parentMat)
 {
 	Move(dt);
+
+	angularVelocity = XMVectorClamp(angularVelocity, -angularVelocityClamps, angularVelocityClamps);
 
 	if (IsDead())
 	{
@@ -102,21 +105,36 @@ void Boat::MoveForward()
 }
 
 /*
+Stops moving forward (has to wait for forward velocity to die down to friction, but stops accelerating forward).
+*/
+void Boat::Stop()
+{
+	acceleration = XMVectorZero();
+}
+
+/*
 Causes the boat to rotate to the right (lean to positive z).
-TODO: The comment here is right, this needs to use dt rather than adding 0.0001.
 */
 void Boat::PortHelm()
 {
-	rotation = XMVectorSetZ(rotation, XMVectorGetZ(rotation) + 0.0001f); // should be multipled by dt?
+	angularAcceleration = XMVectorSet(0,0,0.25f,0);
 }
 
 /*
 Causes the boat to rotate to the left (lean to negative z).
-TODO: The comment here is right, this needs to use dt rather than subtracting 0.0001.
 */
 void Boat::StarboardHelm()
 {
-	rotation = XMVectorSetZ(rotation, XMVectorGetZ(rotation) - 0.0001f); // should be multipled by dt?
+	angularAcceleration = XMVectorSet(0,0,-0.25f,0);
+}
+
+/*
+Causes the boat to rotate back to upright.
+Will overshoot its mark cause it usues acceleration, but i think its more accurate to be honest.
+*/
+void Boat::StallSteering()
+{
+	angularAcceleration = XMVectorSet(0,0,1,0) * -XMVectorGetZ(rotation);
 }
 
 #pragma endregion
@@ -174,21 +192,25 @@ bool Boat::AddAmmunition(CannonBall* cball)
 	return false;
 }
 
+/*
+Fires all the cannons on the left side that we have ammo to fire with.
+*/
 void Boat::FireLeftCannons(Hittable* target)
 {
 	for (std::vector<Cannon*>::iterator it = leftCannons.begin(); it != leftCannons.end(); it++)
 	{
-		if (!Fire(target, *it))
-			return; // Firing on one cannon failed, dont bother with the others.
+		if (!Fire(target, *it)) return; // Firing on one cannon failed, dont bother with the others.
 	}
 }
 
+/*
+Fires all the cannons on the right side that we have ammo to fire with.
+*/
 void Boat::FireRightCannons(Hittable* target)
 {
 	for (std::vector<Cannon*>::iterator it = rightCannons.begin(); it != rightCannons.end(); it++)
 	{
-		if (!Fire(target, *it))
-			return; // Firing on one cannon failed, dont bother with the others.
+		if (!Fire(target, *it)) return; // Firing on one cannon failed, dont bother with the others.
 	}
 }
 
@@ -204,9 +226,7 @@ bool Boat::Fire(Hittable* target, Cannon* cannon)
 	{
 		if(!cannonballs[i]->Active())
 		{
-
 			cannon->Fire(cannonballs[i], target, velocity, stats.damage);
-			//cannonballs[i]->Fire(this->position + this->up * 2, (this->right + this->up), target, stats.damage);
 
 #if defined(DEBUG) | defined(_DEBUG)
 			std::cout << "Ammunition remaining : " << Ammunition() << std::endl;
@@ -258,7 +278,7 @@ void Boat::AddCannon(Cannon* cannon, bool rightSide)
 
 	// Position
 	cannon->rotation = XMVectorSet(0,(3.14f/2.0f) * side, 0, 0);
-	cannon->position = position + up*2.8f + right*side * 1.5f + forward * number *2;
+	cannon->position = position + up*2.8f + right*side * 1.5f - forward + forward * number *2;
 	
 	this->AddChild(cannon);
 }

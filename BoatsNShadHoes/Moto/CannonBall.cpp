@@ -19,6 +19,8 @@ CannonBall::CannonBall(Mesh* mesh, Material* material, ID3D11RasterizerState* ra
 	friction = 1.0f;
 	active = false;
 	
+	acceleration = XMVectorSet(0.0f, -9.81f, 0.0f, 0.0f);
+
 	bounds = new Bounds(&position, XMFLOAT3(0.5f, 0.5f, 0.5f));
 }
 
@@ -36,9 +38,7 @@ void CannonBall::Update(float dt, const XMMATRIX& parentMat)
 {
 	if (!active)
 		return;
-
-	acceleration += XMVectorSet(0.0f, -9.81f, 0.0f, 0.0f);
-
+	
 	MoveableEntity::Update(dt, parentMat);
 
 	if (XMVectorGetY(position) <= GetYFromXZ(position, Game::vsPerFrameData->time) - 2)

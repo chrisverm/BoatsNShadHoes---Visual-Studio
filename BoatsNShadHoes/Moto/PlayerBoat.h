@@ -9,6 +9,12 @@ public:
 	PlayerBoat(Mesh*, Material*, ID3D11RasterizerState*, ID3D11DepthStencilState*, BOAT_STATS);
 
 	void Move(float);
+	void HandleInput();
+
+	Hittable* target;
+private:
+	bool leftSelected;
+	bool rightSelected;
 };
 
 #endif

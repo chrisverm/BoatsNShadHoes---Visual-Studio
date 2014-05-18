@@ -8,10 +8,10 @@ Game Screen ---------------------
 W     = move forward.
 A     = turn to the left.
 D     = turn to the right.
-J     = fire left-side cannons
-K     = fire right-side cannons
+Q     = toggle whether or not to fire left-side cannons
+E     = toggle whether or not to fire right-side cannons
 M     = unlock/lock mouse
-Space = fire all cannons
+Space = fire all selected cannons
 
 Also, you can press 'i' to turn on a debug feature that draws the local basis vectors for every entity.
 

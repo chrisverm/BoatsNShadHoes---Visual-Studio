@@ -41,8 +41,10 @@ public:
 	// Movement
 	void virtual Move(float dt);
 	void MoveForward();
+	void Stop();
 	void PortHelm();
 	void StarboardHelm();
+	void StallSteering();
 
 	// Stats
 	short Ammunition() const;
@@ -69,6 +71,7 @@ public:
 private:
 	BOAT_STATS stats;
 	bool dead;
+	XMVECTOR angularVelocityClamps;
 
 	std::vector<CannonBall*> cannonballs;
 	std::vector<Cannon*> leftCannons;
