@@ -27,6 +27,7 @@ Gameplay::~Gameplay()
 		delete world;
 		world = nullptr;
 	}
+	Game::vsPerSceneData->pntLights[0] = PointLight();
 }
 
 #pragma endregion
@@ -60,49 +61,24 @@ bool Gameplay::Initialize()
 	b1Stats.armor			= 10.0f;
 	b1Stats.ammunition		= 0;
 	b1Stats.maxAmmunition	= 10;
-	b1Stats.rateOfFire		= 0.7f;
+	b1Stats.rateOfFire		= 2;
 	b1Stats.damage			= 20;
 
 	playerBoat = new PlayerBoat(Resources::GetMesh("ship"), Resources::GetMaterial("ship"), 
 		Resources::GetRasterizerState("default"), Resources::GetDepthStencilState("default"), b1Stats);
 	playerBoat->Initialize(Game::vsPerModelConstBuffer, Game::vsPerModelData);
 	
-#pragma region Disgusting cannon making
+#pragma region Disgusting cannon/cannonball making
 	
-	// I wouldnt do more than 3 on each side...
-	Cannon* cannon = new Cannon(Resources::GetMesh("cannon"), Resources::GetMaterial("cannon"),
-		Resources::GetRasterizerState("default"), Resources::GetDepthStencilState("default"));
-	playerBoat->AddCannon(cannon , true);
-	cannon->Initialize(Game::vsPerModelConstBuffer, Game::vsPerModelData);
-
-	cannon = new Cannon(Resources::GetMesh("cannon"), Resources::GetMaterial("cannon"),
-		Resources::GetRasterizerState("default"), Resources::GetDepthStencilState("default"));
-	playerBoat->AddCannon(cannon , true);
-	cannon->Initialize(Game::vsPerModelConstBuffer, Game::vsPerModelData);
-
-	cannon = new Cannon(Resources::GetMesh("cannon"), Resources::GetMaterial("cannon"),
-		Resources::GetRasterizerState("default"), Resources::GetDepthStencilState("default"));
-	playerBoat->AddCannon(cannon , false);
-	cannon->Initialize(Game::vsPerModelConstBuffer, Game::vsPerModelData);
-
-	cannon = new Cannon(Resources::GetMesh("cannon"), Resources::GetMaterial("cannon"),
-		Resources::GetRasterizerState("default"), Resources::GetDepthStencilState("default"));
-	playerBoat->AddCannon(cannon , false);
-	cannon->Initialize(Game::vsPerModelConstBuffer, Game::vsPerModelData);
-
-	cannon = new Cannon(Resources::GetMesh("cannon"), Resources::GetMaterial("cannon"),
-		Resources::GetRasterizerState("default"), Resources::GetDepthStencilState("default"));
-	playerBoat->AddCannon(cannon , true);
-	cannon->Initialize(Game::vsPerModelConstBuffer, Game::vsPerModelData);
-
-	cannon = new Cannon(Resources::GetMesh("cannon"), Resources::GetMaterial("cannon"),
-		Resources::GetRasterizerState("default"), Resources::GetDepthStencilState("default"));
-	playerBoat->AddCannon(cannon , false);
-	cannon->Initialize(Game::vsPerModelConstBuffer, Game::vsPerModelData);
-	cannon = nullptr;
-	
-#pragma endregion
-	
+	// I wouldnt do more than 3 on each side, cause chris wasnts 4.
+	for (int i = 0; i < 6; i++)
+	{
+		Cannon* cannon = new Cannon(Resources::GetMesh("cannon"), Resources::GetMaterial("cannon"),
+			Resources::GetRasterizerState("default"), Resources::GetDepthStencilState("default"));
+		cannon->Initialize(Game::vsPerModelConstBuffer, Game::vsPerModelData);
+		playerBoat->AddCannon(cannon , (i%2 > 0));
+	}
+		
 	// populate ammunition
 	for (short i = 0; i < playerBoat->MaximumAmmunition(); i++)
 	{
@@ -118,6 +94,8 @@ bool Gameplay::Initialize()
 		{ delete cannonBall; }
 	}
 	
+#pragma endregion
+
 	// stats for second boat
 	BOAT_STATS b2Stats;
 	b2Stats.health			= 50.0f;
@@ -130,11 +108,20 @@ bool Gameplay::Initialize()
 	otherBoat = new AIBoat(Resources::GetMesh("ship"), Resources::GetMaterial("ship"), 
 		Resources::GetRasterizerState("default"), Resources::GetDepthStencilState("default"), b2Stats);
 	otherBoat->Initialize(Game::vsPerModelConstBuffer, Game::vsPerModelData);
-	otherBoat->position = XMVectorSet(5, 0, 15,0);
-	otherBoat->rotation = XMVectorSet(0, 2, 0, 0);
+		
+#pragma region Disgusting cannon/cannonball making
 	
+	// I wouldnt do more than 3 on each side, cause chris wasnts 4.
+	for (int i = 0; i < 6; i++)
+	{
+		Cannon* cannon = new Cannon(Resources::GetMesh("cannon"), Resources::GetMaterial("cannon"),
+			Resources::GetRasterizerState("default"), Resources::GetDepthStencilState("default"));
+		cannon->Initialize(Game::vsPerModelConstBuffer, Game::vsPerModelData);
+		otherBoat->AddCannon(cannon , (i%2 > 0));
+	}
+		
 	// populate ammunition
-	for(short i = 0; i < otherBoat->MaximumAmmunition(); i++)
+	for (short i = 0; i < otherBoat->MaximumAmmunition(); i++)
 	{
 		CannonBall* cannonBall = new CannonBall(Resources::GetMesh("sphere"), Resources::GetMaterial("cannonball"), 
 			Resources::GetRasterizerState("default"), Resources::GetDepthStencilState("default"));
@@ -147,6 +134,11 @@ bool Gameplay::Initialize()
 		else 
 		{ delete cannonBall; }
 	}
+
+	otherBoat->position = XMVectorSet(5, 0, 15,0);
+	otherBoat->rotation = XMVectorSet(0, 2, 0, 0);
+	
+#pragma endregion
 	
 	SkyBox* skyBall = new SkyBox(Resources::GetMesh("skybox"), Resources::GetMaterial("skybox"), 
 		Resources::GetRasterizerState("skybox"), Resources::GetDepthStencilState("skybox"));
@@ -222,14 +214,17 @@ bool Gameplay::Initialize()
 #pragma endregion
 
 	// Lighting Setup ----------------------------------
-
+	/*
+	// If you want to add more than one you have to change Lighing.hlsli NUM_PNT_LIGHTS to the appropriate number.
 	PointLight pntLight1;
 	pntLight1.Range = 2.0f;
 	pntLight1.Position = XMFLOAT3(0.0f, 0.5f, -1.0f);
-	pntLight1.Diffuse = XMFLOAT4(1.0f, 0.0f, 0.0f, 1.0f);
+	pntLight1.Diffuse = XMFLOAT4(0.0f, 1.0f, 0.0f, 0.0f);
 	pntLight1.Attenuation = XMFLOAT3(0.0f, 0.2f, 1.0f);
 
 	Game::vsPerSceneData->pntLights[0] = pntLight1;
+	*/
+	
 	deviceContext->UpdateSubresource(
 		Game::vsPerSceneConstBuffer,
 		0,

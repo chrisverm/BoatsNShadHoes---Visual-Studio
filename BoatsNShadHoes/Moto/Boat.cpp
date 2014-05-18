@@ -275,6 +275,11 @@ void Boat::AddCannon(Cannon* cannon, bool rightSide)
 	// Position
 	cannon->rotation = XMVectorSet(0,(3.14f/2.0f) * side, 0, 0);
 	cannon->position = position + up*2.7f + right*side * 1.5f - forward * 2 + forward * number * 3;
+
+	CannonStats cannonStats;
+	cannonStats.coolDownTime = stats.rateOfFire;
+	cannonStats.redTint = 0.3f;
+	cannon->SetStats(cannonStats);
 	
 	this->AddChild(cannon);
 }

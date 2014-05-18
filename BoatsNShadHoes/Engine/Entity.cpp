@@ -22,6 +22,7 @@ Entity::Entity()
 	maxAngleClamps = XMVectorSet( 360.0f,  360.0f,  360.0f,  1.0f);
 
 	XMStoreFloat4x4(&worldMatrix, XMMatrixTranspose(XMMatrixIdentity()));
+	tint = XMFLOAT4(0,0,0,0);
 }
 
 /*
@@ -259,6 +260,7 @@ Passes this entity's information to the constant buffer.
 void Entity::SetConstantBuffer(ID3D11DeviceContext* deviceContext, XMFLOAT4X4 mat)
 {
 	modelConstBufferData->model = mat;
+	modelConstBufferData->tint = tint;
 
 	deviceContext->UpdateSubresource(
 		modelConstBuffer,

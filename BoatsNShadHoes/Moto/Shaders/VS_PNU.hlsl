@@ -19,6 +19,7 @@ struct VertexToPixel
 	float2 uv		: TEXCOORD0;
 
 	float3 worldPos : POSITION;
+	float4 tint	: COLOR0;
 	PointLight pntLights[NUM_PNT_LIGHTS] : NEARESTLIGHT;
 };
 
@@ -36,6 +37,7 @@ VertexToPixel main( VertexShaderInput input )
 	output.uv	  = input.uv;
 	output.normal = mul(input.normal, (float3x3)world);
 	output.normal = normalize(output.normal);
+	output.tint   = tint;
 
 	output.pntLights = pntLights;
 

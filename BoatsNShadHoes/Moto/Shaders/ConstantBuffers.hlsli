@@ -15,6 +15,7 @@ cbuffer perFrame : register( b0 )
 cbuffer perModel : register( b1 )
 {
 	matrix world;
+	float4 tint;
 };
 
 cbuffer perScene : register( b2 )

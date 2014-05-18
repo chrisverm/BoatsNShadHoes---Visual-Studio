@@ -20,6 +20,7 @@ struct VSPerFrameData
 struct VSPerModelData
 {
 	DirectX::XMFLOAT4X4 model;
+	DirectX::XMFLOAT4 tint;
 };
 
 struct VSPerSceneData

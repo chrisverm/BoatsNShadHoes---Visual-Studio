@@ -12,6 +12,7 @@ Instructions::~Instructions()
 		delete world;
 		world = nullptr;
 	}
+	Game::vsPerSceneData->pntLights[0] = PointLight();
 }
 
 bool Instructions::Initialize()
@@ -50,7 +51,7 @@ bool Instructions::Initialize()
 	camDesc.Forward = THIRD_PERSON;
 	camDesc.Roll = STATIC;
 	CameraManager::CreateNewCamera(&camDesc, true);
-
+	
 	// Lighting Setup ----------------------------------
 	PointLight pntLight1;
 	pntLight1.Range = 2.0f;
@@ -59,6 +60,7 @@ bool Instructions::Initialize()
 	pntLight1.Attenuation = XMFLOAT3(0.0f, 0.2f, 1.0f);
 
 	Game::vsPerSceneData->pntLights[0] = pntLight1;
+	
 	deviceContext->UpdateSubresource(
 		Game::vsPerSceneConstBuffer,
 		0,

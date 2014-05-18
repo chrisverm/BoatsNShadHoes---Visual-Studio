@@ -62,6 +62,7 @@ public:
 
 protected:
 	XMFLOAT4X4 worldMatrix;
+	XMFLOAT4 tint;
 
 	// Orientation
 	XMVECTOR forward;
