@@ -30,14 +30,20 @@ Deletes bounds if one was created.
 */
 Entity::~Entity() 
 {
-	for (std::vector<Entity*>::iterator it = children.begin(); it != children.end() ; it++)
+	if (children.size() > 0)
 	{
-		if (dynamic_cast<Camera*>(*it) == NULL)
-			delete (*it);
+		for (std::vector<Entity*>::iterator it = children.begin(); it != children.end() ; it++)
+		{
+			if (dynamic_cast<Camera*>(*it) == NULL)
+				delete (*it);
+		}
 	}
 
 	if (bounds != nullptr)
+	{
 		delete bounds;
+		bounds = nullptr;
+	}
 }
 
 #pragma endregion

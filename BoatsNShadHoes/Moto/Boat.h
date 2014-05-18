@@ -33,6 +33,7 @@ class Boat : public MoveableEntity, public Hittable
 {
 public:
 	Boat(Mesh*, Material*, ID3D11RasterizerState*, ID3D11DepthStencilState*, BOAT_STATS);
+	virtual ~Boat();
 
 	// Update / Init
 	void Update(float dt, const XMMATRIX& parentMat);
@@ -41,10 +42,10 @@ public:
 	// Movement
 	void virtual Move(float dt);
 	void MoveForward();
-	void Stop();
-	void PortHelm();
-	void StarboardHelm();
-	void StallSteering();
+	void Stall();
+	void RudderRight();
+	void RudderLeft();
+	void StallRudder();
 
 	// Stats
 	short Ammunition() const;

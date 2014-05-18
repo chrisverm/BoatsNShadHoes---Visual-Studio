@@ -32,6 +32,12 @@ Boat::Boat(Mesh* mesh, Material* material, ID3D11RasterizerState* rasterizerStat
 	bounds = new Bounds(&position, XMFLOAT3(5,5,15));
 }
 
+/*
+Destroys a boat!
+*/
+Boat::~Boat()
+{ MoveableEntity::~MoveableEntity(); }
+
 #pragma endregion
 
 #pragma region Update, Init
@@ -100,42 +106,32 @@ void Boat::Move(float dt) { }
 Causes the boat to accelerate forward.
 */
 void Boat::MoveForward()
-{
-	acceleration = forward * 2.0f;
-}
+{ acceleration = forward * 2.0f; }
 
 /*
 Stops moving forward (has to wait for forward velocity to die down to friction, but stops accelerating forward).
 */
-void Boat::Stop()
-{
-	acceleration = XMVectorZero();
-}
+void Boat::Stall()
+{ acceleration = XMVectorZero(); }
 
 /*
-Causes the boat to rotate to the right (lean to positive z).
+Causes the boat to rotate to the right (lean to negative x). Starboard side
 */
-void Boat::PortHelm()
-{
-	angularAcceleration = XMVectorSet(0,0,0.25f,0);
-}
+void Boat::RudderRight()
+{ angularAcceleration = XMVectorSet(0,0,-0.25f,0); }
 
 /*
-Causes the boat to rotate to the left (lean to negative z).
+Causes the boat to rotate to the left (lean to positive x). Port side
 */
-void Boat::StarboardHelm()
-{
-	angularAcceleration = XMVectorSet(0,0,-0.25f,0);
-}
+void Boat::RudderLeft()
+{ angularAcceleration = XMVectorSet(0,0,0.25f,0); }
 
 /*
 Causes the boat to rotate back to upright.
 Will overshoot its mark cause it usues acceleration, but i think its more accurate to be honest.
 */
-void Boat::StallSteering()
-{
-	angularAcceleration = XMVectorSet(0,0,1,0) * -XMVectorGetZ(rotation);
-}
+void Boat::StallRudder()
+{ angularAcceleration = XMVectorSet(0,0,1,0) * -XMVectorGetZ(rotation); }
 
 #pragma endregion
 
@@ -278,7 +274,7 @@ void Boat::AddCannon(Cannon* cannon, bool rightSide)
 
 	// Position
 	cannon->rotation = XMVectorSet(0,(3.14f/2.0f) * side, 0, 0);
-	cannon->position = position + up*2.8f + right*side * 1.5f - forward + forward * number *2;
+	cannon->position = position + up*2.7f + right*side * 1.5f - forward * 2 + forward * number * 3;
 	
 	this->AddChild(cannon);
 }

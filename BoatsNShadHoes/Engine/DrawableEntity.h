@@ -10,7 +10,7 @@ class DrawableEntity : public Entity
 {
 public:
 	DrawableEntity(Mesh*, Material*, ID3D11RasterizerState*, ID3D11DepthStencilState*);
-	~DrawableEntity();
+	virtual ~DrawableEntity();
 
 	// Init, Update, Render
 	virtual void Render(ID3D11DeviceContext* deviceContext);

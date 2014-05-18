@@ -15,14 +15,14 @@ void PlayerBoat::HandleInput()
 	if (Input::KeyDown('W')) 
 		MoveForward(); 
 	else
-		Stop();
+		Stall();
 
 	if (Input::KeyDown('A')) // left
-		PortHelm(); 
+		RudderLeft(); 
 	else if (Input::KeyDown('D')) // right
-		StarboardHelm(); 
+		RudderRight(); 
 	else 
-		StallSteering();
+		StallRudder();
 
 	// Toggle Selected sides (We should probably have some sort of graphic (color overlay?) on selected cannons).
 	if (Input::KeyUp('Q')) 

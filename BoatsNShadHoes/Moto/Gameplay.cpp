@@ -21,6 +21,7 @@ Gameplay::~Gameplay()
 
 	// every entity is somehow connected to this
 	// thus this will destroy all entities
+	// For some reason ~Entity is called a LOT more than it should be... figure that out later maybe?
 	if (world != nullptr)
 	{
 		delete world;
@@ -53,7 +54,6 @@ bool Gameplay::Initialize()
 
 #pragma region Entites
 	// Entites -----------------------------------------
-
 	// stats for first boat
 	BOAT_STATS b1Stats;
 	b1Stats.health			= 100.0f;
@@ -68,7 +68,8 @@ bool Gameplay::Initialize()
 	playerBoat->Initialize(Game::vsPerModelConstBuffer, Game::vsPerModelData);
 	
 #pragma region Disgusting cannon making
-	// I wouldnt do more than 4 on each side...
+	
+	// I wouldnt do more than 3 on each side...
 	Cannon* cannon = new Cannon(Resources::GetMesh("cannon"), Resources::GetMaterial("cannon"),
 		Resources::GetRasterizerState("default"), Resources::GetDepthStencilState("default"));
 	playerBoat->AddCannon(cannon , true);
@@ -88,6 +89,18 @@ bool Gameplay::Initialize()
 		Resources::GetRasterizerState("default"), Resources::GetDepthStencilState("default"));
 	playerBoat->AddCannon(cannon , false);
 	cannon->Initialize(Game::vsPerModelConstBuffer, Game::vsPerModelData);
+
+	cannon = new Cannon(Resources::GetMesh("cannon"), Resources::GetMaterial("cannon"),
+		Resources::GetRasterizerState("default"), Resources::GetDepthStencilState("default"));
+	playerBoat->AddCannon(cannon , true);
+	cannon->Initialize(Game::vsPerModelConstBuffer, Game::vsPerModelData);
+
+	cannon = new Cannon(Resources::GetMesh("cannon"), Resources::GetMaterial("cannon"),
+		Resources::GetRasterizerState("default"), Resources::GetDepthStencilState("default"));
+	playerBoat->AddCannon(cannon , false);
+	cannon->Initialize(Game::vsPerModelConstBuffer, Game::vsPerModelData);
+	cannon = nullptr;
+	
 #pragma endregion
 	
 	// populate ammunition
@@ -101,8 +114,10 @@ bool Gameplay::Initialize()
 		// try to add ammunition, don't parent to boat.
 		if(playerBoat->AddAmmunition(cannonBall))
 		{ world->AddChild(cannonBall); }
+		else 
+		{ delete cannonBall; }
 	}
-
+	
 	// stats for second boat
 	BOAT_STATS b2Stats;
 	b2Stats.health			= 50.0f;
@@ -117,7 +132,7 @@ bool Gameplay::Initialize()
 	otherBoat->Initialize(Game::vsPerModelConstBuffer, Game::vsPerModelData);
 	otherBoat->position = XMVectorSet(5, 0, 15,0);
 	otherBoat->rotation = XMVectorSet(0, 2, 0, 0);
-
+	
 	// populate ammunition
 	for(short i = 0; i < otherBoat->MaximumAmmunition(); i++)
 	{
@@ -129,8 +144,10 @@ bool Gameplay::Initialize()
 		// try to add ammunition, don't parent to boat.
 		if(otherBoat->AddAmmunition(cannonBall))
 		{ world->AddChild(cannonBall); }
+		else 
+		{ delete cannonBall; }
 	}
-
+	
 	SkyBox* skyBall = new SkyBox(Resources::GetMesh("skybox"), Resources::GetMaterial("skybox"), 
 		Resources::GetRasterizerState("skybox"), Resources::GetDepthStencilState("skybox"));
 	skyBall->Initialize(Game::vsPerModelConstBuffer, Game::vsPerModelData);
@@ -144,12 +161,8 @@ bool Gameplay::Initialize()
 	world->AddChild(water);
 	playerBoat->AddChild(skyBall); // Parented to the boat, AW YEAH.
 	playerBoat->target = otherBoat;
-
-#pragma endregion
-
-#pragma region Camera
+	
 	// Camera Setup -----------[ o]---------------------
-
 	viewChanged = false;
 	CameraManager::Initialize(deviceContext, 1, &DX::windowWidth, &DX::windowHeight, &viewChanged, &Game::projChanged);
 	
@@ -208,7 +221,6 @@ bool Gameplay::Initialize()
 #endif
 #pragma endregion
 
-#pragma region Lighting
 	// Lighting Setup ----------------------------------
 
 	PointLight pntLight1;
@@ -227,7 +239,6 @@ bool Gameplay::Initialize()
 		0);
 
 	Game::vsPerFrameData->time = 0;
-#pragma endregion
 
 	return true;
 }

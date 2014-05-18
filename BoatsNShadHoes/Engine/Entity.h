@@ -15,8 +15,8 @@ class Entity
 {
 public:
 	Entity();
-	~Entity();
-	
+	virtual ~Entity();
+
 	ID3D11Buffer* modelConstBuffer;
 	VSPerModelData* modelConstBufferData;
 
