@@ -9,8 +9,19 @@ AIBoat::AIBoat(Mesh* mesh, Material* mat, ID3D11RasterizerState* rastState, ID3D
 }
 
 /*
-NOT IMPLEMENTED, GAAAHHHHHHHHHHHHHH
+I'M TRYING TO IMPLEMENT NOW GAHHHHHHH -Love, Justin
 */
 void AIBoat::Move(float dt)
 {
+	Boat* player = (Boat*)targets[0];
+	
+	XMVECTOR enemyPos = player->position;
+	if(XMVectorGetX(enemyPos) < XMVectorGetX(position))
+	{
+		RudderLeft();
+	}
+	else if(XMVectorGetX(enemyPos) < XMVectorGetX(position))
+	{
+		RudderRight();
+	}
 }

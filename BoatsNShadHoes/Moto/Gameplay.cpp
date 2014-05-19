@@ -95,8 +95,8 @@ bool Gameplay::Initialize()
 	}
 	
 #pragma endregion
-
-	for (int i = 0; i < 3; i++)
+	//1 boat for now as an enemy
+	for (int i = 0; i < 1; i++)
 	{
 #pragma region Disgusting other boat making
 
