@@ -49,17 +49,11 @@ Sinks if dead, otherwise positions itself on the water before updating Moveable.
 */
 void Boat::Update(float dt, const XMMATRIX& parentMat)
 {
-	Move(dt);
-
-	angularVelocity = XMVectorClamp(angularVelocity, -angularVelocityClamps, angularVelocityClamps);
-
-	if (IsDead())
+	if (!IsDead())
 	{
-		// apply downward position change to sunken boat
-		position -= XMVectorSet(0.0, +0.001f, 0.0f, 0.0f);
-	}
-	else 
-	{
+		Move(dt);
+		angularVelocity = XMVectorClamp(angularVelocity, -angularVelocityClamps, angularVelocityClamps);
+
 		// set boat's Y position on the water
 		float waveY  = GetYFromXZ(position);
 		position = XMVectorSetY(position, waveY - 0.5f);
@@ -191,22 +185,37 @@ bool Boat::AddAmmunition(CannonBall* cball)
 /*
 Fires all the cannons on the left side that we have ammo to fire with.
 */
-void Boat::FireLeftCannons(Hittable* target)
+void Boat::FireLeftCannons()
 {
 	for (std::vector<Cannon*>::iterator it = leftCannons.begin(); it != leftCannons.end(); it++)
 	{
-		if (!Fire(target, *it)) return; // Firing on one cannon failed, dont bother with the others.
+		if (!Fire(*it)) return; // Firing on one cannon failed, dont bother with the others.
 	}
 }
 
 /*
 Fires all the cannons on the right side that we have ammo to fire with.
 */
-void Boat::FireRightCannons(Hittable* target)
+void Boat::FireRightCannons()
 {
 	for (std::vector<Cannon*>::iterator it = rightCannons.begin(); it != rightCannons.end(); it++)
 	{
-		if (!Fire(target, *it)) return; // Firing on one cannon failed, dont bother with the others.
+		if (!Fire(*it)) return; // Firing on one cannon failed, dont bother with the others.
+	}
+}
+
+/*
+Fires all the cannons on both sides.
+If not enough cannonballs, it will fire still fire equal ammounts on either side.
+Unless we have an odd number of cannonballs, then the right side will have one more than the left.
+*/
+void Boat::FireAllCannons()
+{
+	for (int i = 0; i < (int)rightCannons.size(); i++)
+	{
+		// Hopefuly we have the same number of cannons.
+		if (!Fire(rightCannons[i])) return;
+		if (!Fire(leftCannons[i])) return;
 	}
 }
 
@@ -215,14 +224,14 @@ Fires a cannonball if there are any left.
 Passes the target to the cannonball for collision detection.
 Returns false if no cannonball could be fired (out of ammo).
 */
-bool Boat::Fire(Hittable* target, Cannon* cannon)
+bool Boat::Fire(Cannon* cannon)
 {
 	// check for inactive cannonballs
 	for(short i = 0; i < stats.ammunition; i++)
 	{
 		if(!cannonballs[i]->Active())
 		{
-			cannon->Fire(cannonballs[i], target, velocity, stats.damage);
+			cannon->Fire(cannonballs[i], targets, velocity, stats.damage);
 
 #if defined(DEBUG) | defined(_DEBUG)
 			std::cout << "Ammunition remaining : " << Ammunition() << std::endl;
@@ -249,7 +258,11 @@ void Boat::TakeDamage(float amnt)
 	stats.health -= (amnt-stats.armor);
 
 	if(stats.health <= 0)
+	{
+		acceleration = XMVectorSet(0,-9.81f,0,0);
+		angularAcceleration = XMVectorSet(0,0,0,0);
 		dead = true;
+	}
 }
 
 /*
@@ -274,7 +287,10 @@ void Boat::AddCannon(Cannon* cannon, bool rightSide)
 
 	// Position
 	cannon->rotation = XMVectorSet(0,(3.14f/2.0f) * side, 0, 0);
-	cannon->position = position + up*2.7f + right*side * 1.5f - forward * 2 + forward * number * 3;
+	cannon->position = position
+		+ up * 2.7f //y
+		+ right * (float)side * 1.5f // x
+		- forward * 2.0f + forward * (float)number * 3.0f; //z
 
 	CannonStats cannonStats;
 	cannonStats.coolDownTime = stats.rateOfFire;

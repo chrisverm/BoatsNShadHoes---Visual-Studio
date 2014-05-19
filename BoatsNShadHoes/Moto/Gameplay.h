@@ -33,7 +33,7 @@ public:
 private:
 	Entity* world;
 	PlayerBoat* playerBoat;
-	AIBoat* otherBoat;
+	std::vector<AIBoat*> otherBoats;
 
 	void LoadShadersAndInputLayout();
 	void LoadResources();
@@ -46,7 +46,6 @@ private:
 	std::map<std::string, AudioPlayer*> sounds;
 
 	bool viewChanged;
-	bool boatsColliding; // this should be removed later.
 };
 
 #endif

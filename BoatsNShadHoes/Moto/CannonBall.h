@@ -21,7 +21,7 @@ public:
 #endif
 
 	// Fire
-	void Fire(XMVECTOR position, XMVECTOR acceleration, Hittable* target, float damage);
+	void Fire(XMVECTOR position, XMVECTOR acceleration, std::vector<Hittable*> targets, float damage);
 	
 	// Getter
 	bool Active() const;
@@ -32,7 +32,7 @@ private:
 	bool active;
 	float damage;
 
-	Hittable* target;
+	std::vector<Hittable*> targets;
 
 	// Helper
 	float GetYFromXZ(XMVECTOR pos, float time);

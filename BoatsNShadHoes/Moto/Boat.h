@@ -56,14 +56,17 @@ public:
 	// Actions
 	bool AddAmmunition(CannonBall*);
 	void AddCannon(Cannon*, bool);
-	void FireLeftCannons(Hittable*);
-	void FireRightCannons(Hittable*);
-	bool Fire(Hittable*, Cannon*);
+	void FireLeftCannons();
+	void FireRightCannons();
+	void FireAllCannons();
+	bool Fire(Cannon*);
 	void TakeDamage(float);
 	
 	// Hittable implementation
 	void Hit(float);
 	Bounds* GetBoundsPtr();
+
+	std::vector<Hittable*> targets;
 
 	// Shared hit/fire sounds to use.
 	static std::vector<AudioPlayer*> hitSounds;

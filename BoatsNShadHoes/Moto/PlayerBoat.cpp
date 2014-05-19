@@ -24,19 +24,12 @@ void PlayerBoat::HandleInput()
 	else 
 		StallRudder();
 
-	// Toggle Selected sides (We should probably have some sort of graphic (color overlay?) on selected cannons).
-	if (Input::KeyUp('Q')) 
-		leftSelected = !leftSelected; 
-	if (Input::KeyUp('E')) 
-		rightSelected = !rightSelected; 
-
-	if (Input::KeyUp(' '))
-	{
-		if (leftSelected)
-			FireLeftCannons(target);
-		if (rightSelected)
-			FireRightCannons(target);
-	}
+	if (Input::KeyUp('Q') || Input::MouseButtonUp(LeftMB)) 
+		FireLeftCannons();
+	if (Input::KeyUp('E') || Input::MouseButtonUp(RightMB)) 
+		FireRightCannons(); 
+	if (Input::KeyUp(' ') || Input::MouseButtonUp(MiddleMB)) 
+		FireAllCannons(); 
 }
 
 /*

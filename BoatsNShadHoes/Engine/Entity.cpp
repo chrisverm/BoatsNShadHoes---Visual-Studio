@@ -85,9 +85,8 @@ void Entity::Update(float dt, const XMMATRIX& parentMat)
 	XMStoreFloat4x4(&worldMatrix, XMMatrixTranspose(worldMat));
 
 	forward = XMVector3Normalize(worldMat.r[2]);
-	//UpdateForwardFromRotation();
-
-	SetUnitVectors();
+	right = XMVector3Normalize(worldMat.r[0]);
+	up = XMVector3Normalize(worldMat.r[1]);
 
 	for (std::vector<Entity*>::iterator it = children.begin(); it != children.end(); it++)
 	{ (*it)->Update(dt, worldMat); }

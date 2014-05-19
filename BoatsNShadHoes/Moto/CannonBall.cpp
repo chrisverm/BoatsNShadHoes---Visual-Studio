@@ -49,8 +49,12 @@ void CannonBall::Update(float dt, const XMMATRIX& parentMat)
 #endif
 	}
 
-	if (bounds->Intersecting(target->GetBoundsPtr()))
-	{ target->Hit(damage); active = false; }
+	for (std::vector<Hittable*>::iterator it = targets.begin(); it != targets.end(); it++)
+	{
+		Hittable* target = *it;
+		if (bounds->Intersecting(target->GetBoundsPtr()))
+		{ target->Hit(damage); active = false; }
+	}
 }
 
 /*
@@ -88,10 +92,10 @@ bool CannonBall::Active() const { return active; }
 Fires this cannonball (sets it to active).
 Requires a position to fire from, direction to travel in, a damage value, and the target to check collisions with.
 */
-void CannonBall::Fire(XMVECTOR position, XMVECTOR direction, Hittable* target, float damage)
+void CannonBall::Fire(XMVECTOR position, XMVECTOR direction, std::vector<Hittable*> targets, float damage)
 {
 	this->damage = damage;
-	this->target = target;
+	this->targets = targets;
 	this->position = position;
 	this->velocity = direction * 10;
 

@@ -32,7 +32,7 @@ float Mod(float num, float mod)
 
 float3 WaveOffset(float3 inputPosition)
 {
-	float3 origin = mul(inputPosition, world).xyz;
+	float3 origin = mul(float4(inputPosition,0), world).xyz;
 	float start = (origin.x / 150.0f) * 360;
 
 	float angle = (start + time * 200.0f) * 3.1415f;
@@ -50,7 +50,7 @@ float3 WaveOffset(float3 inputPosition)
 
 float3 WaveNormal(float3 inputPosition, float3 waveOffset)
 {
-	float3 origin = mul(inputPosition, world).xyz;
+	float3 origin = mul(float4(inputPosition,0), world).xyz;
 	float start = (origin.x / 150.0f) * 360;
 
 	float angle = (start + time * 200.0f) * 3.1415f;
@@ -98,7 +98,7 @@ VertexToPixel main( VertexShaderInput input )
 	output.uv	  = uv;
 	output.uv.x -= time / 8.0f;
 
-	float3 normal = WaveNormal(input.position, position);
+	float3 normal = WaveNormal(input.position, position.xyz);
 	output.normal = mul(normal, (float3x3)world);
 	output.normal = normalize(output.normal);
 

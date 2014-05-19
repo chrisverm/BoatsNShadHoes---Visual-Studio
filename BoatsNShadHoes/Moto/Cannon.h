@@ -21,7 +21,7 @@ public:
 	float coolDownTime;
 
 	void Update(float, const XMMATRIX&);
-	void Fire(CannonBall*, Hittable*, XMVECTOR, float);
+	void Fire(CannonBall*, std::vector<Hittable*>, XMVECTOR, float);
 
 private:
 	bool active;

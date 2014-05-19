@@ -96,49 +96,58 @@ bool Gameplay::Initialize()
 	
 #pragma endregion
 
-	// stats for second boat
-	BOAT_STATS b2Stats;
-	b2Stats.health			= 50.0f;
-	b2Stats.armor			= 15.0f;
-	b2Stats.ammunition		= 0;
-	b2Stats.maxAmmunition	= 3;
-	b2Stats.rateOfFire		= 1.5f;
-	b2Stats.damage			= 10;
-
-	otherBoat = new AIBoat(Resources::GetMesh("ship"), Resources::GetMaterial("ship"), 
-		Resources::GetRasterizerState("default"), Resources::GetDepthStencilState("default"), b2Stats);
-	otherBoat->Initialize(Game::vsPerModelConstBuffer, Game::vsPerModelData);
-		
-#pragma region Disgusting cannon/cannonball making
-	
-	// I wouldnt do more than 3 on each side, cause chris wasnts 4.
-	for (int i = 0; i < 6; i++)
+	for (int i = 0; i < 3; i++)
 	{
-		Cannon* cannon = new Cannon(Resources::GetMesh("cannon"), Resources::GetMaterial("cannon"),
-			Resources::GetRasterizerState("default"), Resources::GetDepthStencilState("default"));
-		cannon->Initialize(Game::vsPerModelConstBuffer, Game::vsPerModelData);
-		otherBoat->AddCannon(cannon , (i%2 > 0));
-	}
+#pragma region Disgusting other boat making
+
+		// stats for second boat
+		BOAT_STATS b2Stats;
+		b2Stats.health			= 50.0f;
+		b2Stats.armor			= 15.0f;
+		b2Stats.ammunition		= 0;
+		b2Stats.maxAmmunition	= 3;
+		b2Stats.rateOfFire		= 1.5f;
+		b2Stats.damage			= 10;
+
+		AIBoat* otherBoat = new AIBoat(Resources::GetMesh("ship"), Resources::GetMaterial("ship"), 
+			Resources::GetRasterizerState("default"), Resources::GetDepthStencilState("default"), b2Stats);
+		otherBoat->Initialize(Game::vsPerModelConstBuffer, Game::vsPerModelData);
+		// Position set at the end of the region now due to parenting silliness.
+			
+		// I wouldnt do more than 3 on each side, cause chris wasnts 4.
+		for (int i = 0; i < 6; i++)
+		{
+			Cannon* cannon = new Cannon(Resources::GetMesh("cannon"), Resources::GetMaterial("cannon"),
+				Resources::GetRasterizerState("default"), Resources::GetDepthStencilState("default"));
+			cannon->Initialize(Game::vsPerModelConstBuffer, Game::vsPerModelData);
+			otherBoat->AddCannon(cannon , (i%2 > 0));
+		}
 		
-	// populate ammunition
-	for (short i = 0; i < otherBoat->MaximumAmmunition(); i++)
-	{
-		CannonBall* cannonBall = new CannonBall(Resources::GetMesh("sphere"), Resources::GetMaterial("cannonball"), 
-			Resources::GetRasterizerState("default"), Resources::GetDepthStencilState("default"));
+		// populate ammunition
+		for (short i = 0; i < otherBoat->MaximumAmmunition(); i++)
+		{
+			CannonBall* cannonBall = new CannonBall(Resources::GetMesh("sphere"), Resources::GetMaterial("cannonball"), 
+				Resources::GetRasterizerState("default"), Resources::GetDepthStencilState("default"));
 
-		cannonBall->Initialize(Game::vsPerModelConstBuffer, Game::vsPerModelData);
+			cannonBall->Initialize(Game::vsPerModelConstBuffer, Game::vsPerModelData);
 
-		// try to add ammunition, don't parent to boat.
-		if(otherBoat->AddAmmunition(cannonBall))
-		{ world->AddChild(cannonBall); }
-		else 
-		{ delete cannonBall; }
-	}
+			// try to add ammunition, don't parent to boat.
+			if(otherBoat->AddAmmunition(cannonBall))
+			{ world->AddChild(cannonBall); }
+			else 
+			{ delete cannonBall; }
+		}
 
-	otherBoat->position = XMVectorSet(5, 0, 15,0);
-	otherBoat->rotation = XMVectorSet(0, 2, 0, 0);
+		// Position, needs to be better so they dont spwn inside each other or the player!
+		otherBoat->position = XMVectorSet(rand()%80 - 40.0f, 0, rand()%40 - 20.0f,0);
+		otherBoat->rotation = XMVectorSet(0, rand()%80 - 40.0f, 0, 0);
+
+		otherBoat->targets.push_back(playerBoat);
+		otherBoats.push_back(otherBoat);
+		playerBoat->targets.push_back(otherBoat);
 	
 #pragma endregion
+	}
 	
 	SkyBox* skyBall = new SkyBox(Resources::GetMesh("skybox"), Resources::GetMaterial("skybox"), 
 		Resources::GetRasterizerState("skybox"), Resources::GetDepthStencilState("skybox"));
@@ -147,12 +156,13 @@ bool Gameplay::Initialize()
 	Water* water = new Water(Resources::GetMesh("quad"), Resources::GetMaterial("water"), 
 		Resources::GetRasterizerState("default"), Resources::GetDepthStencilState("default"));
 	water->Initialize(Game::vsPerModelConstBuffer, Game::vsPerModelData);
+	
+	for (int i = 0; i < (int)otherBoats.size(); i++)
+	{ world->AddChild(otherBoats[i]); }
 
 	world->AddChild(playerBoat);
-	world->AddChild(otherBoat);
 	world->AddChild(water);
 	playerBoat->AddChild(skyBall); // Parented to the boat, AW YEAH.
-	playerBoat->target = otherBoat;
 	
 	// Camera Setup -----------[ o]---------------------
 	viewChanged = false;
@@ -504,7 +514,7 @@ void Gameplay::LoadResources()
 void Gameplay::Update(float dt)
 {
 	CameraManager::Update();
-	
+		
 	world->Update(dt, XMMatrixIdentity());
 
 	XMFLOAT3 cameraPosition;
@@ -533,22 +543,18 @@ void Gameplay::Update(float dt)
 		Input::ToggleCursorLocking();
 	}
 
-	if (Bounds::Intersecting(playerBoat->bounds, otherBoat->bounds))
+	for (int i = 0; i < (int)otherBoats.size(); i++)
 	{
-		if (!boatsColliding)
+		if (Bounds::Intersecting(playerBoat->bounds, otherBoats[i]->bounds))
+			printf("Boat Collision! Oh No! \n"); 
+
+		for (int j = i+1; j < (int)otherBoats.size(); j++)
 		{
-			boatsColliding = true;
-			printf("Boat Collision! \n");
+			if (Bounds::Intersecting(otherBoats[i]->bounds, otherBoats[j]->bounds))
+				printf("Ai Boat Collision! Ha Ha! \n");
 		}
 	}
-	else
-	{
-		if (boatsColliding)
-		{
-			boatsColliding = false;
-			printf("Boats no longer colliding \n");
-		}
-	}
+	
 
 #ifdef SOUND_PLAY
 	// updating audio source based on listener position

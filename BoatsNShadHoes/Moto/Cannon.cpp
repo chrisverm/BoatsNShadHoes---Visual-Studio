@@ -38,7 +38,7 @@ void Cannon::Update(float dt, const XMMATRIX& parentMat)
 /*
 Fires a cannonball if not cooling down.
 */
-void Cannon::Fire(CannonBall* cannonBall, Hittable* target, XMVECTOR currentVeloctiy, float damage)
+void Cannon::Fire(CannonBall* cannonBall,  std::vector<Hittable*> targets, XMVECTOR currentVeloctiy, float damage)
 {
 	if (active)
 	{
@@ -52,7 +52,7 @@ void Cannon::Fire(CannonBall* cannonBall, Hittable* target, XMVECTOR currentVelo
 		cannonBall->Fire(
 			XMVector3Transform(position, matrix),
 			(this->forward * (5) + this->up/2), // For some reason it looks 400x better without using current velocity...
-			target,
+			targets,
 			damage);
 
 		cannonBall->velocity += currentVeloctiy;

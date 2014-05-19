@@ -10,11 +10,6 @@ public:
 
 	void Move(float);
 	void HandleInput();
-
-	Hittable* target;
-private:
-	bool leftSelected;
-	bool rightSelected;
 };
 
 #endif
