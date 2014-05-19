@@ -35,7 +35,16 @@ void Camera::Update(float dt, const XMMATRIX& parentMat)
 	if (Input::DeltaMouse->x != 0 || Input::DeltaMouse->y != 0)
 		Move(Input::DeltaMouse, dt);
 
-	Entity::Update(dt, parentMat);
+	XMMATRIX trans = XMMatrixTranslationFromVector(XMVectorSetY(parent->position, XMVectorGetY(parent->position / 1.25f)));
+	XMMATRIX rot = XMMatrixRotationRollPitchYawFromVector(XMVectorSetZ(parent->rotation, 0));
+	XMMATRIX sca = XMMatrixScalingFromVector(parent->scale);
+	XMMATRIX parentMatrix = sca * rot * trans;
+
+	Entity::Update(dt, parentMatrix);
+
+	rotation = XMVectorClamp(rotation, minAngleClamps, maxAngleClamps);
+	rotation = XMVectorModAngles(rotation);
+
 	XMStoreFloat4x4(&viewMatrix, XMMatrixInverse(nullptr, XMLoadFloat4x4(&worldMatrix)));
 }
 
