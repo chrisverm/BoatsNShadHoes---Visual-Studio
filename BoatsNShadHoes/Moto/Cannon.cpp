@@ -51,7 +51,7 @@ void Cannon::Fire(CannonBall* cannonBall,  std::vector<Hittable*> targets, XMVEC
 
 		cannonBall->Fire(
 			XMVector3Transform(position, matrix),
-			(this->forward * (5) + this->up/2), // For some reason it looks 400x better without using current velocity...
+			(this->forward * (Random::Range(5,7)) + this->up/Random::Range(1.8,2.2)), // For some reason it looks 400x better without using current velocity...
 			targets,
 			damage);
 

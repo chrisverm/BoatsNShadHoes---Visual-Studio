@@ -7,6 +7,7 @@
 #include "Mesh.h"
 #include "Material.h"
 #include "Bounds.h"
+#include "Random.h"
 
 // Some people frown upon this being here.
 using namespace DirectX;

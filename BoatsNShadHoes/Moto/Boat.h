@@ -51,7 +51,8 @@ public:
 	short Ammunition() const;
 	short MaximumAmmunition() const;
 	float Health() const;
-	bool IsDead() const;
+	bool Dead() const;
+	bool Sunk() const;
 
 	// Actions
 	bool AddAmmunition(CannonBall*);
@@ -75,6 +76,7 @@ public:
 private:
 	BOAT_STATS stats;
 	bool dead;
+	bool sunk;
 	XMVECTOR angularVelocityClamps;
 
 	std::vector<CannonBall*> cannonballs;

@@ -17,7 +17,7 @@ Boat::Boat(Mesh* mesh, Material* material, ID3D11RasterizerState* rasterizerStat
 	SetStats(b);
 
 	// default stats for boat
-	dead = false;
+	sunk = dead = false;
 	maxVel = 3.0f;
 	maxAccel = 2.0f;
 	friction = 0.9f;
@@ -49,7 +49,7 @@ Sinks if dead, otherwise positions itself on the water before updating Moveable.
 */
 void Boat::Update(float dt, const XMMATRIX& parentMat)
 {
-	if (!IsDead())
+	if (!Dead())
 	{
 		Move(dt);
 		angularVelocity = XMVectorClamp(angularVelocity, -angularVelocityClamps, angularVelocityClamps);
@@ -70,7 +70,12 @@ void Boat::Update(float dt, const XMMATRIX& parentMat)
 		rotation = XMVectorSetX(rotation, -angle * 15);
 	}
 
-	MoveableEntity::Update(dt, parentMat);
+	if (!Sunk())
+	{
+		MoveableEntity::Update(dt, parentMat);
+		if (XMVectorGetY(position) < GetYFromXZ(position) - 5)
+			sunk = true;
+	}
 }
 
 
@@ -149,7 +154,12 @@ float Boat::Health() const { return stats.health; }
 /*
 Returns whether or not the boat is currently dead.
 */
-bool Boat::IsDead() const { return dead; }
+bool Boat::Dead() const { return dead; }
+
+/*
+Returns whether or not the boat is currently sunk.
+*/
+bool Boat::Sunk() const { return sunk; }
 
 #pragma endregion
 

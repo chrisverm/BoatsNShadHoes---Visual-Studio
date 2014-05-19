@@ -139,8 +139,8 @@ bool Gameplay::Initialize()
 		}
 
 		// Position, needs to be better so they dont spwn inside each other or the player!
-		otherBoat->position = XMVectorSet(rand()%80 - 40.0f, 0, rand()%40 - 20.0f,0);
-		otherBoat->rotation = XMVectorSet(0, rand()%80 - 40.0f, 0, 0);
+		otherBoat->position = Random::Direction(40, 80, true, false);
+		otherBoat->rotation = XMVectorSet(0, Random::Range(-3.14f, 3.14), 0, 0);
 
 		otherBoat->targets.push_back(playerBoat);
 		otherBoats.push_back(otherBoat);
@@ -545,13 +545,18 @@ void Gameplay::Update(float dt)
 
 	for (int i = 0; i < (int)otherBoats.size(); i++)
 	{
-		if (Bounds::Intersecting(playerBoat->bounds, otherBoats[i]->bounds))
-			printf("Boat Collision! Oh No! \n"); 
+		if (otherBoats[i]->Sunk()) // Dont even check this iteration
+			continue;
+		
+		// Check only if player boat is alive
+		if (!playerBoat->Sunk() && Bounds::Intersecting(playerBoat->bounds, otherBoats[i]->bounds))
+		{ printf("Boat Collision! Oh No! \n"); playerBoat->TakeDamage(500/*ooo kill em*/); otherBoats[i]->TakeDamage(500/*ooo ooo kill em kill em*/); }
 
+		// Then check all others that havnt checked against this yet that are alive.
 		for (int j = i+1; j < (int)otherBoats.size(); j++)
 		{
-			if (Bounds::Intersecting(otherBoats[i]->bounds, otherBoats[j]->bounds))
-				printf("Ai Boat Collision! Ha Ha! \n");
+			if (!otherBoats[j]->Sunk() && Bounds::Intersecting(otherBoats[i]->bounds, otherBoats[j]->bounds))
+			{ printf("AI Collision! Ha ha! \n"); otherBoats[j]->TakeDamage(500/*ooo kill em*/); otherBoats[i]->TakeDamage(500/*ooo ooo kill em kill em*/); }
 		}
 	}
 	
