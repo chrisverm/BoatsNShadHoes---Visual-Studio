@@ -536,7 +536,7 @@ void Gameplay::Update(float dt)
 	{
 		timeSinceEnd+= dt;
 
-		if (timeSinceEnd > 2.75f)
+		if (timeSinceEnd > 2.5f)
 		{
 			EndGame::win = false;
 			GameStateManager::ChangeState("EndGame"); 
