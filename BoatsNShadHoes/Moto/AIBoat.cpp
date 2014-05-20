@@ -74,6 +74,17 @@ void AIBoat::Move(float dt)
 		if(sideAngle >= 3.0f*(3.14f/4.0f))
 		{ FireLeftCannons(); }
 	}
+	for (int i = 0; i < otherAIBoats.size(); i++)
+	{
+		XMVECTOR diffVectorToAlly = otherAIBoats[i]->position - position;
+		float distanceToOtherAI = XMVectorGetX(XMVector3Length(diffVectorToAlly));
+
+		if(distanceToOtherAI < 30)
+		{
+			RudderRight();
+		}
+	}
+
 
 	Boat::Move(dt);
 
