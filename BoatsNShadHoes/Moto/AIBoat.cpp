@@ -10,18 +10,66 @@ AIBoat::AIBoat(Mesh* mesh, Material* mat, ID3D11RasterizerState* rastState, ID3D
 
 /*
 I'M TRYING TO IMPLEMENT NOW GAHHHHHHH -Love, Justin
+YAY!
 */
 void AIBoat::Move(float dt)
 {
 	Boat* player = (Boat*)targets[0];
 	
-	XMVECTOR enemyPos = player->position;
-	if(XMVectorGetX(enemyPos) < XMVectorGetX(position))
+	XMVECTOR playerPos = player->position;
+	XMVECTOR differenceVector = playerPos - position;
+
+	//Gets angle between AIboat and playerBoat. In radians
+	float frontAngle = XMVectorGetX(XMVector3AngleBetweenVectors(forward, differenceVector));
+	float sideAngle = XMVectorGetX(XMVector3AngleBetweenVectors(right, differenceVector));
+	std::cout << "front angle: " << frontAngle << std::endl;
+	std::cout << "side angle: " << sideAngle << std::endl;
+
+	float distance = XMVectorGetX(XMVector3Length(differenceVector));
+	std::cout << distance << std::endl << std::endl;
+		
+	// Always move forward
+	MoveForward();
+	StallRudder();
+
+	// Too far away, go to him.
+	if(distance > 50)
 	{
-		RudderLeft();
+		if (frontAngle > 0.2f) // If this fails, just go forward.
+		{
+			// turn to the right
+			if (sideAngle < 3.14f / 2.0f)
+			{ RudderRight(); }
+			// turn to the left
+			else 
+			{ RudderLeft(); }
+		}
 	}
-	else if(XMVectorGetX(enemyPos) < XMVectorGetX(position))
+	// Too close, turn away
+	else if (distance < 20)
 	{
-		RudderRight();
+		// turn to the right
+		if (sideAngle < 3.14f / 2.0f)
+		{ RudderLeft(); }
+		// turn to the left
+		else 
+		{ RudderRight(); }
 	}
+	else
+	{
+		// try to circle.
+	}
+
+	// check if we can fire.
+	// if side angle is close to 0 or pi, fire on that side...
+	if (distance < 80)
+	{
+		if(sideAngle <= 3.14f/4.0f)
+		{ FireRightCannons(); }
+		if(sideAngle >= 3.0f*(3.14f/4.0f))
+		{ FireLeftCannons(); }
+	}
+
+	Boat::Move(dt);
+
 }

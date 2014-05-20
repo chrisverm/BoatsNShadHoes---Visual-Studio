@@ -73,7 +73,7 @@ void Boat::Update(float dt, const XMMATRIX& parentMat)
 	if (!Sunk())
 	{
 		MoveableEntity::Update(dt, parentMat);
-		if (XMVectorGetY(position) < GetYFromXZ(position) - 5)
+		if (XMVectorGetY(position) < GetYFromXZ(position) - 10)
 			sunk = true;
 	}
 }
@@ -99,7 +99,11 @@ void Boat::SetStats(BOAT_STATS b)
 /*
 Not implemented, should be implemented in PlayerBoat/AIBoat for to define how this boat moves.
 */
-void Boat::Move(float dt) { }  
+void Boat::Move(float dt)
+{
+	// (actually turns the boat(on its y) based on how far its rolled to one side(on its z)).
+	angularAcceleration = XMVectorSetY(angularAcceleration, -XMVectorGetZ(rotation));
+}  
 
 /*
 Causes the boat to accelerate forward.

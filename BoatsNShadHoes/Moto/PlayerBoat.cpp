@@ -39,8 +39,7 @@ void PlayerBoat::Move(float dt)
 {
 	HandleInput();
 
-	// (actually turns the boat(on its y) based on how far its rolled to one side(on its z)).
-	angularAcceleration = XMVectorSetY(angularAcceleration, -XMVectorGetZ(rotation));
+	Boat::Move(dt);
 
 	/* This removed the ability to turn while not moving, but it might not any longer with some new changes.
 	angularAcceleration = XMVectorSet(0.0f, -roll, 0.0f, 0.0f);
