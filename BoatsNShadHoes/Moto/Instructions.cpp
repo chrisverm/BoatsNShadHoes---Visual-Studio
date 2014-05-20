@@ -13,6 +13,7 @@ Instructions::~Instructions()
 		world = nullptr;
 	}
 	Game::vsPerSceneData->pntLights[0] = PointLight();
+	Game::vsPerSceneData->ambientLight = XMFLOAT4(0,0,0,0);
 }
 
 bool Instructions::Initialize()
@@ -22,10 +23,7 @@ bool Instructions::Initialize()
 
 	LoadShadersAndInputLayout();
 	LoadResources();
-
-	Input::SetCursorVisibility(false);
-	Input::SetCursorLocking(true);
-
+	
 	Screen* screen = new Screen(Resources::GetMesh("screen"), Resources::GetMaterial("screen"),
 		Resources::GetRasterizerState("default"), Resources::GetDepthStencilState("default"));
 	screen->Initialize(Game::vsPerModelConstBuffer, Game::vsPerModelData);
@@ -54,12 +52,14 @@ bool Instructions::Initialize()
 	
 	// Lighting Setup ----------------------------------
 	PointLight pntLight1;
-	pntLight1.Range = 20.0f;
+	pntLight1.Range = 80.0f;
 	pntLight1.Position = XMFLOAT3(0.0f, 0.0f, -15.0f);
 	pntLight1.Diffuse = XMFLOAT4(1.0f, 1.0f, 1.0f, 1.0f);
-	pntLight1.Attenuation = XMFLOAT3(0.0f, 0.2f, 1.0f);
+	pntLight1.Attenuation = XMFLOAT3(1.0f, 1.0f, 1.0f);
+	pntLight1.Ambient = XMFLOAT4(1,1,1,1);
 
 	Game::vsPerSceneData->pntLights[0] = pntLight1;
+	Game::vsPerSceneData->ambientLight = XMFLOAT4(0.7f,0.7f,0.7f,0.7f);
 	
 	deviceContext->UpdateSubresource(
 		Game::vsPerSceneConstBuffer,
@@ -191,6 +191,8 @@ void Instructions::LoadResources()
 void Instructions::Update(float dt)
 {
 	CameraManager::Update();
+	
+	world->Update(dt, XMMatrixIdentity());
 
 	XMFLOAT3 cameraPosition;
 	XMStoreFloat3(&cameraPosition, CameraManager::ActiveCamera()->position);
@@ -199,8 +201,6 @@ void Instructions::Update(float dt)
 	Game::vsPerFrameData->view		 = CameraManager::ActiveCamera()->GetViewMatrix();
 	Game::vsPerFrameData->projection = CameraManager::ActiveCamera()->GetProjMatrix();
 	Game::vsPerFrameData->cameraPosition = cameraPosition;
-
-	//entities[4]->position = CameraManager::ActiveCamera()->position;
 
 	if (Game::vsPerFrameData->time > 1.0f)
 		Game::vsPerFrameData->time -= 1.0f;
@@ -212,15 +212,6 @@ void Instructions::Update(float dt)
 		Game::vsPerFrameData,
 		0,
 		0);
-
-	// Toggle showing the cursor (not locked yet).
-	if (Input::KeyUp('M'))
-	{
-		Input::ToggleCursorVisibility();
-		Input::ToggleCursorLocking();
-	}
-
-	world->Update(dt, XMMatrixIdentity());
 
 	if (Input::KeyUp(' '))
 	{

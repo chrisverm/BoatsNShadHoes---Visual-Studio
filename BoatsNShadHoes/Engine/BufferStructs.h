@@ -28,6 +28,7 @@ struct VSPerSceneData
 	//DirectionalLight dLight[NUM_DIR_LIGHTS];
 	PointLight pntLights[NUM_PNT_LIGHTS];
 	//SpotLight sLight[NUM_SPT_LIGHTS];
+	DirectX::XMFLOAT4 ambientLight;
 };
 
 #endif

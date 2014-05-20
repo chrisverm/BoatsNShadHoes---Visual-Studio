@@ -21,6 +21,7 @@ cbuffer perModel : register( b1 )
 cbuffer perScene : register( b2 )
 {
 	PointLight pntLights[NUM_PNT_LIGHTS];
+	float4 ambientLight;
 };
 
 #endif

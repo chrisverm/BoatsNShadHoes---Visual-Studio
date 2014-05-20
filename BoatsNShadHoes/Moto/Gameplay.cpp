@@ -96,7 +96,7 @@ bool Gameplay::Initialize()
 	
 #pragma endregion
 	//1 boat for now as an enemy
-	for (int i = 0; i < 20; i++)
+	for (int i = 0; i < 15; i++)
 	{
 #pragma region Disgusting other boat making
 
@@ -161,7 +161,7 @@ bool Gameplay::Initialize()
 		Resources::GetRasterizerState("skybox"), Resources::GetDepthStencilState("skybox"));
 	skyBall->Initialize(Game::vsPerModelConstBuffer, Game::vsPerModelData);
 
-	Water* water = new Water(Resources::GetMesh("quad"), Resources::GetMaterial("water"), 
+	water = new Water(Resources::GetMesh("quad"), Resources::GetMaterial("water"), 
 		Resources::GetRasterizerState("default"), Resources::GetDepthStencilState("default"));
 	water->Initialize(Game::vsPerModelConstBuffer, Game::vsPerModelData);
 	
@@ -242,6 +242,7 @@ bool Gameplay::Initialize()
 
 	Game::vsPerSceneData->pntLights[0] = pntLight1;
 	*/
+	Game::vsPerSceneData->ambientLight = XMFLOAT4(0,0,0,0);
 	
 	deviceContext->UpdateSubresource(
 		Game::vsPerSceneConstBuffer,
@@ -522,8 +523,9 @@ void Gameplay::LoadResources()
 void Gameplay::Update(float dt)
 {
 	CameraManager::Update();
-		
+			
 	world->Update(dt, XMMatrixIdentity());
+	//water->position = playerBoat->position * XMVectorSet(1,0,1,1) + water->position * XMVectorSet(0,1,0,0);
 
 	XMFLOAT3 cameraPosition;
 	XMStoreFloat3(&cameraPosition, CameraManager::ActiveCamera()->position);
@@ -553,12 +555,15 @@ void Gameplay::Update(float dt)
 
 	for (int i = 0; i < (int)otherBoats.size(); i++)
 	{
-		if (otherBoats[i]->Sunk()) // Dont even check this iteration
+		if (otherBoats[i]->Sunk()) // Dont even check this to other ai boats, they will check against this.
 			continue;
 		
 		// Check only if player boat is alive
 		if (!playerBoat->Sunk() && Bounds::Intersecting(playerBoat->bounds, otherBoats[i]->bounds))
 		{ printf("Boat Collision! Oh No! \n"); playerBoat->TakeDamage(500/*ooo kill em*/); otherBoats[i]->TakeDamage(500/*ooo ooo kill em kill em*/); }
+
+		if (otherBoats[i]->Dead()) // Dont even check this to other ai boats, they will check against this.
+			continue;
 
 		// Then check all others that havnt checked against this yet that are alive.
 		for (int j = i+1; j < (int)otherBoats.size(); j++)
@@ -610,7 +615,7 @@ void Gameplay::Draw(float dt)
 
 	world->Render(deviceContext);
 	
-#if defined(DEBUG) | defined(_DEBUG)
+#if defined(DEBUG_DRAW)
 	
 	world->DebugRender(deviceContext);
 

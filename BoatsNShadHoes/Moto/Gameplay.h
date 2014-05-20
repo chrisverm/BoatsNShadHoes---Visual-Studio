@@ -21,6 +21,10 @@
 #include "Camera.h"
 #include "Skybox.h"
 
+#if defined(DEBUG) | defined(_DEBUG)
+#define DEBUG_DRAW
+#endif
+
 class Gameplay : public GameState
 {
 public:
@@ -34,6 +38,7 @@ private:
 	Entity* world;
 	PlayerBoat* playerBoat;
 	std::vector<AIBoat*> otherBoats;
+	Water* water;
 
 	void LoadShadersAndInputLayout();
 	void LoadResources();

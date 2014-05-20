@@ -77,7 +77,11 @@ void Boat::Update(float dt, const XMMATRIX& parentMat)
 			sunk = true;
 	}
 }
-
+void Boat::Render(ID3D11DeviceContext* deviceContext)
+{
+	if (!Sunk())
+	{ MoveableEntity::Render(deviceContext); }
+}
 
 /*
 Sets the stats of the boat using the given struct
@@ -181,15 +185,9 @@ bool Boat::AddAmmunition(CannonBall* cball)
 		cannonballs.push_back(cball);
 		stats.ammunition += 1;
 		
-#if defined(DEBUG) | defined (_DEBUG)
-		std::cout << "added ammo!" << std::endl;
-#endif
 		return true;
 	}
 	
-#if defined(DEBUG) | defined (_DEBUG)
-	std::cout << " could not add ammo! Deleting cannonball." << std::endl;
-#endif
 	delete cball;
 
 	// at maximum ammunition; cannot add more
@@ -248,7 +246,7 @@ bool Boat::Fire(Cannon* cannon)
 			cannon->Fire(cannonballs[i], targets, velocity, stats.damage);
 
 #if defined(DEBUG) | defined(_DEBUG)
-			std::cout << "Ammunition remaining : " << Ammunition() << std::endl;
+			//std::cout << "Ammunition remaining : " << Ammunition() << std::endl;
 #endif
 
 #if defined SOUND_PLAY

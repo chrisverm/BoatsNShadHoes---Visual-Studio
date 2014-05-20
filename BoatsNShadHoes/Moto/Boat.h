@@ -41,6 +41,8 @@ public:
 
 	// Movement
 	void virtual Move(float dt);
+	void Render(ID3D11DeviceContext*);
+
 	void MoveForward();
 	void Stall();
 	void RudderRight();

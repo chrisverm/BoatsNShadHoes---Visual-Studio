@@ -22,6 +22,7 @@ struct VertexToPixel
 	
 	float3 worldPos : POSITION;
 	PointLight pntLights[NUM_PNT_LIGHTS] : NEARESTLIGHT;
+	float4 ambientLight : COLOR1;
 };
 
 // The entry point for our vertex shader
@@ -41,6 +42,7 @@ VertexToPixel main( VertexShaderInput input )
 	output.normal = normalize(output.normal);
 
 	output.pntLights = pntLights;
+	output.ambientLight = ambientLight;
 
 	return output;
 }
