@@ -19,7 +19,7 @@ public:
 	virtual void Update(float dt) = 0;
 	virtual void Draw(float dt) = 0;
 
-	void Unload() { this->~GameState(); }
+	virtual void Unload() = 0;
 
 protected:
 	ID3D11Device* device;

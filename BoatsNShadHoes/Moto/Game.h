@@ -5,11 +5,13 @@
 #include "BufferStructs.h"
 #include "Instructions.h"
 #include "Gameplay.h"
+#include "EndGame.h"
 
 class Game : public DX
 {
 	friend class Instructions;
 	friend class Gameplay;
+	friend class EndGame;
 	friend class Boat;
 	friend class CannonBall;
 public:

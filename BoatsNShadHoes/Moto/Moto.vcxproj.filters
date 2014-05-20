@@ -66,6 +66,9 @@
     <ClInclude Include="Cannon.h">
       <Filter>Header Files</Filter>
     </ClInclude>
+    <ClInclude Include="EndGame.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="Boat.cpp">
@@ -99,6 +102,9 @@
       <Filter>Source Files</Filter>
     </ClCompile>
     <ClCompile Include="Cannon.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="EndGame.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
   </ItemGroup>
@@ -182,6 +188,12 @@
       <Filter>Resource Files\Textures</Filter>
     </Image>
     <Image Include="..\Resources\boat_texture.png">
+      <Filter>Resource Files\Textures</Filter>
+    </Image>
+    <Image Include="..\Resources\LoseScreen.png">
+      <Filter>Resource Files\Textures</Filter>
+    </Image>
+    <Image Include="..\Resources\WinScreen.png">
       <Filter>Resource Files\Textures</Filter>
     </Image>
   </ItemGroup>

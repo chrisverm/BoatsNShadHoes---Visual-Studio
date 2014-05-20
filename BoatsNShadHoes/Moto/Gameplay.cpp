@@ -7,6 +7,11 @@ Gameplay::Gameplay(ID3D11Device* device, ID3D11DeviceContext* deviceContext)
 
 Gameplay::~Gameplay()
 {
+	Unload();
+}
+
+void Gameplay::Unload()
+{
 #ifdef SOUND_PLAY
 	alcDestroyContext(audioDeviceContext);
 	alcCloseDevice(audioDevice);
@@ -27,6 +32,8 @@ Gameplay::~Gameplay()
 		delete world;
 		world = nullptr;
 	}
+
+	otherBoats.clear();
 	Game::vsPerSceneData->pntLights[0] = PointLight();
 }
 
@@ -36,6 +43,7 @@ Gameplay::~Gameplay()
 
 bool Gameplay::Initialize()
 {
+	lost = false;
 	LoadShadersAndInputLayout();
 	LoadResources();
 
@@ -140,7 +148,7 @@ bool Gameplay::Initialize()
 
 		// Position, needs to be better so they dont spwn inside each other or the player!
 		otherBoat->position = Random::Direction(40, 80, true, false);
-		otherBoat->rotation = XMVectorSet(0, Random::Range(-3.14f, 3.14), 0, 0);
+		otherBoat->rotation = XMVectorSet(0, Random::Range(-3.14f, 3.14f), 0, 0);
 
 		otherBoat->targets.push_back(playerBoat);
 		otherBoats.push_back(otherBoat);
@@ -149,9 +157,9 @@ bool Gameplay::Initialize()
 #pragma endregion
 	}
 	
-	for (int i = 0; i < otherBoats.size(); i++)
+	for (int i = 0; i < (int)otherBoats.size(); i++)
 	{
-		for (int j = 0; j < otherBoats.size(); j++)
+		for (int j = 0; j < (int)otherBoats.size(); j++)
 		{
 			if (i != j) otherBoats[i]->otherAIBoats.push_back(otherBoats[j]);
 		}
@@ -522,6 +530,18 @@ void Gameplay::LoadResources()
 
 void Gameplay::Update(float dt)
 {
+	if (lost)
+	{
+		timeSinceEnd+= dt;
+
+		if (timeSinceEnd > 2)
+		{
+			EndGame::win = false;
+			GameStateManager::ChangeState("EndGame"); 
+			return;
+		}
+	}
+
 	CameraManager::Update();
 			
 	world->Update(dt, XMMatrixIdentity());
@@ -553,14 +573,22 @@ void Gameplay::Update(float dt)
 		Input::ToggleCursorLocking();
 	}
 
+	bool oneAlive= false;
 	for (int i = 0; i < (int)otherBoats.size(); i++)
 	{
 		if (otherBoats[i]->Sunk()) // Dont even check this to other ai boats, they will check against this.
 			continue;
-		
+		oneAlive = true;
 		// Check only if player boat is alive
 		if (!playerBoat->Sunk() && Bounds::Intersecting(playerBoat->bounds, otherBoats[i]->bounds))
-		{ printf("Boat Collision! Oh No! \n"); playerBoat->TakeDamage(500/*ooo kill em*/); otherBoats[i]->TakeDamage(500/*ooo ooo kill em kill em*/); }
+		{
+			printf("Boat Collision! Oh No! \n"); 
+			playerBoat->TakeDamage(500/*ooo kill em*/); 
+			otherBoats[i]->TakeDamage(500/*ooo ooo kill em kill em*/); 
+
+			lost = true;
+			timeSinceEnd = 0;
+		}
 
 		if (otherBoats[i]->Dead()) // Dont even check this to other ai boats, they will check against this.
 			continue;
@@ -569,8 +597,19 @@ void Gameplay::Update(float dt)
 		for (int j = i+1; j < (int)otherBoats.size(); j++)
 		{
 			if (!otherBoats[j]->Sunk() && Bounds::Intersecting(otherBoats[i]->bounds, otherBoats[j]->bounds))
-			{ printf("AI Collision! Ha ha! \n"); otherBoats[j]->TakeDamage(500/*ooo kill em*/); otherBoats[i]->TakeDamage(500/*ooo ooo kill em kill em*/); }
+			{
+				printf("AI Collision! Ha ha! \n"); 
+				otherBoats[j]->TakeDamage(500/*ooo kill em*/);
+				otherBoats[i]->TakeDamage(500/*ooo ooo kill em kill em*/);
+			}
 		}
+	}
+
+	if (!oneAlive)
+	{
+		EndGame::win = true;
+		GameStateManager::ChangeState("EndGame"); 
+		return;
 	}
 	
 

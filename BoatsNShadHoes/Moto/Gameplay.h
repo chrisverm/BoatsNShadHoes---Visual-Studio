@@ -30,6 +30,7 @@ class Gameplay : public GameState
 public:
 	Gameplay(ID3D11Device* device, ID3D11DeviceContext* deviceContext);
 	~Gameplay();
+	void Unload();
 	bool Initialize();
 	void Update(float dt);
 	void Draw(float dt);
@@ -49,6 +50,8 @@ private:
 	ALCcontext* audioDeviceContext;
 	AudioPlayer* main_bgm;
 	std::map<std::string, AudioPlayer*> sounds;
+	bool lost;
+	float timeSinceEnd;
 
 	bool viewChanged;
 };

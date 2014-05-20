@@ -56,8 +56,10 @@ bool Game::Initialize(HINSTANCE hInstance, int iconResource)
 
 	Instructions* instructions = new Instructions(device, deviceContext);
 	Gameplay* gameplay = new Gameplay(device, deviceContext);
+	EndGame* endgame = new EndGame(device, deviceContext);
 	GameStateManager::AddState("Instructions", instructions);
 	GameStateManager::AddState("Gameplay", gameplay);
+	GameStateManager::AddState("EndGame", endgame);
 	GameStateManager::ChangeState("Instructions");
 
 	return true;

@@ -1,5 +1,7 @@
-#ifndef INSTRUCTIONS_H
-#define INSTRUCTIONS_H
+#ifndef ENDGAME_H
+#define ENDGAME_H
+
+#include "Gamestate.h"
 
 #include <vector>
 #include "WICTextureLoader.h"
@@ -18,16 +20,19 @@
 #include "Skybox.h"
 #include "Screen.h"
 
-class Instructions : public GameState
+class EndGame :
+	public GameState
 {
 public:
-	Instructions(ID3D11Device* device, ID3D11DeviceContext* deviceContext);
-	~Instructions();
-
+	EndGame(ID3D11Device* device, ID3D11DeviceContext* deviceContext);
+	~EndGame(void);
+	
 	void Unload();
 	bool Initialize();
 	void Update(float dt);
 	void Draw(float dt);
+
+	static bool win;
 
 private:
 	Entity* world;
@@ -38,7 +43,6 @@ private:
 
 	bool viewChanged;
 	bool drawCoordinates;
-
 };
 
 #endif

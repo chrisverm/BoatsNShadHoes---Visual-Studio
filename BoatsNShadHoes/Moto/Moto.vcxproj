@@ -112,6 +112,7 @@ copy "$(OutDir)$(TargetName)$(TargetExt)" "$(SolutionDir)Binary"</Command>
     <ClInclude Include="Boat.h" />
     <ClInclude Include="Cannon.h" />
     <ClInclude Include="CannonBall.h" />
+    <ClInclude Include="EndGame.h" />
     <ClInclude Include="Game.h" />
     <ClInclude Include="Gameplay.h" />
     <ClInclude Include="Hittable.h" />
@@ -127,6 +128,7 @@ copy "$(OutDir)$(TargetName)$(TargetExt)" "$(SolutionDir)Binary"</Command>
     <ClCompile Include="Boat.cpp" />
     <ClCompile Include="Cannon.cpp" />
     <ClCompile Include="CannonBall.cpp" />
+    <ClCompile Include="EndGame.cpp" />
     <ClCompile Include="Game.cpp" />
     <ClCompile Include="Gameplay.cpp" />
     <ClCompile Include="Instructions.cpp" />
@@ -214,9 +216,11 @@ copy "$(OutDir)$(TargetName)$(TargetExt)" "$(SolutionDir)Binary"</Command>
     <Image Include="..\Resources\cannonball_texture.jpg" />
     <Image Include="..\Resources\cannon_texture.png" />
     <Image Include="..\Resources\crate_texture.png" />
+    <Image Include="..\Resources\LoseScreen.png" />
     <Image Include="..\Resources\screen_texture.JPG" />
     <Image Include="..\Resources\ship_icon.ico" />
     <Image Include="..\Resources\water_texture.jpg" />
+    <Image Include="..\Resources\WinScreen.png" />
   </ItemGroup>
   <ItemGroup>
     <ResourceCompile Include="Moto.rc" />

@@ -1,14 +1,16 @@
-#include "Instructions.h"
+#include "EndGame.h"
 
-Instructions::Instructions(ID3D11Device* device, ID3D11DeviceContext* deviceContext)
+bool EndGame::win;
+
+EndGame::EndGame(ID3D11Device* device, ID3D11DeviceContext* deviceContext)
 	: GameState(device, deviceContext) { }
 
-Instructions::~Instructions()
+EndGame::~EndGame()
 {
 	Unload();
 }
 
-void Instructions::Unload()
+void EndGame::Unload()
 {
 	// every entity is somehow connected to this
 	// thus this will destroy all entities
@@ -21,17 +23,28 @@ void Instructions::Unload()
 	Game::vsPerSceneData->ambientLight = XMFLOAT4(0,0,0,0);
 }
 
-bool Instructions::Initialize()
+bool EndGame::Initialize()
 {
 	world = new Entity();
 	drawCoordinates = false;
 
 	LoadShadersAndInputLayout();
 	LoadResources();
-	
-	Screen* screen = new Screen(Resources::GetMesh("screen"), Resources::GetMaterial("screen"),
-		Resources::GetRasterizerState("default"), Resources::GetDepthStencilState("default"));
-	screen->Initialize(Game::vsPerModelConstBuffer, Game::vsPerModelData);
+
+	Screen* screen;
+
+	if (win)
+	{
+		screen = new Screen(Resources::GetMesh("screen2"), Resources::GetMaterial("win"),
+			Resources::GetRasterizerState("default2"), Resources::GetDepthStencilState("default"));
+		screen->Initialize(Game::vsPerModelConstBuffer, Game::vsPerModelData);
+	}
+	else
+	{
+		screen = new Screen(Resources::GetMesh("screen2"), Resources::GetMaterial("lose"),
+			Resources::GetRasterizerState("default"), Resources::GetDepthStencilState("default"));
+		screen->Initialize(Game::vsPerModelConstBuffer, Game::vsPerModelData);
+	}
 
 	entities.push_back(screen);		world->AddChild(screen);
 
@@ -79,7 +92,7 @@ bool Instructions::Initialize()
 	return true;
 }
 
-void Instructions::LoadShadersAndInputLayout()
+void EndGame::LoadShadersAndInputLayout()
 {
 	// PNU Shaders -------------------------------------
 	/*Resources::CreateVertexShaderAndInputLayout("PNU", L"Shaders/VS_PNU.cso", 
@@ -97,7 +110,7 @@ void Instructions::LoadShadersAndInputLayout()
 	Resources::CreatePixelShader("PNUC", L"Shaders/PS_PNUC.cso");
 }
 
-void Instructions::LoadResources()
+void EndGame::LoadResources()
 {
 	// Depth Stencil States ----------------------------
 	D3D11_DEPTH_STENCIL_DESC dssDesc;
@@ -137,7 +150,8 @@ void Instructions::LoadResources()
 	rsDesc.AntialiasedLineEnable	= false;
 	Resources::CreateRasterizerState("default", rsDesc);
 
-	Resources::CreateShaderResourceView("screen", L"Resources/screen_texture.jpg");
+	Resources::CreateShaderResourceView("win", L"Resources/WinScreen.png");
+	Resources::CreateShaderResourceView("lose", L"Resources/LoseScreen.png");
 
 	// Sampler States ------------------------------------
 	D3D11_SAMPLER_DESC samplerDesc;
@@ -187,13 +201,15 @@ void Instructions::LoadResources()
 	Mesh* screen = new Mesh(vertArray2, 4, indices2, 6, D3D_PRIMITIVE_TOPOLOGY_TRIANGLELIST);
 	screen->Initialize(device, Resources::GetInputLayout("PNUC"));
 
-	Resources::AddMesh("screen", screen);
+	Resources::AddMesh("screen2", screen);
 
-	Resources::CreateMaterial("screen", Resources::GetSRV("screen"), Resources::GetSamplerState("MIN_MAG_POINT_MIP_LINEAR"),
+	Resources::CreateMaterial("win", Resources::GetSRV("win"), Resources::GetSamplerState("MIN_MAG_POINT_MIP_LINEAR"),
+		Resources::GetVertexShader("PNUC"), Resources::GetPixelShader("PNUC"));
+	Resources::CreateMaterial("lose", Resources::GetSRV("lose"), Resources::GetSamplerState("MIN_MAG_POINT_MIP_LINEAR"),
 		Resources::GetVertexShader("PNUC"), Resources::GetPixelShader("PNUC"));
 }
 
-void Instructions::Update(float dt)
+void EndGame::Update(float dt)
 {
 	CameraManager::Update();
 	
@@ -220,11 +236,11 @@ void Instructions::Update(float dt)
 
 	if (Input::KeyUp(' '))
 	{
-		GameStateManager::ChangeState("Gameplay");
+		GameStateManager::ChangeState("Instructions");
 	}
 }
 
-void Instructions::Draw(float dt)
+void EndGame::Draw(float dt)
 {
 	const float color[4] = { 0.4f, 0.6f, 0.75f, 0.0f };
 
