@@ -35,6 +35,8 @@ void Gameplay::Unload()
 
 	otherBoats.clear();
 	Game::vsPerSceneData->pntLights[0] = PointLight();
+	Input::SetCursorVisibility(true);
+	Input::SetCursorLocking(false);
 }
 
 #pragma endregion
@@ -534,7 +536,7 @@ void Gameplay::Update(float dt)
 	{
 		timeSinceEnd+= dt;
 
-		if (timeSinceEnd > 2)
+		if (timeSinceEnd > 2.75f)
 		{
 			EndGame::win = false;
 			GameStateManager::ChangeState("EndGame"); 
