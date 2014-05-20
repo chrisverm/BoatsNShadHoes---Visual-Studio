@@ -187,7 +187,7 @@ bool Gameplay::Initialize()
 	CAMERA_DESC camDesc;
 	camDesc.FieldOfView = XMConvertToRadians(45.0f);
 	camDesc.NearPlane = 0.1f;
-	camDesc.FarPlane = 100.0f;
+	camDesc.FarPlane = 150.0f;
 	camDesc.AttachedDist = 20.0f;
 	camDesc.Parent = playerBoat;
 	camDesc.InitialRoll = 0.0f;
