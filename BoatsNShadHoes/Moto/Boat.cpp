@@ -348,7 +348,8 @@ Gets the y position the boat should be at to be on the water based on the positi
 */
 float Boat::GetYFromXZ(XMVECTOR pos)
 {
-	float start = (XMVectorGetX(pos) / 150.0f) * 360;
+	// Uncomment small block in line below for the fish.
+	float start = (XMVectorGetX(pos) /* + 0 */ / 150.0f) * 360;
 	float degsToRads = 3.1415f / 180.0f;
 
 	float angle = (start + Game::vsPerFrameData->time * 200) * 3.1415f;
