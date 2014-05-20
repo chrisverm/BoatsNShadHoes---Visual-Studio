@@ -179,7 +179,7 @@ bool Gameplay::Initialize()
 	camDesc.InitialForward = XMVectorSet(0.0f, 0.0f, 1.0f, 0.0f);
 	camDesc.MinAngleClamps = XMVectorSet(0.0f, -181.0f, 0.0f, 0.0f) * XMConvertToRadians(1.0f);
 	camDesc.MaxAngleClamps = XMVectorSet(90.0f, 181.0f, 0.0f, 0.0f) * XMConvertToRadians(1.0f);
-	camDesc.Position = STATIC;
+	camDesc.Position = ATTACHED;
 	camDesc.Forward = THIRD_PERSON;
 	camDesc.Roll = STATIC;
 	CameraManager::CreateNewCamera(&camDesc, true);

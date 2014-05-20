@@ -43,7 +43,7 @@ bool Instructions::Initialize()
 	camDesc.AttachedDist = 20.0f;
 	camDesc.Parent = screen;
 	camDesc.InitialRoll = 0.0f;
-	camDesc.InitialPosition = XMVectorSet(0.0f, 0.0f, -20.0f, 0.0f);
+	camDesc.InitialPosition = XMVectorSet(0.0f, 0.0f, -14.0f, 0.0f);
 	camDesc.InitialForward = XMVectorSet(0.0f, 0.0f, 1.0f, 0.0f);
 	camDesc.MinAngleClamps = XMVectorSet(0.0f, -181.0f, 0.0f, 0.0f) * XMConvertToRadians(1.0f);
 	camDesc.MaxAngleClamps = XMVectorSet(90.0f, 181.0f, 0.0f, 0.0f) * XMConvertToRadians(1.0f);
@@ -54,9 +54,9 @@ bool Instructions::Initialize()
 	
 	// Lighting Setup ----------------------------------
 	PointLight pntLight1;
-	pntLight1.Range = 2.0f;
-	pntLight1.Position = XMFLOAT3(0.0f, 0.5f, -1.0f);
-	pntLight1.Diffuse = XMFLOAT4(1.0f, 0.0f, 0.0f, 1.0f);
+	pntLight1.Range = 20.0f;
+	pntLight1.Position = XMFLOAT3(0.0f, 0.0f, -15.0f);
+	pntLight1.Diffuse = XMFLOAT4(1.0f, 1.0f, 1.0f, 1.0f);
 	pntLight1.Attenuation = XMFLOAT3(0.0f, 0.2f, 1.0f);
 
 	Game::vsPerSceneData->pntLights[0] = pntLight1;
@@ -153,15 +153,13 @@ void Instructions::LoadResources()
 	samplerDesc.AddressW = D3D11_TEXTURE_ADDRESS_WRAP;
 	Resources::CreateSamplerState("MIN_MAG_MIP_LINEAR", samplerDesc);
 
-	int size = 8;
-
 	//Begin More Disgusting
 	Vertex_PNUC temp2[] = 
 	{
-		{ XMFLOAT3(size,size,0), XMFLOAT3(0,0,0), XMFLOAT2(1, 0), XMFLOAT4(1,1,1,1) },
-		{ XMFLOAT3(-size,size,0), XMFLOAT3(0,0,0), XMFLOAT2(0, 0), XMFLOAT4(1,1,1,1) },
-		{ XMFLOAT3(-size,-size,0), XMFLOAT3(0,0,0), XMFLOAT2(0, 1), XMFLOAT4(1,1,1,1) },
-		{ XMFLOAT3(size,-size,0), XMFLOAT3(0,0,0), XMFLOAT2(1, 1), XMFLOAT4(1,1,1,1) }
+		{ XMFLOAT3(8,6,0), XMFLOAT3(0,0,0), XMFLOAT2(1, 0), XMFLOAT4(1,1,1,1) },
+		{ XMFLOAT3(-8,6,0), XMFLOAT3(0,0,0), XMFLOAT2(0, 0), XMFLOAT4(1,1,1,1) },
+		{ XMFLOAT3(-8,-6,0), XMFLOAT3(0,0,0), XMFLOAT2(0, 1), XMFLOAT4(1,1,1,1) },
+		{ XMFLOAT3(8,-6,0), XMFLOAT3(0,0,0), XMFLOAT2(1, 1), XMFLOAT4(1,1,1,1) }
 	};
 
 	Vertex_PNUC* verts2 = new Vertex_PNUC[4];
