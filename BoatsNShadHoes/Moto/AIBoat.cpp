@@ -5,8 +5,7 @@ Does nothing more than Boat's update.
 */
 AIBoat::AIBoat(Mesh* mesh, Material* mat, ID3D11RasterizerState* rastState, ID3D11DepthStencilState* depthStenState, BOAT_STATS stats) :
 	Boat(mesh, mat, rastState, depthStenState, stats)
-{
-}
+{ }
 
 /*
 I'M TRYING TO IMPLEMENT NOW GAHHHHHHH -Love, Justin
@@ -22,11 +21,8 @@ void AIBoat::Move(float dt)
 	//Gets angle between AIboat and playerBoat. In radians
 	float frontAngle = XMVectorGetX(XMVector3AngleBetweenVectors(forward, differenceVector));
 	float sideAngle = XMVectorGetX(XMVector3AngleBetweenVectors(right, differenceVector));
-	std::cout << "front angle: " << frontAngle << std::endl;
-	std::cout << "side angle: " << sideAngle << std::endl;
 
 	float distance = XMVectorGetX(XMVector3Length(differenceVector));
-	std::cout << distance << std::endl << std::endl;
 		
 	// Always move forward
 	MoveForward();
@@ -49,6 +45,9 @@ void AIBoat::Move(float dt)
 	else if (distance < 20)
 	{
 		// turn to the right
+		
+		// if closer to 0, turn to go 0, (
+		// if closer to pi, turn to go pi..
 		if (sideAngle < 3.14f / 2.0f)
 		{ RudderLeft(); }
 		// turn to the left
@@ -57,7 +56,13 @@ void AIBoat::Move(float dt)
 	}
 	else
 	{
-		// try to circle.
+		// try to get in better position to shoot
+		// if player boat in back right or front left quadrant...
+		if ((sideAngle < 3.14f / 2.0f && frontAngle > 3.14f / 2.0f) || (sideAngle > 3.14f / 2.0f && frontAngle < 3.14f / 2.0f))
+		{ RudderRight(); }
+		// if player boat in back left or front right quadrant...
+		else if ((sideAngle > 3.14f / 2.0f && frontAngle > 3.14f / 2.0f) || (sideAngle < 3.14f / 2.0f && frontAngle < 3.14f / 2.0f))
+		{ RudderLeft(); }
 	}
 
 	// check if we can fire.

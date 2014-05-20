@@ -96,7 +96,7 @@ bool Gameplay::Initialize()
 	
 #pragma endregion
 	//1 boat for now as an enemy
-	for (int i = 0; i < 1; i++)
+	for (int i = 0; i < 20; i++)
 	{
 #pragma region Disgusting other boat making
 
@@ -149,6 +149,14 @@ bool Gameplay::Initialize()
 #pragma endregion
 	}
 	
+	for (int i = 0; i < otherBoats.size(); i++)
+	{
+		for (int j = 0; j < otherBoats.size(); j++)
+		{
+			if (i != j) otherBoats[i]->otherAIBoats.push_back(otherBoats[j]);
+		}
+	}
+
 	SkyBox* skyBall = new SkyBox(Resources::GetMesh("skybox"), Resources::GetMaterial("skybox"), 
 		Resources::GetRasterizerState("skybox"), Resources::GetDepthStencilState("skybox"));
 	skyBall->Initialize(Game::vsPerModelConstBuffer, Game::vsPerModelData);
